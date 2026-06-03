@@ -1,0 +1,33 @@
+name: Agent PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  validate-agent-pr:
+    if: startsWith(github.head_ref, 'agent/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate governance artifact
+        run: python scripts/validate_artifact.py
+
+      - name: Run policy engine tests
+        run: python broker/tests/test_policy_engine.py
+
+      - name: Flag high-risk changed files
+        shell: bash
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          changed=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          echo "$changed"
+          echo "$changed" | grep -E '(^\.github/workflows/|^security/|^config/|Dockerfile|docker-compose|requirements|pyproject\.toml|package-lock\.json|\.env|\.pem$|\.key$)' && {
+            echo "High-risk file change detected. Human review required."
+            exit 0
+          } || true

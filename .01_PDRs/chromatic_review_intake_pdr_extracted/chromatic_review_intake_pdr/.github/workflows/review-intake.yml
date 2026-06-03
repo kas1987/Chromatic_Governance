@@ -1,0 +1,58 @@
+name: Chromatic Review Intake
+
+on:
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+  pull_request_review_comment:
+    types: [created, edited, deleted]
+  issue_comment:
+    types: [created, edited]
+  check_run:
+    types: [completed]
+  workflow_run:
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: write
+  checks: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ingest-review:
+    if: github.event_name != 'issue_comment' || github.event.issue.pull_request != null
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure planning folders exist
+        run: |
+          mkdir -p 00_PLANNING 02_LOGS
+          touch 00_PLANNING/review-findings.jsonl
+          test -f 00_PLANNING/next-work.queue.json || echo '{"items":[]}' > 00_PLANNING/next-work.queue.json
+
+      - name: Ingest GitHub review event
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          python scripts/review_intake.py \
+            --event-name "$GITHUB_EVENT_NAME" \
+            --event-path "$GITHUB_EVENT_PATH" \
+            --findings 00_PLANNING/review-findings.jsonl \
+            --queue 00_PLANNING/next-work.queue.json \
+            --state 00_PLANNING/review-intake.state.json
+
+      - name: Commit intake updates
+        run: |
+          git config user.name "Chromatic Review Intake"
+          git config user.email "actions@github.com"
+          git add 00_PLANNING/review-findings.jsonl 00_PLANNING/next-work.queue.json 00_PLANNING/review-intake.state.json
+          git diff --cached --quiet || git commit -m "chore(review-intake): ingest GitHub review event"
+          git push

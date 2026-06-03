@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "frontend-family",
+  "displayName": "Frontend Family",
+  "description": "Frontend, UI/UX, asset extraction, CSS library, dashboard, GUI, local app, web platform, Tailwind, Blender, and 3D asset workflows.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Kris Sayresmith"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "plugin-family",
+    "frontend",
+    "ui-ux",
+    "css",
+    "tailwind",
+    "dashboard",
+    "blender",
+    "3d-assets"
+  ],
+  "defaultEnabled": false
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "observability-family",
+  "displayName": "Observability Family",
+  "description": "Logs, metrics, tracing, incident summaries, RCA, SLO checks, alert tuning, and health reports.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Kris Sayresmith"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "plugin-family",
+    "agent-workflow",
+    "observability"
+  ],
+  "defaultEnabled": false
+}

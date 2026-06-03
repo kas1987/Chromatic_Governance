@@ -1,0 +1,45 @@
+agents:
+  repo_scout:
+    display_name: Repo Scout
+    status: active
+    allowed_profiles:
+      - read_only
+    allowed_repos:
+      - example-org/example-repo
+    branch_prefix: agent/reposcout/
+    require_task_id_for_write: true
+
+  auditor:
+    display_name: Governance Auditor
+    status: active
+    allowed_profiles:
+      - read_only
+      - issue_triage
+    allowed_repos:
+      - example-org/example-repo
+    branch_prefix: agent/auditor/
+    require_task_id_for_write: true
+
+  code_sentinel:
+    display_name: CodeSentinel - AI COO
+    status: active
+    allowed_profiles:
+      - read_only
+      - patch_standard
+    allowed_repos:
+      - example-org/example-repo
+    branch_prefix: agent/codesentinel/
+    require_task_id_for_write: true
+    require_pull_request: true
+    deny_direct_main_push: true
+
+  janitor:
+    display_name: Repo Janitor
+    status: inactive
+    allowed_profiles:
+      - read_only
+      - cleanup_limited
+    allowed_repos:
+      - example-org/example-repo
+    branch_prefix: agent/janitor/
+    require_task_id_for_write: true

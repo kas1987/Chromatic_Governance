@@ -1,0 +1,22 @@
+{
+  "risks": [
+    {
+      "id": "RISK-001",
+      "title": "Duplicate review findings create duplicate agent work",
+      "severity": "medium",
+      "mitigation": "Use dedupe_key and source_finding_id upsert behavior."
+    },
+    {
+      "id": "RISK-002",
+      "title": "Multiple agents mutate the same PR branch",
+      "severity": "high",
+      "mitigation": "Require pr_branch_lock before any write/push action."
+    },
+    {
+      "id": "RISK-003",
+      "title": "Vague comments trigger unsafe broad refactors",
+      "severity": "high",
+      "mitigation": "Confidence gate marks unclear/architecture tasks review-required or needs-human-decision."
+    }
+  ]
+}

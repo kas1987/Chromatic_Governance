@@ -1,0 +1,59 @@
+profiles:
+  read_only:
+    description: Safe read-only repository inspection.
+    github_permissions:
+      contents: read
+      issues: read
+      pull_requests: read
+      metadata: read
+    may_write_files: false
+    may_open_pr: false
+    may_comment: false
+
+  issue_triage:
+    description: Issue and PR triage without file writes.
+    github_permissions:
+      contents: read
+      issues: write
+      pull_requests: write
+      metadata: read
+    may_write_files: false
+    may_open_pr: false
+    may_comment: true
+
+  patch_standard:
+    description: Standard patch agent profile with branch and PR workflow.
+    github_permissions:
+      contents: write
+      issues: write
+      pull_requests: write
+      checks: write
+      metadata: read
+    may_write_files: true
+    may_open_pr: true
+    may_comment: true
+    require_task_id: true
+    require_branch_prefix: true
+    deny_direct_main_push: true
+
+  cleanup_limited:
+    description: Limited cleanup profile for docs, formatting, and repo hygiene.
+    github_permissions:
+      contents: write
+      issues: write
+      pull_requests: write
+      metadata: read
+    may_write_files: true
+    may_open_pr: true
+    allowed_paths:
+      - docs/**
+      - governance/**
+      - README.md
+      - '*.md'
+    blocked_paths:
+      - .github/workflows/**
+      - security/**
+      - config/**
+      - .env*
+      - '*.pem'
+      - '*.key'

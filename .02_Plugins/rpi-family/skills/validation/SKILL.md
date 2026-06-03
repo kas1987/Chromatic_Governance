@@ -1,0 +1,275 @@
+---
+name: validation
+description: 'Full validation phase orchestrator. Vibe + post-mortem + retro + forge. Reviews implementation quality, extracts learnings, feeds the knowledge flywheel. Triggers: "validation", "validate", "validate work", "review and learn", "validation phase", "post-implementation review".'
+skill_api_version: 1
+user-invocable: true
+context:
+  window: fork
+  intent:
+    mode: task
+  sections:
+    exclude: [HISTORY]
+  intel_scope: full
+metadata:
+  tier: meta
+  dependencies:
+    - vibe        # required - code quality review
+    - post-mortem # required - retrospective analysis
+    - retro       # optional - quick learning capture
+    - forge       # optional - transcript mining
+    - shared      # optional - CLI fallback table
+output_contract: skills/council/schemas/verdict.json
+permissions:
+  allowed: [Read, Glob, Grep, Bash, Write, Skill]
+  forbidden: [Edit, Agent, WebFetch, WebSearch, NotebookEdit, LSP, TaskCreate, TaskUpdate]
+  bash_scope: "ao ratchet/codex/forge, jq, git log, date"
+  write_scope: ".agents/rpi/phase-3-summary-*.md only — delegates all other writes to sub-skills"
+  model_tier: large
+---
+
+## Tool Governance
+
+> Full registry: `skills/shared/references/skill-tool-registry.md`. Violations tracked in mc-6a5.
+
+| Allowed | Forbidden |
+|---------|-----------|
+| Read, Glob, Grep, Bash, Write, Skill | Edit, Agent, WebFetch, WebSearch, NotebookEdit, LSP, TaskCreate, TaskUpdate |
+
+**Bash:** ao ratchet/codex/forge, jq, git log, date
+**Write:** .agents/rpi/phase-3-summary-*.md only — delegates all other writes to sub-skills
+
+
+# /validation — Full Validation Phase Orchestrator
+
+**YOU MUST EXECUTE THIS WORKFLOW. Do not just describe it.**
+
+## DAG — Execute This Sequentially
+
+```
+mkdir -p .agents/rpi
+detect complexity from execution-packet or --complexity flag (default: standard)
+detect ao CLI availability
+```
+
+**Run every step in order. Do not stop between steps.**
+
+```
+STEP 1  ──  Skill(skill="vibe", args="recent [--quick]")
+              Use --quick for fast/standard. Full council for full.
+              PASS/WARN? → continue
+              FAIL?      → write summary, output <promise>FAIL</promise>, stop
+                           (validation cannot fix code — caller decides retry)
+
+STEP 1.5 ── Four-Surface Closure (mandatory)
+              Read `skills/validation/references/four-surface-closure.md` for the mandatory four-surface closure check.
+              Check all four surfaces: Code, Documentation, Examples, Proof.
+              All 4 pass? → continue
+              if --strict-surfaces:
+                Any surface fails? → FAIL, write summary, output <promise>FAIL</promise>, stop
+              else (default):
+                Code passes, others fail? → WARN, continue
+                Code fails? → BLOCK, write summary, output <promise>FAIL</promise>, stop
+
+STEP 1.6 ── Test pyramid coverage audit (advisory, append to summary)
+              Check L0-L3 + BF1/BF4 per modified file. WARN only, not FAIL.
+
+STEP 1.7 ── Lifecycle Checks (advisory, WARN-only, never FAIL)
+              Skip entire step if: --no-lifecycle flag.
+              Each sub-step uses --quick mode to limit context consumption.
+              On budget expiry: skip remaining sub-steps, write [TIME-BOXED].
+
+              a) if lifecycle tier >= minimal AND test_framework_detected:
+                   Skill(skill="test", args="coverage --quick")
+                   Append coverage delta to phase summary.
+
+              b) if lifecycle tier >= standard AND dependency_manifest_exists:
+                   Skill(skill="deps", args="vuln --quick")
+                   CRITICAL vulns (CVSS >= 9.0): **FAIL** (block shipping). Opt-out: `--allow-critical-deps` for acknowledged risk acceptance.
+                   Non-critical: advisory note only.
+
+              c) if lifecycle tier >= standard:
+                   Skill(skill="review", args="--diff --quick")
+                   Append review findings to summary as advisory.
+
+              d) if lifecycle tier == full AND modified_files_touch_hot_path:
+                   Skill(skill="perf", args="profile --quick")
+                   Append perf findings to summary as advisory.
+                   Hot path detection: modified files match benchmark files
+                   or patterns (handler, middleware, router, parser, engine,
+                   worker, pool, codec).
+
+STEP 2  ──  if epic_id:
+              Skill(skill="post-mortem", args="<epic-id> [--quick]")
+              Use --quick for fast/standard. Full council for full.
+
+STEP 3  ──  if not --no-retro:
+              Skill(skill="retro")
+
+STEP 4  ──  if not --no-forge AND ao available:
+              if [ -n "${CODEX_THREAD_ID:-}" ] || [ "${CODEX_INTERNAL_ORIGINATOR_OVERRIDE:-}" = "Codex Desktop" ]; then
+                ao codex stop --auto-extract 2>/dev/null || true
+              else
+                ao forge transcript --last-session --queue --quiet 2>/dev/null || true
+              fi
+
+STEP 5  ──  write phase summary to .agents/rpi/phase-3-summary-YYYY-MM-DD-<slug>.md
+              ao ratchet record vibe 2>/dev/null || true
+              output <promise>DONE</promise>
+```
+
+**That's it.** Steps 1→2→3→4→5. No stopping between steps.
+
+---
+
+## Setup Detail
+
+**State:**
+```
+validation_state = {
+  epic_id: "<epic-id or null>",
+  complexity: <fast|standard|full>,
+  no_retro: <true if --no-retro>,
+  no_forge: <true if --no-forge>,
+  strict_surfaces: <true if --strict-surfaces>,
+  vibe_verdict: null,
+  post_mortem_verdict: null
+}
+```
+
+**Load execution packet** (if available): read `complexity`, `contract_surfaces`, `done_criteria` from `.agents/rpi/execution-packet.json`.
+
+## Gate Detail
+
+**STEP 1 (vibe) is the only gate.** Validation cannot fix code — it can only report.
+
+- **PASS/WARN:** Log verdict, continue to STEP 2.
+- **FAIL:** Extract findings from `ls -t .agents/council/*vibe*.md | head -1`, write phase summary with FAIL status, output `<promise>FAIL</promise>` with findings attached. Suggest: `"Vibe FAIL. Fix findings, then re-run /validation [epic-id]"`.
+
+**Why no internal retry:** Retries require re-implementation (`/crank`). The caller (`/rpi` or human) decides whether to loop back.
+
+## Phase Summary Format
+
+Write to `.agents/rpi/phase-3-summary-YYYY-MM-DD-<slug>.md`:
+
+```markdown
+# Phase 3 Summary: Validation
+
+- **Epic:** <epic-id or "standalone">
+- **Vibe verdict:** <PASS|WARN|FAIL>
+- **Post-mortem verdict:** <verdict or "skipped">
+- **Retro:** <captured|skipped>
+- **Forge:** <mined|skipped>
+- **Complexity:** <fast|standard|full>
+- **Status:** <DONE|FAIL>
+- **Timestamp:** <ISO-8601>
+```
+
+## Phase Budgets
+
+| Sub-step | `fast` | `standard` | `full` |
+|----------|--------|------------|--------|
+| Vibe | 2 min | 3 min | 5 min |
+| Post-mortem | 2 min | 3 min | 5 min |
+| Retro | 1 min | 1 min | 2 min |
+| Forge | skip | 2 min | 3 min |
+
+On budget expiry: allow in-flight calls to complete, write `[TIME-BOXED]` marker, proceed.
+
+## Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--complexity=<level>` | auto | Force complexity level (fast/standard/full) |
+| `--no-lifecycle` | off | Skip ALL lifecycle checks in STEP 1.6 (test, deps, review, perf) |
+| `--lifecycle=<tier>` | matches complexity | Controls which lifecycle skills fire: `minimal` (test only), `standard` (+deps, +review), `full` (+perf) |
+| `--no-retro` | off | Skip retro + forge steps |
+| `--no-forge` | off | Skip forge step only |
+| `--no-budget` | off | Disable phase time budgets |
+| `--strict-surfaces` | off | Make all 4 surface failures blocking (FAIL instead of WARN). Passed automatically by `/rpi --quality`. |
+| `--allow-critical-deps` | off | Allow shipping with CVSS >= 9.0 vulnerabilities (acknowledged risk acceptance) |
+
+## Chronicle Integration
+
+**Default `/rpi` behavior:** `/rpi` runs `/vibe` directly (not `/validation`) and spawns a Chronicle background agent for post-mortem + retro + forge + beads feeding. In this mode, `/validation` is NOT called from `/rpi`.
+
+**When `/rpi --no-chronicle` is set:** `/rpi` calls `/validation` as before (full blocking pipeline: vibe → post-mortem → retro → forge).
+
+**Direct `/validation` invocation** (outside of `/rpi`): Full pipeline always runs — no Chronicle involvement.
+
+## Quick Start
+
+```bash
+/validation ag-5k2                        # validate epic with full close-out
+/validation                               # validate recent work (no epic)
+/validation --complexity=full ag-5k2      # force full council ceremony
+/validation --no-retro ag-5k2             # skip retro + forge
+/validation --no-forge ag-5k2             # skip forge only
+```
+
+## Completion Markers
+
+```
+<promise>DONE</promise>    # Validation passed, learnings captured
+<promise>FAIL</promise>    # Vibe failed, re-implementation needed (findings attached)
+```
+
+## Troubleshooting
+
+| Problem | Cause | Solution |
+|---------|-------|----------|
+| Vibe FAIL on first run | Implementation has quality issues | Fix findings via `/crank`, then re-run `/validation` |
+| Post-mortem skipped unexpectedly | No epic-id provided | Pass epic-id: `/validation ag-5k2` |
+| Codex closeout missing | Codex has no session-end hook surface | Let `/validation` run `ao codex stop`, or run `ao codex stop` manually before leaving the session |
+| Forge produces no output | No ao CLI or no transcript content | Install ao CLI or run `/retro` manually |
+| Stale execution-packet | Packet from a previous RPI cycle | Delete `.agents/rpi/execution-packet.json` and pass `--complexity` explicitly |
+
+## Reference Documents
+
+- [references/four-surface-closure.md](references/four-surface-closure.md) — four-surface closure validation (code + docs + examples + proof)
+- [references/forge-scope.md](references/forge-scope.md) — forge session scoping and deduplication
+- [references/idempotency-and-resume.md](references/idempotency-and-resume.md) — re-run behavior and standalone mode
+
+## See Also
+
+- [skills/vibe/SKILL.md](../vibe/SKILL.md) — code quality review
+- [skills/post-mortem/SKILL.md](../post-mortem/SKILL.md) — retrospective analysis
+- [skills/retro/SKILL.md](../retro/SKILL.md) — quick learning capture
+- [skills/forge/SKILL.md](../forge/SKILL.md) — transcript mining
+- [skills/crank/SKILL.md](../crank/SKILL.md) — previous phase (implementation)
+- [skills/discovery/SKILL.md](../discovery/SKILL.md) — first phase (discovery)
+- [skills/rpi/SKILL.md](../rpi/SKILL.md) — full lifecycle orchestrator
+- [skills/test/SKILL.md](../test/SKILL.md) — test coverage (lifecycle STEP 1.6a)
+- [skills/deps/SKILL.md](../deps/SKILL.md) — dependency vuln scan (lifecycle STEP 1.6b)
+- [skills/review/SKILL.md](../review/SKILL.md) — structured review (lifecycle STEP 1.6c)
+- [skills/perf/SKILL.md](../perf/SKILL.md) — performance profiling (lifecycle STEP 1.6d)
+
+## Examples
+
+### Run full validation after implementation
+```
+/validation
+```
+Expected: Runs four-surface closure check (code + docs + examples + proof), reports PASS or lists gaps with file references.
+
+### Standalone validation (not in a lifecycle)
+```
+/validation --standalone
+```
+Expected: Reads context independently without assuming a prior `/crank` or `/rpi` cycle; validates current working state.
+
+### Validate before merging a PR
+Run after all implementation phases complete and before pushing:
+```
+/validation
+```
+Expected: Catches drift between docs and code, missing proof artifacts, or incomplete examples sections.
+
+## Troubleshooting
+
+| Problem | Cause | Fix |
+|---------|-------|-----|
+| Four-surface check fails on docs | README not updated to match code change | Update docs to reflect the implementation; re-run validation |
+| Proof artifact missing | Test output or screenshot not captured | Run tests and save output to `.agents/proof/`; reference in validation report |
+| Validation reports stale | Re-run in a new session without context | Use `--standalone` flag to load context independently |
+| `references/four-surface-closure.md` not found | Reference file missing from skill | Check `~/.claude/skills/validation/references/`; if absent, validate manually against the four surfaces: code, docs, examples, proof |
+| Validation PASS but live behavior broken | Validation covers structure, not runtime | Run actual tests and smoke tests separately; validation is a completeness gate, not a functional test |

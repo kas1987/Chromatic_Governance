@@ -1,0 +1,8 @@
+# High-risk governance and automation paths
+.github/workflows/ @REPLACE_WITH_OWNER
+security/ @REPLACE_WITH_OWNER
+config/ @REPLACE_WITH_OWNER
+broker/src/token_issuer.py @REPLACE_WITH_OWNER
+*.pem @REPLACE_WITH_OWNER
+*.key @REPLACE_WITH_OWNER
+.env* @REPLACE_WITH_OWNER

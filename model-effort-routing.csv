@@ -1,0 +1,10 @@
+Model,Effort Level,Thinking Budget (tokens),Input Cost $/MTok,Output+Thinking Cost $/MTok,Est Cost per Call,Thinking Supported,C-Level Fit,T-Level Fit,Comparable To,Best Use Cases,Anti-Patterns
+Haiku 4.5,any,0 (no thinking),0.80,4.00,$0.001-0.01,No,C1-C2,T1-T2,N/A,"Classification, routing, format transforms, JSON-to-table, fixture seed, batch ops","Never use for multi-file reasoning; no judgment tasks"
+Sonnet 4.6,low,0,3.00,15.00,$0.02-0.05,No,C2,T3,—,"Quick single-file edits, fast code drafts, boilerplate gen","Skip for anything needing inference chains"
+Sonnet 4.6,medium,4000-8000,3.00,15.00,$0.05-0.15,Yes,"C2-C3",T3,—,"Standard coding, PR review, test generation, debug (known patterns)","Don't use for novel architecture or security decisions"
+Sonnet 4.6,high,16000-32000,3.00,15.00,$0.15-0.40,Yes,C3-C4,T3,"Opus low","Deep reasoning, architecture review, complex multi-file debug, root-cause","Cost approaches Opus low — verify crossover before dispatching"
+Sonnet 4.6,max,32000-64000+,3.00,15.00,$0.30-0.80,Yes,C4,T3-T4,"Opus medium","Thorough analysis, pre-mortem, design synthesis, exhaustive review","Often costs MORE than Opus low — only when Opus unavailable or quota-constrained"
+Opus 4.8,low,0,15.00,75.00,$0.10-0.25,No,C4,T4,"Sonnet high","Creative synthesis, knowledge-heavy judgment, ambiguous requirements scoping","Expensive for mechanical tasks — always C4 minimum"
+Opus 4.8,medium,4000-8000,15.00,75.00,$0.20-0.60,Yes,C4,T4,"Sonnet max","High-trust decisions, novel architecture, security audits","Overkill for tasks Sonnet high handles well"
+Opus 4.8,high,16000-32000,15.00,75.00,$0.50-1.50,Yes,C4,T4,—,"Mission-critical synthesis, complex pre-mortems, adversarial review","Reserve for highest-stakes single-shot outputs"
+Opus 4.8,max,32000-64000+,15.00,75.00,$1.00-3.00,Yes,C4,T4,—,"Maximum capability — correctness-critical one-shot, irreversible decisions","Rarely needed; budget gate required"

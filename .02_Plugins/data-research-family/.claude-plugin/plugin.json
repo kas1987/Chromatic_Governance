@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "data-research-family",
+  "displayName": "Data Research Family",
+  "description": "Evidence gathering, source scans, benchmarks, documentation digests, API change watches, and citation audits.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Kris Sayresmith"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "plugin-family",
+    "agent-workflow",
+    "data-research"
+  ],
+  "defaultEnabled": false
+}

@@ -1,0 +1,53 @@
+{
+  "name": "github-agent-access-governance-kit",
+  "version": "0.1.0",
+  "created_for": "GitHub agent repository access governance",
+  "purpose": "Provide a PDR, governance controls, policy config, and broker scaffold for safe AI agent access to GitHub repositories.",
+  "recommended_location": "governance/github-agent-access/",
+  "depends_on": [
+    "GitHub App registration",
+    "Selected repository installation",
+    "Secure private key storage",
+    "Branch protection",
+    "CI validation"
+  ],
+  "depended_on_by": [
+    "Agent router",
+    "CodeSentinel",
+    "RepoScout",
+    "Governance auditor",
+    "Autonomous patch workflows"
+  ],
+  "contents": {
+    "pdr": "Product/design record for the GitHub App access broker.",
+    "governance": "Best practices, permission matrix, risk register, controls checklist.",
+    "config": "Example agent, repo, and permission profile policy files.",
+    "broker": "Minimal Python policy engine and token issuer scaffold.",
+    "workflows": "GitHub Actions examples for app token and PR validation.",
+    "security": "Threat model and secret handling policy.",
+    "operations": "Setup guide and runbook.",
+    "handoffs": "Agent/Codex implementation handoffs."
+  },
+  "validation": [
+    "python scripts/validate_artifact.py",
+    "python broker/tests/test_policy_engine.py"
+  ],
+  "deployment": [
+    "Register private GitHub App",
+    "Install on selected repos",
+    "Set secrets/variables",
+    "Update config YAML",
+    "Run dry-run validation",
+    "Enable read-only agents before write agents"
+  ],
+  "repair_guidance": [
+    "If tests fail, inspect config YAML and branch prefix rules.",
+    "If token issuance fails, verify app ID, private key, installation ID, and permissions.",
+    "If unwanted access occurs, suspend app installation and rotate private key."
+  ],
+  "references": [
+    "GitHub Docs: GitHub Apps installation access tokens",
+    "GitHub Docs: GITHUB_TOKEN in Actions",
+    "GitHub Docs: GitHub Apps vs OAuth Apps"
+  ]
+}

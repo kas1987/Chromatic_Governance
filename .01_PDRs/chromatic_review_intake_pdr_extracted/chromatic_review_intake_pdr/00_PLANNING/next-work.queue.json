@@ -1,0 +1,46 @@
+{
+  "items": [
+    {
+      "id": "NW-REVIEW-INTAKE-001",
+      "title": "Install passive GitHub review intake workflow in one pilot repo",
+      "status": "ready",
+      "priority": 95,
+      "repo": "target/repo",
+      "area": "review-intake",
+      "specialties": ["github-actions", "python", "observability"],
+      "owner_agent": "Auditor",
+      "depends_on": [],
+      "blocked_by": [],
+      "risk_level": "low",
+      "confidence_score": 90,
+      "acceptance_checks": [
+        "GitHub Action triggers on pull_request_review_comment",
+        "review-findings.jsonl receives a valid JSONL record",
+        "next-work.queue.json receives a deduped queue item"
+      ],
+      "links": [],
+      "notes": "MVP-1 should not auto-patch. Intake only."
+    },
+    {
+      "id": "NW-REVIEW-INTAKE-002",
+      "title": "Enable PR branch lock before mutating agent patches",
+      "status": "ready",
+      "priority": 92,
+      "repo": "target/repo",
+      "area": "collision-control",
+      "specialties": ["agentops", "state-machine", "safety"],
+      "owner_agent": "Chainbreaker",
+      "depends_on": ["NW-REVIEW-INTAKE-001"],
+      "blocked_by": [],
+      "risk_level": "medium",
+      "confidence_score": 86,
+      "acceptance_checks": [
+        "lock_pr_branch.py acquire blocks second active mutator",
+        "expired locks can be replaced",
+        "release clears active lock"
+      ],
+      "links": [],
+      "notes": "Required before allowing agents to push patches."
+    }
+  ]
+}

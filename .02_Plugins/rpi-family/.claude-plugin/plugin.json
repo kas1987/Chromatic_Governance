@@ -1,0 +1,9 @@
+{
+  "license": "MIT",
+  "name": "rpi",
+  "author": {
+    "name": "kas41"
+  },
+  "description": "Full RPI lifecycle — discovery, plan, crank, swarm, implement, council, quick-execute, vibe, validation, review, refactor, bug-hunt, test, pre-mortem, post-mortem",
+  "version": "1.0.0"
+}

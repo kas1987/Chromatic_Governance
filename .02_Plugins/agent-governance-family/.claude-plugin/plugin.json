@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "agent-governance-family",
+  "displayName": "Agent Governance Family",
+  "description": "Multi-agent delegation, authority maps, conflict resolution, review chains, parallel planning, and escalation policy.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Kris Sayresmith"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "plugin-family",
+    "agent-workflow",
+    "agent-governance"
+  ],
+  "defaultEnabled": false
+}

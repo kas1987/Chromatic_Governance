@@ -1,0 +1,30 @@
+repos:
+  example-org/example-repo:
+    status: active
+    default_branch: main
+    installation_id: REPLACE_WITH_INSTALLATION_ID
+    allowed_agents:
+      - repo_scout
+      - auditor
+      - code_sentinel
+    protected_branches:
+      - main
+      - release/*
+    high_risk_paths:
+      - .github/workflows/**
+      - security/**
+      - config/**
+      - Dockerfile
+      - docker-compose*.yml
+      - requirements*.txt
+      - pyproject.toml
+      - package-lock.json
+      - .env*
+      - '*.pem'
+      - '*.key'
+    blocked_paths:
+      - .git/**
+      - secrets/**
+      - private_keys/**
+    required_pr_labels:
+      - agent-change

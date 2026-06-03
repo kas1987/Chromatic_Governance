@@ -1,0 +1,182 @@
+{
+  "package": "chromatic-review-intake-pdr",
+  "version": "0.1.0",
+  "created": "2026-06-01",
+  "files": [
+    {
+      "path": ".github/workflows/review-intake.yml",
+      "bytes": 1841,
+      "sha256": "5f3cb50174c5148789f15547d0a74431e2c658fec9f65b7c6976e8d5e699213a"
+    },
+    {
+      "path": "00_PLANNING/next-work.queue.json",
+      "bytes": 1494,
+      "sha256": "fd9a48cf3bac324f4c5ac380195ca95dcefa30df627d9e8979545e1bee82c229"
+    },
+    {
+      "path": "00_PLANNING/review-findings.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "00_PLANNING/review-intake.state.json",
+      "bytes": 114,
+      "sha256": "3070e2b0d08d68f1f0ac60e3e732879119a695fa70cd112684bbefa22f826860"
+    },
+    {
+      "path": "00_PLANNING/risk-register.json",
+      "bytes": 670,
+      "sha256": "4d8991eecec3b7ef03b1ee1d6e5a41a8f823eaa3ab2d405b685c41ee8ea68a95"
+    },
+    {
+      "path": "02_LOGS/agent-dispatch-log.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "02_LOGS/review-resolution-log.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "02_LOGS/reviewer-patterns.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "03_PLAYBOOKS/PR_COLLISION_CONTROL_PLAYBOOK.md",
+      "bytes": 694,
+      "sha256": "fe8aa91f902903f1c0b9c137365073b86283f6d16e4a6e0de74a8f39d51a5d30"
+    },
+    {
+      "path": "03_PLAYBOOKS/REVIEW_DISPATCH_PLAYBOOK.md",
+      "bytes": 898,
+      "sha256": "35a5a07dcd06773e692ae23d7df9229e802c028801ec927f97f7bccb191949c0"
+    },
+    {
+      "path": "03_PLAYBOOKS/REVIEW_INTAKE_PLAYBOOK.md",
+      "bytes": 948,
+      "sha256": "22ce76514d2cc84677e1f0a2924785aa93aa4f971f585d1fa979ea61ca86f7fa"
+    },
+    {
+      "path": "03_PLAYBOOKS/REVIEW_LEARNING_PLAYBOOK.md",
+      "bytes": 762,
+      "sha256": "a33250ab370667be858a8f840ec60e5046cc543e891de82cdf9b9eaa06a2de4f"
+    },
+    {
+      "path": "03_PLAYBOOKS/REVIEW_RESOLUTION_PLAYBOOK.md",
+      "bytes": 730,
+      "sha256": "71d6d7092e93dfd2c00fbe0007ceac8d4c7f9162aeee2112fca913c0cecb960d"
+    },
+    {
+      "path": "04_HANDOFFS/AUDITOR_HANDOFF_REVIEW_INTAKE.md",
+      "bytes": 912,
+      "sha256": "1a590c6cd1a04502fc848d59e5da80e5996319deb8fef02ecdb0e6d774f05fbf"
+    },
+    {
+      "path": "04_HANDOFFS/CHAINBREAKER_HANDOFF_PR_LOCKS.md",
+      "bytes": 629,
+      "sha256": "e10d713d7e7325e6e2ff54886679ca6d1992897bffb0ef076ac8ceb690451bbe"
+    },
+    {
+      "path": "04_HANDOFFS/SENTINEL_HANDOFF_PATCH_REVIEW_FINDING.md",
+      "bytes": 688,
+      "sha256": "2c07fca1197c7a4ae65c169aa508ddea15f4482c95f20d4ae4d3a43c3c952264"
+    },
+    {
+      "path": "05_DOCS/DEPENDENCY_GRAPH.md",
+      "bytes": 419,
+      "sha256": "6a9cef0f5ddd7d67ba05a319a12243120d81c64a8820f70af5b28383dd53c030"
+    },
+    {
+      "path": "05_DOCS/DISPATCH_BOARD.md",
+      "bytes": 403,
+      "sha256": "97b1f896feeab9cc542ec7051d3ecb38a9c186350186010a60ea684c1dd3ec9a"
+    },
+    {
+      "path": "05_DOCS/GOVERNANCE_REGISTER.md",
+      "bytes": 641,
+      "sha256": "f01699086147c96f06be5abb9a875522a2efc8ddb164be77dfa02fdd86f2f6fb"
+    },
+    {
+      "path": "05_DOCS/IMPLEMENTATION_NOTES.md",
+      "bytes": 647,
+      "sha256": "dd8c695a6efa6a08c83cf29c789ac47e87eac06f2e19823cecf952aa7cc3929c"
+    },
+    {
+      "path": "05_DOCS/REVIEW_INTAKE_PDR.md",
+      "bytes": 8287,
+      "sha256": "5463bf3bd38fb8f0350e249bf781537b0d5657cd37ddcf93ec6cd9ce87df8e75"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1637,
+      "sha256": "972a172eb502c3f92040e6fdf59f4b5fd4f8c4fc08f3d70f223a5c3c189a2580"
+    },
+    {
+      "path": "schemas/agent_dispatch.schema.json",
+      "bytes": 654,
+      "sha256": "90355955c72d3a4d0300151452ad017f2d513e2ab2ac8813ad3deb7abff2ac6b"
+    },
+    {
+      "path": "schemas/next_work_item.schema.json",
+      "bytes": 1107,
+      "sha256": "f432f0e91838db4f2fab246b1f4f050d3c7e0c757bf5369aedd3279be40a5c5d"
+    },
+    {
+      "path": "schemas/pr_branch_lock.schema.json",
+      "bytes": 548,
+      "sha256": "0791fec89cb8d5d45b741e2b84160a63f85155dce3a71f4f16d8c283ccb4e84e"
+    },
+    {
+      "path": "schemas/review_finding.schema.json",
+      "bytes": 1284,
+      "sha256": "b3839a67b730737d2a8291fc514cddc20f37da2ea2724afb43fe867ff906a3e4"
+    },
+    {
+      "path": "scripts/classify_review_finding.py",
+      "bytes": 4971,
+      "sha256": "6fffaf0a2cbd2fc1c4c68af896cf5996a4e1989cdbfef8326afec3a20977bbf1"
+    },
+    {
+      "path": "scripts/lock_pr_branch.py",
+      "bytes": 2481,
+      "sha256": "c38bc372296da652e0b3de275b563cb54715d9a8867543b096920ed89c739465"
+    },
+    {
+      "path": "scripts/post_review_resolution.py",
+      "bytes": 1592,
+      "sha256": "8fe33d9e8cb97d40c76aed5150cc3136f1abe94474dda37fcad88dd88256f5dc"
+    },
+    {
+      "path": "scripts/review_intake.py",
+      "bytes": 12515,
+      "sha256": "5725162e9ea6d016d9b5616a11437afb243eda288cf58d4432cd27f8e7c289ea"
+    },
+    {
+      "path": "scripts/update_next_work_queue.py",
+      "bytes": 1651,
+      "sha256": "044b848c11380379f9a33cfd96a88e34581022606e66d1534409e4d3cc1d3f11"
+    },
+    {
+      "path": "templates/agent_mission_packet.md",
+      "bytes": 462,
+      "sha256": "016aaf325b383e9eef33d9a02646e3dda408cb7af99381190ffb732c394164dc"
+    },
+    {
+      "path": "templates/review_resolution_comment.md",
+      "bytes": 323,
+      "sha256": "4fc6f575ad50af14567061cc8e8fe0df058701e668280f58baa662a4463bb41c"
+    },
+    {
+      "path": "tests/sample_pull_request_review_comment_event.json",
+      "bytes": 629,
+      "sha256": "7f3617dd326d0ca6abfc0f77028ce62782534840fc9ebc1908ce4d291ddbc425"
+    },
+    {
+      "path": "tests/test_review_intake_smoke.sh",
+      "bytes": 598,
+      "sha256": "2af1512678ae126d4bd224c6d1e8de22c9eedf4a2ad34237cf0b993e2d9e195c"
+    }
+  ]
+}

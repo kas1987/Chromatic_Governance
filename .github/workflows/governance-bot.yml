@@ -1,0 +1,38 @@
+name: Chromatic Governance Bot
+
+on:
+  # Sync governance docs on push to Main
+  push:
+    branches: ["Main"]
+    paths:
+      - "**.md"
+      - "**.csv"
+  # Daily drift check
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  governance-sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install requests pyyaml
+
+      - name: Run governance checks
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HARNESS_REPO: kas1987/Chromatic_Governance
+        run: python .github/scripts/governance_check.py

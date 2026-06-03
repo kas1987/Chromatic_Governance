@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "architecture-family",
+  "displayName": "Architecture Family",
+  "description": "Design governance for architecture, interfaces, module boundaries, ADRs, migrations, and technical debt.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Kris Sayresmith"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "plugin-family",
+    "agent-workflow",
+    "architecture"
+  ],
+  "defaultEnabled": false
+}

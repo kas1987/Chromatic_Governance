@@ -1,0 +1,13 @@
+{
+  "hooks": [
+    {
+      "name": "frontend-scope-check",
+      "description": "Advisory check for frontend scope, asset rights, accessibility, and UI platform fit.",
+      "command": "scripts/frontend-scope-check.sh",
+      "events": [
+        "pre_task",
+        "pre_commit"
+      ]
+    }
+  ]
+}

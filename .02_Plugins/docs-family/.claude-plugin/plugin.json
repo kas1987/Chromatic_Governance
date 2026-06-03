@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "docs-family",
+  "displayName": "Docs Family",
+  "description": "Documentation operations for README, API docs, runbooks, dev guides, troubleshooting, diagrams, and doc audits.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Kris Sayresmith"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "plugin-family",
+    "agent-workflow",
+    "docs"
+  ],
+  "defaultEnabled": false
+}

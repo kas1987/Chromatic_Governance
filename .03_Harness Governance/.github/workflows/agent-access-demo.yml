@@ -1,0 +1,30 @@
+name: Agent Access Demo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.CHROMATIC_AGENT_APP_ID }}
+          private-key: ${{ secrets.CHROMATIC_AGENT_PRIVATE_KEY }}
+
+      - name: Checkout with app token
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Show repo context
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh repo view
+          gh issue list --limit 5

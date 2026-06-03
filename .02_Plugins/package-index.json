@@ -1,0 +1,23 @@
+{
+  "name": "poly-chromatic-plugin-families",
+  "version": "0.14.0",
+  "description": "Scoped Claude Code plugin-family operating ecosystem for agent workflows, including delivery, governance, research, docs, frontend, release, security, QA/evals, and toolchain controls.",
+  "plugins": [
+    "rpi",
+    "toolchain-family",
+    "context-family",
+    "security-family",
+    "architecture-family",
+    "qa-eval-family",
+    "release-family",
+    "observability-family",
+    "agent-governance-family",
+    "docs-family",
+    "product-family",
+    "data-research-family",
+    "frontend-family"
+  ],
+  "plugin_count": 13,
+  "skill_count": 113,
+  "status": "v14 ecosystem polish build"
+}

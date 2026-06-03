@@ -1,0 +1,12 @@
+{
+  "patches": [
+    {
+      "id": "github-agent-access-governance-kit@0.1.0",
+      "type": "governance_scaffold",
+      "status": "packaged",
+      "entrypoint": "README.md",
+      "manifest": "artifact_manifest.json",
+      "validation": "scripts/validate_artifact.py"
+    }
+  ]
+}
