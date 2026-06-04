@@ -64,7 +64,7 @@ class TestBuildIndex:
 
     def test_family_names_match_known_families(self):
         known = {
-            "rpi", "toolchain-family", "context-family", "security-family",
+            "rpi-family", "toolchain-family", "context-family", "security-family",
             "architecture-family", "qa-eval-family", "release-family",
             "observability-family", "agent-governance-family", "docs-family",
             "product-family", "data-research-family", "frontend-family",
