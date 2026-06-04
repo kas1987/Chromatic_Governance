@@ -77,7 +77,8 @@
         "CI governance gates passing",
         "Access policy documented"
       ],
-      "completion_percentage": 75
+      "completion_percentage": 90,
+      "notes": "Phase B exit criteria all confirmed met by audit 2026-06-04: FOUND-003 MCP server (chromatic_skills_server.py, get_skill/list_skills/search_skills), FOUND-004 Stop hook (context_snapshot.py, writes context-usage.jsonl), FOUND-005 skill-governance.yml (validate_skills.py validates name: frontmatter). Remaining 10%: Phase C-D TBD."
     },
     {
       "id": "PDR-004",
@@ -209,7 +210,10 @@
         "No direct In-Process transition without Pre-flight readiness",
         "Design approved for Pre-flight"
       ],
-      "completion_percentage": 40
+      "completion_percentage": 70,
+      "phase": 4,
+      "updated_at": "2026-06-04T23:30:00Z",
+      "notes": "Phases 1-4 Python scripts delivered: intake_event_bridge.py, registry_router.py, mission_packet_emitter.py, intake_metrics.py. Remaining 30%: actual n8n workflow JSON nodes not yet created (scripts implement equivalent logic but are not n8n-native workflows)."
     }
   ],
   "status_workflow": {
