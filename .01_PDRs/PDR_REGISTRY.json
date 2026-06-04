@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-06-04T18:40:08.901299+00:00",
+  "last_updated": "2026-06-04T19:01:31.119355+00:00",
   "pdrs": [
     {
       "id": "PDR-002",
@@ -136,7 +136,7 @@
     {
       "id": "ART-CHROMATIC_SKILL_UTILIZATION_ROADMAP_PDR",
       "status": "Backlog",
-      "zip_path": ".01_PDRs\\chromatic-skill-utilization-roadmap-pdr.zip",
+      "zip_path": ".01_PDRs\\.01_Backlog\\chromatic-skill-utilization-roadmap-pdr.zip",
       "extracted_path": ".01_PDRs/.99_Extracted/chromatic-skill-utilization-roadmap-pdr",
       "registered_at": "2026-06-04T18:40:08.896571+00:00",
       "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight."
@@ -144,7 +144,7 @@
     {
       "id": "ART-CLAUDE_PLUGIN_FAMILIES_SCAFFOLD",
       "status": "Backlog",
-      "zip_path": ".01_PDRs\\claude_plugin_families_scaffold.zip",
+      "zip_path": ".01_PDRs\\.01_Backlog\\claude_plugin_families_scaffold.zip",
       "extracted_path": ".01_PDRs/.99_Extracted/claude_plugin_families_scaffold",
       "registered_at": "2026-06-04T18:40:08.898165+00:00",
       "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight."
@@ -152,7 +152,7 @@
     {
       "id": "ART-CLAUDE_PLUGIN_FAMILIES_SCAFFOLD_V13_FRONTEND_CORE",
       "status": "Backlog",
-      "zip_path": ".01_PDRs\\claude_plugin_families_scaffold_v13_frontend_core.zip",
+      "zip_path": ".01_PDRs\\.01_Backlog\\claude_plugin_families_scaffold_v13_frontend_core.zip",
       "extracted_path": ".01_PDRs/.99_Extracted/claude_plugin_families_scaffold_v13_frontend_core",
       "registered_at": "2026-06-04T18:40:08.898165+00:00",
       "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight."
@@ -160,7 +160,7 @@
     {
       "id": "ART-CLAUDE_PLUGIN_FAMILIES_SCAFFOLD_V14_GOLD",
       "status": "Backlog",
-      "zip_path": ".01_PDRs\\claude_plugin_families_scaffold_v14_gold.zip",
+      "zip_path": ".01_PDRs\\.01_Backlog\\claude_plugin_families_scaffold_v14_gold.zip",
       "extracted_path": ".01_PDRs/.99_Extracted/claude_plugin_families_scaffold_v14_gold",
       "registered_at": "2026-06-04T18:40:08.898165+00:00",
       "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight."
@@ -168,7 +168,7 @@
     {
       "id": "ART-REPO_PDR_SWARM_ROUTER",
       "status": "Backlog",
-      "zip_path": ".01_PDRs\\repo-pdr-swarm-router.zip",
+      "zip_path": ".01_PDRs\\.01_Backlog\\repo-pdr-swarm-router.zip",
       "extracted_path": ".01_PDRs/.99_Extracted/repo-pdr-swarm-router",
       "registered_at": "2026-06-04T18:40:08.898165+00:00",
       "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight."

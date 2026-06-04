@@ -129,6 +129,7 @@ Use the automated promotion workflow:
 ### ZIP Intake Policy
 
 - Root-level `.zip` bundles under `.01_PDRs/` are tracked as backlog intake artifacts.
+- ZIP intake artifacts live in `.01_PDRs/.01_Backlog/`.
 - ZIPs remain intact while the work item is in Backlog.
 - Moving a PDR to Pre-flight can auto-unpack its `zip_path` into `extracted_path` under `.99_Extracted/`.
 - Moving a PDR from Pre-flight to In-Process is blocked unless extracted content exists and is non-empty.
@@ -136,7 +137,7 @@ Use the automated promotion workflow:
 
 ### Automated ZIP Intake Review
 
-- `pdr_zip_intake.py` scans `.01_PDRs/*.zip` and auto-reviews integrity (`zipfile` validation + file count).
+- `pdr_zip_intake.py` scans `.01_PDRs/.01_Backlog/*.zip` and auto-reviews integrity (`zipfile` validation + file count).
 - Historical/current/new ZIP states are recorded in SQLite at `.01_PDRs/.intake/zip_intake.db`.
 - Event stream is logged to `.01_PDRs/.intake/zip_intake-log.jsonl`.
 - Pipeline stage/status is correlated from `PDR_REGISTRY.json` (`artifact_backlog` and `pdrs`).

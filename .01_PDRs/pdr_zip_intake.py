@@ -21,6 +21,9 @@ from pathlib import Path
 from typing import Any
 
 
+BACKLOG_ZIP_FOLDER = ".01_Backlog"
+
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -278,7 +281,7 @@ def scan_zip_intake(base_dir: Path, zip_name_filter: str | None = None) -> dict[
     try:
         ensure_schema(conn)
 
-        zips = sorted(base_dir.glob("*.zip"))
+        zips = sorted((base_dir / BACKLOG_ZIP_FOLDER).glob("*.zip"))
         if zip_name_filter:
             zips = [z for z in zips if z.name == zip_name_filter]
 

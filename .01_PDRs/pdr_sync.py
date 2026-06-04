@@ -42,6 +42,8 @@ STATUS_FOLDER_MAP = {
     "Archived": ".00_Archived",
 }
 
+BACKLOG_ZIP_FOLDER = ".01_Backlog"
+
 ACTIVE_STATUSES = {"Backlog", "Pre-flight", "In-Process", "Completed", "Reviewed"}
 
 
@@ -63,13 +65,31 @@ class PDRRegistry:
             json.dump(self.data, f, indent=2)
 
     def _sync_zip_backlog(self) -> None:
-        """Track root-level ZIP bundles as backlog artifacts if not already registered."""
+        """Track Backlog ZIP bundles and reconcile artifact entries by ZIP name."""
         artifacts = self.data.setdefault("artifact_backlog", [])
-        tracked = {a.get("zip_path") for a in artifacts}
+        tracked_by_name = {
+            Path(str(a.get("zip_path", ""))).name: a
+            for a in artifacts
+            if isinstance(a, dict) and a.get("zip_path")
+        }
 
-        for zip_file in sorted(self.base_dir.glob("*.zip")):
+        backlog_dir = self.base_dir / BACKLOG_ZIP_FOLDER
+        backlog_dir.mkdir(parents=True, exist_ok=True)
+
+        # Back-compat migration: if ZIPs are still in .01_PDRs root, move them to .01_Backlog.
+        for root_zip in sorted(self.base_dir.glob("*.zip")):
+            target = backlog_dir / root_zip.name
+            if not target.exists():
+                root_zip.rename(target)
+                print(f"📦 Moved ZIP to backlog: {root_zip.name}")
+
+        for zip_file in sorted(backlog_dir.glob("*.zip")):
             rel_zip = str(zip_file.relative_to(self.base_dir.parent))
-            if rel_zip in tracked:
+            zip_name = zip_file.name
+
+            if zip_name in tracked_by_name:
+                tracked_by_name[zip_name]["zip_path"] = rel_zip
+                tracked_by_name[zip_name]["status"] = "Backlog"
                 continue
 
             artifact_id = f"ART-{zip_file.stem.upper().replace('-', '_')}"

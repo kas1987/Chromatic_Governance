@@ -21,6 +21,9 @@ from pathlib import Path
 from pdr_zip_intake import scan_zip_intake
 
 
+BACKLOG_ZIP_FOLDER = ".01_Backlog"
+
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -53,8 +56,10 @@ def save_state(base_dir: Path, state: dict[str, float]) -> None:
 def detect_changed_zips(base_dir: Path, previous: dict[str, float]) -> tuple[list[Path], dict[str, float]]:
     current: dict[str, float] = {}
     changed: list[Path] = []
+    backlog_dir = base_dir / BACKLOG_ZIP_FOLDER
+    backlog_dir.mkdir(parents=True, exist_ok=True)
 
-    for zip_path in sorted(base_dir.glob("*.zip")):
+    for zip_path in sorted(backlog_dir.glob("*.zip")):
         mtime = zip_path.stat().st_mtime
         current[zip_path.name] = mtime
         if previous.get(zip_path.name) != mtime:
@@ -98,8 +103,11 @@ def import_from_source(base_dir: Path, source_dir: Path, move: bool) -> None:
     imported = 0
     skipped = 0
 
+    backlog_dir = base_dir / BACKLOG_ZIP_FOLDER
+    backlog_dir.mkdir(parents=True, exist_ok=True)
+
     for src in sorted(source_dir.glob("*.zip")):
-        dest = base_dir / src.name
+        dest = backlog_dir / src.name
 
         if dest.exists() and dest.stat().st_size == src.stat().st_size:
             skipped += 1
