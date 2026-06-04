@@ -7,6 +7,7 @@ Generates audit trail of all transitions.
 """
 
 import json
+import shutil
 import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -41,6 +42,8 @@ STATUS_FOLDER_MAP = {
     "Archived": ".00_Archived",
 }
 
+ACTIVE_STATUSES = {"Backlog", "Pre-flight", "In-Process", "Completed", "Reviewed"}
+
 
 class PDRRegistry:
     def __init__(self, registry_path: Path):
@@ -59,6 +62,29 @@ class PDRRegistry:
         with open(self.registry_path, "w") as f:
             json.dump(self.data, f, indent=2)
 
+    def _sync_zip_backlog(self) -> None:
+        """Track root-level ZIP bundles as backlog artifacts if not already registered."""
+        artifacts = self.data.setdefault("artifact_backlog", [])
+        tracked = {a.get("zip_path") for a in artifacts}
+
+        for zip_file in sorted(self.base_dir.glob("*.zip")):
+            rel_zip = str(zip_file.relative_to(self.base_dir.parent))
+            if rel_zip in tracked:
+                continue
+
+            artifact_id = f"ART-{zip_file.stem.upper().replace('-', '_')}"
+            artifacts.append(
+                {
+                    "id": artifact_id,
+                    "status": "Backlog",
+                    "zip_path": rel_zip,
+                    "extracted_path": f".01_PDRs/.99_Extracted/{zip_file.stem}",
+                    "registered_at": datetime.now(timezone.utc).isoformat(),
+                    "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight.",
+                }
+            )
+            print(f"➕ Registered backlog artifact: {zip_file.name}")
+
     def _resolve_path(self, path_str: str) -> Path:
         """Resolve registry paths consistently whether script is run from repo root or .01_PDRs."""
         raw = Path(path_str)
@@ -75,6 +101,7 @@ class PDRRegistry:
         Returns list of transitions performed.
         """
         transitions = []
+        self._sync_zip_backlog()
         status_folders = {status: self.base_dir / folder for status, folder in STATUS_FOLDER_MAP.items()}
 
         # Map of PDR ID to its current file location
@@ -149,6 +176,29 @@ class PDRRegistry:
         if to_status not in STATUS_FOLDER_MAP:
             print(f"❌ Unknown target status: {to_status}")
             return False
+
+        # ZIP lifecycle:
+        # - keep zip intact in Backlog
+        # - on Pre-flight, ensure extracted folder exists (auto-unpack when zip_path is configured)
+        # - entering In-Process from Pre-flight requires extracted content
+        zip_path = pdr.get("zip_path")
+        extracted_path = pdr.get("extracted_path")
+
+        if to_status == "Pre-flight" and zip_path and extracted_path:
+            zip_abs = self._resolve_path(zip_path)
+            extracted_abs = self._resolve_path(extracted_path)
+            extracted_abs.mkdir(parents=True, exist_ok=True)
+            if zip_abs.exists() and not any(extracted_abs.iterdir()):
+                shutil.unpack_archive(str(zip_abs), str(extracted_abs))
+                print(f"📦 Unpacked ZIP for Pre-flight: {zip_abs.name} -> {extracted_abs}")
+
+        if from_status == "Pre-flight" and to_status == "In-Process" and extracted_path:
+            extracted_abs = self._resolve_path(extracted_path)
+            if not extracted_abs.exists() or not any(extracted_abs.iterdir()):
+                print(
+                    f"❌ Cannot enter In-Process: extracted bundle missing/empty at {extracted_abs}"
+                )
+                return False
 
         # Move file
         old_path = self._resolve_path(pdr.get("file_path", ""))

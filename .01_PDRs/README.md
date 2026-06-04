@@ -126,6 +126,14 @@ Use the automated promotion workflow:
 - On promotion to Archived, extracted bundles are moved to `.00_Archived/_extracted/<PDR-ID>` automatically by `pdr_sync.py` when `extracted_path` is set in the registry.
 - Hard delete is optional and should be a separate manual retention action after archive.
 
+### ZIP Intake Policy
+
+- Root-level `.zip` bundles under `.01_PDRs/` are tracked as backlog intake artifacts.
+- ZIPs remain intact while the work item is in Backlog.
+- Moving a PDR to Pre-flight can auto-unpack its `zip_path` into `extracted_path` under `.99_Extracted/`.
+- Moving a PDR from Pre-flight to In-Process is blocked unless extracted content exists and is non-empty.
+- `python pdr_sync.py sync` auto-registers untracked ZIP files into `artifact_backlog` in `PDR_REGISTRY.json`.
+
 ### Allowed Transitions
 
 | From State | Allowed Transitions |
