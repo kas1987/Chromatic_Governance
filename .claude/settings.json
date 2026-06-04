@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .agents/hooks/context_snapshot.py"
+          }
+        ]
+      }
+    ]
+  }
+}

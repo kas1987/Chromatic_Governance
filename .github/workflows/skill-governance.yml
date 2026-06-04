@@ -1,0 +1,63 @@
+name: Skill Governance
+
+on:
+  pull_request:
+    paths:
+      - '.02_Plugins/**'
+  push:
+    branches:
+      - Main
+    paths:
+      - '.02_Plugins/**'
+  workflow_dispatch:
+
+jobs:
+  validate-scaffold:
+    name: Plugin scaffold structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate plugin scaffold structure
+        run: |
+          cd .02_Plugins
+          bash scripts/validate-scaffold.sh .
+
+      - name: Validate plugin structure audit
+        run: |
+          cd .02_Plugins
+          bash toolchain-family/scripts/plugin-structure-audit.sh .
+
+  validate-skills:
+    name: SKILL.md governance compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Validate SKILL.md governance compliance
+        run: python .github/scripts/validate_skills.py
+
+  test-mcp-server:
+    name: MCP skill server tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MCP server dependencies
+        run: pip install -r .02_Plugins/mcp/requirements.txt
+
+      - name: Run MCP server tests
+        run: python -m pytest .02_Plugins/mcp/tests/ -v --tb=short
