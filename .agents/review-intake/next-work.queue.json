@@ -1,46 +1,68 @@
 {
   "items": [
     {
-      "id": "NW-REVIEW-INTAKE-001",
-      "title": "Validate passive GitHub review intake workflow in Chromatic repo",
-      "status": "ready",
-      "priority": 95,
-      "repo": "kas1987/Chromatic_Governance",
-      "area": "review-intake",
-      "specialties": ["github-actions", "python", "observability"],
-      "owner_agent": "Auditor",
-      "depends_on": [],
-      "blocked_by": [],
-      "risk_level": "low",
-      "confidence_score": 90,
       "acceptance_checks": [
         "GitHub Action triggers on pull_request_review_comment",
         "review-findings.jsonl receives a valid JSONL record",
         "next-work.queue.json receives a deduped queue item"
       ],
+      "area": "review-intake",
+      "blocked_by": [],
+      "confidence_score": 90,
+      "depends_on": [],
+      "dispatch_id": "DISP-F8BCDE0357",
+      "dispatched_at": "2026-06-04T19:58:37.750300Z",
+      "id": "NW-REVIEW-INTAKE-001",
+      "last_dispatch_error": null,
+      "last_dispatch_result": "completed",
       "links": [],
-      "notes": "Phase 1 — passive intake only. No auto-patching."
+      "notes": "Phase 1 \u2014 passive intake only. No auto-patching.",
+      "owner_agent": "Auditor",
+      "priority": 95,
+      "repo": "kas1987/Chromatic_Governance",
+      "risk_level": "low",
+      "specialties": [
+        "github-actions",
+        "python",
+        "observability"
+      ],
+      "status": "completed",
+      "title": "Validate passive GitHub review intake workflow in Chromatic repo",
+      "trace_id": "trace-NW-REVIEW-INTAKE-001-1780603117",
+      "updated_at": "2026-06-04T19:58:37.751296Z"
     },
     {
-      "id": "NW-REVIEW-INTAKE-002",
-      "title": "Enable PR branch lock before mutating agent patches",
-      "status": "ready",
-      "priority": 92,
-      "repo": "kas1987/Chromatic_Governance",
-      "area": "collision-control",
-      "specialties": ["agentops", "state-machine", "safety"],
-      "owner_agent": "Chainbreaker",
-      "depends_on": ["NW-REVIEW-INTAKE-001"],
-      "blocked_by": [],
-      "risk_level": "medium",
-      "confidence_score": 86,
       "acceptance_checks": [
         "lock_pr_branch.py acquire blocks second active mutator",
         "expired locks can be replaced",
         "release clears active lock"
       ],
+      "area": "collision-control",
+      "blocked_by": [],
+      "confidence_score": 86,
+      "depends_on": [
+        "NW-REVIEW-INTAKE-001"
+      ],
+      "dispatch_id": "DISP-8499BD31EB",
+      "dispatched_at": "2026-06-04T20:30:07.936257Z",
+      "id": "NW-REVIEW-INTAKE-002",
+      "last_dispatch_error": null,
+      "last_dispatch_result": "completed",
       "links": [],
-      "notes": "Required before allowing agents to push patches to any PR branch."
+      "notes": "Required before allowing agents to push patches to any PR branch.",
+      "owner_agent": "Chainbreaker",
+      "priority": 92,
+      "repo": "kas1987/Chromatic_Governance",
+      "risk_level": "medium",
+      "specialties": [
+        "agentops",
+        "state-machine",
+        "safety"
+      ],
+      "status": "completed",
+      "title": "Enable PR branch lock before mutating agent patches",
+      "trace_id": "trace-NW-REVIEW-INTAKE-002-1780605007",
+      "updated_at": "2026-06-04T20:30:07.940258Z"
     }
   ]
 }

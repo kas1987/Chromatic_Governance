@@ -1,11 +1,11 @@
 {
   "version": "1.0",
-  "last_updated": "2026-06-04T21:45:00+00:00",
+  "last_updated": "2026-06-04T21:40:15.956101+00:00",
   "pdrs": [
     {
       "id": "PDR-001",
       "title": "Skill Utilization Roadmap",
-      "description": "Skill inventory and governance baseline — 118 skills across 13 families, cross-LLM portability plan, governance standard",
+      "description": "Skill inventory and governance baseline \u00e2\u20ac\u201d 118 skills across 13 families, cross-LLM portability plan, governance standard",
       "status": "Archived",
       "phase": 0,
       "owner": "Claude",
@@ -70,7 +70,7 @@
         "CI governance gates passing",
         "Access policy documented"
       ],
-      "completion_percentage": 20
+      "completion_percentage": 60
     },
     {
       "id": "PDR-004",
@@ -110,30 +110,41 @@
         "All acceptance tests passing",
         "Documentation complete"
       ],
-      "completion_percentage": 40
+      "completion_percentage": 60
     },
     {
       "id": "PDR-006",
       "title": "Global Artifact Taxonomy",
-      "description": "Typed node/edge taxonomy for all artifacts and PDRs — sequential ordering, hierarchy, dependencies, complexity, priority scoring, SQLite query layer",
-      "status": "In-Process",
+      "description": "Typed node/edge taxonomy for all artifacts and PDRs \u00e2\u20ac\u201d sequential ordering, hierarchy, dependencies, complexity, priority scoring, SQLite query layer",
+      "status": "Completed",
       "phase": 1,
       "owner": "Kas/Claude",
       "created_at": "2026-06-04T21:30:00Z",
-      "updated_at": "2026-06-04T22:30:00Z",
-      "file_path": ".01_PDRs\\.03_In-Process\\PDR-006-global-artifact-taxonomy.md",
+      "updated_at": "2026-06-04T21:40:15.956101+00:00",
+      "file_path": ".01_PDRs\\.04_Completed\\PDR-006-global-artifact-taxonomy.md",
       "transitions": [
         {
           "from": null,
           "to": "In-Process",
           "timestamp": "2026-06-04T21:30:00Z",
           "actor": "Kas/Claude",
-          "reason": "Designed and implementing immediately — taxonomy needed to support audit and agent routing"
+          "reason": "Designed and implementing immediately \u00e2\u20ac\u201d taxonomy needed to support audit and agent routing"
+        },
+        {
+          "from": "In-Process",
+          "to": "Completed",
+          "timestamp": "2026-06-04T21:40:15.956101+00:00",
+          "actor": "user",
+          "reason": "Taxonomy implemented: ARTIFACT_TAXONOMY.json, TAXONOMY_EDGES.json, taxonomy_sync.py, SQLite DB \u2014 all 100 acceptance criteria met this session"
         }
       ],
       "related_issues": [],
       "related_pr": null,
-      "tags": ["governance", "taxonomy", "infrastructure"],
+      "tags": [
+        "governance",
+        "taxonomy",
+        "infrastructure"
+      ],
       "acceptance_criteria": [
         "ARTIFACT_TAXONOMY.json created with all current PDRs and artifacts (seq 1-11)",
         "TAXONOMY_EDGES.json created with all known relationships",
@@ -250,7 +261,7 @@
       "zip_path": ".01_PDRs\\.01_Backlog\\hermes_harness_pipeline_scaffold_v1.zip",
       "extracted_path": null,
       "registered_at": "2026-06-04T21:00:00+00:00",
-      "notes": "Hermes local agent pipeline scaffold — PDR, governance, schemas (mission_packet, eval_receipt), routing plan, model tier map, 3 agent missions, eval plan, CI gate plan, operator guide, seed queue."
+      "notes": "Hermes local agent pipeline scaffold \u00e2\u20ac\u201d PDR, governance, schemas (mission_packet, eval_receipt), routing plan, model tier map, 3 agent missions, eval plan, CI gate plan, operator guide, seed queue."
     },
     {
       "id": "ART-HERMES_HARNESS_PDR_PACKAGE",
@@ -258,7 +269,7 @@
       "zip_path": ".01_PDRs\\.01_Backlog\\hermes_harness_pdr_package.zip",
       "extracted_path": null,
       "registered_at": "2026-06-04T21:00:00+00:00",
-      "notes": "Hermes local agent worker PDR package — PDR_HERMES_LOCAL_AGENT_WORKER.md, agent handoff packets (Sentinel, Auditor, Cartographer, Archivist, Quartermaster), implementation plan, deployment configs, routing policy, evaluation protocol. Companion to ART-HERMES_HARNESS_PIPELINE_SCAFFOLD_V1."
+      "notes": "Hermes local agent worker PDR package \u00e2\u20ac\u201d PDR_HERMES_LOCAL_AGENT_WORKER.md, agent handoff packets (Sentinel, Auditor, Cartographer, Archivist, Quartermaster), implementation plan, deployment configs, routing policy, evaluation protocol. Companion to ART-HERMES_HARNESS_PIPELINE_SCAFFOLD_V1."
     },
     {
       "id": "ART-CHROMATIC_MISSION_PACKET_FRAMEWORK_V1",
@@ -266,7 +277,7 @@
       "zip_path": ".01_PDRs\\.01_Backlog\\chromatic_mission_packet_framework_v1.zip",
       "extracted_path": null,
       "registered_at": "2026-06-04T21:00:00+00:00",
-      "notes": "Chromatic mission packet framework — 4-level mission complexity schemas (M1-M4), PDR/governance-register/supporting-docs schemas, templates (PDR, risk register, dispatch board, evidence map), governance gates, PDR requirements by level, agent routing guide, worked examples."
+      "notes": "Chromatic mission packet framework \u00e2\u20ac\u201d 4-level mission complexity schemas (M1-M4), PDR/governance-register/supporting-docs schemas, templates (PDR, risk register, dispatch board, evidence map), governance gates, PDR requirements by level, agent routing guide, worked examples."
     }
   ]
 }
