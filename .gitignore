@@ -13,6 +13,9 @@ __pycache__/
 *.secret
 secrets/
 
+# Per-GPT media assets (local images, videos — not tracked in repo)
+.80_Per_GPT/
+
 # OS
 .DS_Store
 Thumbs.db

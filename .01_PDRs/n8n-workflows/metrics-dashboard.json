@@ -1,0 +1,122 @@
+{
+  "id": "chromatic-metrics-dashboard-v1",
+  "name": "Chromatic Metrics Dashboard",
+  "active": false,
+  "nodeGroups": {},
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorHandler": ""
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": "chromatic-governance"
+  },
+  "versionId": "7c2d1e4f-b8a9-4d5c-8e1a-f2c3d4e5f6a7",
+  "triggerCount": 0,
+  "tags": [
+    "metrics",
+    "dashboard",
+    "reporting",
+    "intake"
+  ],
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyDay",
+              "hour": 7,
+              "minute": 0
+            }
+          ]
+        }
+      },
+      "id": "daily_trigger",
+      "name": "Daily Trigger",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1.0,
+      "position": [
+        250,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python scripts/intake_metrics.py",
+        "workingDirectory": ""
+      },
+      "id": "execute_metrics",
+      "name": "Execute Metrics",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1.0,
+      "position": [
+        450,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "report_date",
+              "value": "={{ $now.toFormat('yyyy-MM-dd') }}"
+            },
+            {
+              "name": "report_timestamp",
+              "value": "={{ $now.toIso() }}"
+            },
+            {
+              "name": "metrics_output",
+              "value": "={{ $('execute_metrics').stdout }}"
+            },
+            {
+              "name": "execution_status",
+              "value": "={{ $('execute_metrics').exitCode === 0 ? 'success' : 'error' }}"
+            },
+            {
+              "name": "summary",
+              "value": "Chromatic intake metrics report generated for {{ $now.toFormat('yyyy-MM-dd') }}. Execution: {{ $('execute_metrics').exitCode === 0 ? 'success' : 'failed' }}"
+            }
+          ]
+        }
+      },
+      "id": "format_metrics",
+      "name": "Format Metrics",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1.0,
+      "position": [
+        650,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "daily_trigger": {
+      "main": [
+        [
+          {
+            "node": "execute_metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "execute_metrics": {
+      "main": [
+        [
+          {
+            "node": "format_metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

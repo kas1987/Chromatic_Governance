@@ -1,0 +1,222 @@
+{
+  "id": "chromatic-intake-v1",
+  "name": "Chromatic Intake Orchestration",
+  "active": false,
+  "nodeGroups": {},
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorHandler": ""
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": "chromatic-governance"
+  },
+  "versionId": "9b9e3bdb-a4cf-43f6-baa9-8e5f9c2e3d1a",
+  "triggerCount": 0,
+  "tags": [
+    "intake",
+    "orchestration",
+    "pdr",
+    "automation"
+  ],
+  "nodes": [
+    {
+      "parameters": {
+        "rule": "everyMinutes",
+        "minute": 5,
+        "triggerAtStartup": false
+      },
+      "id": "schedule_trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.0,
+      "position": [
+        250,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python scripts/intake_event_bridge.py --once --backlog-dir .01_Backlog --events-jsonl scripts/events.jsonl",
+        "workingDirectory": ""
+      },
+      "id": "read_backlog",
+      "name": "Read Backlog",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1.0,
+      "position": [
+        450,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python scripts/registry_router.py --once --events-jsonl scripts/events.jsonl --routing-jsonl scripts/routing-decisions.jsonl",
+        "workingDirectory": ""
+      },
+      "id": "route_events",
+      "name": "Route Events",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1.0,
+      "position": [
+        650,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python scripts/mission_packet_emitter.py --once",
+        "workingDirectory": ""
+      },
+      "id": "emit_missions",
+      "name": "Emit Missions",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1.0,
+      "position": [
+        850,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python scripts/intake_metrics.py",
+        "workingDirectory": ""
+      },
+      "id": "compute_metrics",
+      "name": "Compute Metrics",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1.0,
+      "position": [
+        1050,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $('route_events').stdout.includes('dispatch') }}",
+              "condition": "equal",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "check_dispatch",
+      "name": "Check if Dispatched",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1.0,
+      "position": [
+        1250,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "workflow_summary",
+              "value": "Intake orchestration completed at {{ $now.toIso() }}. Processed backlog, routed events, emitted mission packets, and computed daily metrics."
+            },
+            {
+              "name": "dispatch_count",
+              "value": "={{ $('route_events').stdout.match(/dispatch/g)?.length || 0 }}"
+            },
+            {
+              "name": "status",
+              "value": "={{ $('compute_metrics').exitCode === 0 ? 'success' : 'warning' }}"
+            }
+          ]
+        }
+      },
+      "id": "format_summary",
+      "name": "Format Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1.0,
+      "position": [
+        1450,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "schedule_trigger": {
+      "main": [
+        [
+          {
+            "node": "read_backlog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "read_backlog": {
+      "main": [
+        [
+          {
+            "node": "route_events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "route_events": {
+      "main": [
+        [
+          {
+            "node": "emit_missions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "emit_missions": {
+      "main": [
+        [
+          {
+            "node": "compute_metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "compute_metrics": {
+      "main": [
+        [
+          {
+            "node": "check_dispatch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_dispatch": {
+      "main": [
+        [
+          {
+            "node": "format_summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format_summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
