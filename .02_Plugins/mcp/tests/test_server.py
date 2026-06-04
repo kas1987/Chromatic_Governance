@@ -8,7 +8,7 @@ import pytest
 
 import chromatic_skills_server as srv
 
-PLUGINS_ROOT = Path(__file__).resolve().parents[3]  # .02_Plugins/
+PLUGINS_ROOT = Path(__file__).resolve().parents[2]  # .02_Plugins/
 
 
 @pytest.fixture(autouse=True)
