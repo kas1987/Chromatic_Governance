@@ -1,0 +1,122 @@
+{
+  "version": "1.0",
+  "schema": {
+    "type": "object",
+    "description": "Skill invocation log entry (written to .agents/logs/skill-invocation.jsonl)",
+    "properties": {
+      "timestamp": {
+        "type": "string",
+        "format": "iso8601",
+        "description": "UTC timestamp of invocation"
+      },
+      "session_id": {
+        "type": "string",
+        "description": "Unique session identifier (from Claude Code or harness)"
+      },
+      "caller_context": {
+        "type": "object",
+        "description": "Context of the invoking agent",
+        "properties": {
+          "agent_id": {
+            "type": "string",
+            "description": "Agent identifier"
+          },
+          "broker_profile": {
+            "type": "string",
+            "enum": ["read_only", "issue_triage", "patch_standard", "cleanup_limited"],
+            "description": "Broker permission profile of caller"
+          },
+          "model": {
+            "type": "string",
+            "description": "LLM model name (e.g., 'claude-opus-4', 'gpt-4')"
+          }
+        },
+        "required": ["agent_id", "broker_profile", "model"]
+      },
+      "invocation": {
+        "type": "object",
+        "description": "Details of the skill invocation",
+        "properties": {
+          "tool": {
+            "type": "string",
+            "enum": ["list_skills", "get_skill", "search_skills"],
+            "description": "MCP tool invoked"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Tool parameters as passed",
+            "additionalProperties": true
+          },
+          "skill_name": {
+            "type": "string",
+            "description": "Skill name if get_skill() or resolved from search_skills()"
+          },
+          "family_name": {
+            "type": "string",
+            "description": "Plugin family (context-family, toolchain-family, etc.)"
+          }
+        },
+        "required": ["tool", "parameters"]
+      },
+      "result": {
+        "type": "object",
+        "description": "Result of invocation",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["success", "denied", "error", "not_found"],
+            "description": "Outcome: success, access denied, error, or skill not found"
+          },
+          "skills_returned": {
+            "type": "integer",
+            "description": "Number of skills in result (for list/search)"
+          },
+          "error_message": {
+            "type": "string",
+            "description": "Error details if status is error or denied"
+          }
+        },
+        "required": ["status"]
+      },
+      "duration_ms": {
+        "type": "number",
+        "description": "Invocation duration in milliseconds"
+      }
+    },
+    "required": ["timestamp", "session_id", "caller_context", "invocation", "result", "duration_ms"]
+  },
+  "example": {
+    "timestamp": "2026-06-04T23:30:45.123456Z",
+    "session_id": "sess_abc123def456",
+    "caller_context": {
+      "agent_id": "agent-dispatcher",
+      "broker_profile": "patch_standard",
+      "model": "claude-opus-4"
+    },
+    "invocation": {
+      "tool": "search_skills",
+      "parameters": {
+        "query": "track token usage"
+      },
+      "family_name": "context-family"
+    },
+    "result": {
+      "status": "success",
+      "skills_returned": 3
+    },
+    "duration_ms": 42
+  },
+  "logging_behavior": {
+    "when": "Every MCP tool call (list_skills, get_skill, search_skills)",
+    "where": ".agents/logs/skill-invocation.jsonl",
+    "format": "One JSON object per line (JSONL), no array wrapper",
+    "retention": "Unlimited (compress after 90 days)",
+    "privacy": "Session ID is opaque; no agent names logged except agent_id from caller context"
+  },
+  "analytics_queries": {
+    "most_invoked_families": "SELECT family_name, COUNT(*) as count FROM skill_invocation GROUP BY family_name ORDER BY count DESC",
+    "access_denied_by_profile": "SELECT broker_profile, COUNT(*) as count FROM skill_invocation WHERE result.status = 'denied' GROUP BY broker_profile",
+    "skill_discovery_patterns": "SELECT invocation.tool, COUNT(*) as count FROM skill_invocation GROUP BY invocation.tool",
+    "latency_p99": "SELECT PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY duration_ms) as p99_ms FROM skill_invocation"
+  }
+}
