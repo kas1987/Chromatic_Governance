@@ -1,6 +1,6 @@
 # Cross-Provider Model Routing Reference
 
-**Version:** 2026-06-03  
+**Version:** 2026-06-04  
 **Scope:** Cross-provider routing guidance for GPT, Gemini, Claude, and local Ollama-class models  
 **Companion files:** `model-effort-routing.md`, `cross-provider-model-routing.csv`
 
@@ -80,7 +80,9 @@ Source-of-truth rule:
 | Provider surface | Current status | Representative models or endpoints | Notes |
 |---|---|---|---|
 | Ollama local | Available | `llama3.2:3b`, `qwen3-vl:4b`, `qwen2.5-coder:14b` | Laptop-local, CPU-first |
-| Ollama remote | Planned / probe-first | `desktop.local:11434` | Prefer when desktop is awake and LAN latency is low |
+| Ollama Cloud | Available — `https://ollama.com/api` | `llama3.3:70b`, cloud-enabled model catalog | Subscription-backed cloud GPU; same API shape as local Ollama; requires `OLLAMA_API_KEY` |
+| Ollama remote (LAN) | Planned / probe-first | `desktop.local:11434` | Prefer when desktop is awake and LAN latency is low |
+| Featherless | Available — `https://api.featherless.ai/v1` | `NousResearch/Hermes-3-Llama-3.1-8B`, `Qwen/Qwen2.5-7B-Instruct` | OpenAI-compatible, serverless open-model inference; models use HuggingFace `Org/ModelName` paths; requires `FEATHERLESS_API_KEY` |
 | LM Studio local | Installed, model-dependent | Loaded model varies | Treat as local T0 when active |
 | Native Claude session | Available | `claude-sonnet-4-6` | Subscription-backed session path |
 | OpenAI API | Key present in harness | `gpt-4o-mini`, `gpt-4o`, `o3-mini` | General cloud coding and reasoning |
@@ -91,7 +93,9 @@ Source-of-truth rule:
 ### Confirmed routing posture from the harness
 
 - Laptop context prefers T0 local first for C1-C2, then cloud escalation.
-- Desktop or remote Ollama shifts more C2-C3 work back to local GPU inference.
+- Ollama Cloud (`https://ollama.com/api`) is the T1 cloud tier — subscription-backed, same API as local, higher-capability models.
+- Featherless (`https://api.featherless.ai/v1`) is the T2 serverless tier — any open model via HuggingFace path, low per-call cost.
+- Desktop or remote Ollama (LAN) shifts more C2-C3 work back to local GPU inference when awake.
 - Gemini Pro is the current preferred long-context C3 route.
 - Native Claude and Claude API remain the premium C3-C4 reasoning and governance routes.
 - RunPod is a documented overflow option for larger-model needs, but it is not yet part of the live provider config.
@@ -117,8 +121,8 @@ This section maps task shape to a default provider family. Replace exact model n
 
 | Task shape | Current preferred route | Fallback |
 |---|---|---|
-| C1 mechanical transforms | `llama3.2:3b` via local Ollama | `qwen2.5-coder:14b` local |
-| C2 structured coding | `qwen2.5-coder:14b` local or remote Ollama | `gemini-2.5-flash` |
+| C1 mechanical transforms | `llama3.2:3b` via local Ollama | Featherless `NousResearch/Hermes-3-Llama-3.1-8B` |
+| C2 structured coding | Ollama Cloud `llama3.3:70b` or Featherless `Qwen/Qwen2.5-7B-Instruct` | `gemini-2.5-flash` |
 | C3 reasoning and multi-file debug | `gemini-2.5-pro` | Native Claude or Claude Sonnet |
 | C4 novel, strategic, or creative reasoning | Native Claude / Claude Opus / Gemini Ultra | RunPod if a larger hosted model is specifically needed |
 | Google-native workflow | `gemini-2.5-flash` or `gemini-2.5-pro` | ChatGPT or Claude only after extraction |
@@ -141,6 +145,8 @@ This section maps task shape to a default provider family. Replace exact model n
 | Ollama small | C1 | T1-T2 | Local extraction, lightweight labeling, private transforms | Anything requiring strong judgment |
 | Ollama medium | C1-C2 | T2-T3 | Local coding help, internal summaries, cheap private automation | Mission-critical reasoning |
 | Ollama large | C2-C3 | T3 | Better local reasoning when privacy matters more than frontier quality | Top-end architecture, security, or high-stakes decisions |
+| Ollama Cloud | C2-C3 | T3 | Subscription-backed cloud GPU; higher-capability models than typical local; same API as local Ollama | When privacy requires fully local execution |
+| Featherless | C1-C2 | T2-T3 | Serverless open-model inference; any HuggingFace model on-demand; low cost per call | When you need top-tier frontier model quality or Google-native features |
 | RunPod hosted large | C3-C4 | T4 | Larger hosted open models when local VRAM is insufficient | Routine work that fits local or standard cloud APIs |
 
 ---

@@ -1,0 +1,9 @@
+# Treat generated SQLite databases as binary and never auto-merge them.
+# JSON files (taxonomy.json / ARTIFACT_TAXONOMY.json) are the source of truth;
+# the .db is regenerated via taxonomy_sync.py. These are untracked (see
+# .gitignore) — this rule is a backstop in case one is ever re-added.
+*.db binary merge=ours
+
+# Normalize line endings for text sources; keep shell scripts LF on Windows.
+*.sh text eol=lf
+*.py text eol=lf

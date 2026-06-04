@@ -98,9 +98,10 @@
 - **n8n/** — n8n (Make) integration layer
   - Workflow import/validation
   - Dispatch hooks to trigger jobs
-- **model-router/** — Cross-provider model routing (T0→T4)
-  - Ollama (T0 local) → Featherless (T1) → Gemini (T3) → Anthropic (T4)
-  - Model availability and cost routing logic
+- **model-router/** — Cross-provider model routing (T0→T3, v3)
+  - T0 Ollama local (`http://127.0.0.1:11434`) → T1 Ollama Cloud (`https://ollama.com/api`) → T2 Featherless (`https://api.featherless.ai/v1`) → T3 Gemini
+  - Health-check-gated tier selection; full 4-provider fallback cascade
+  - Config in `.claude/hooks/model-router.sh`
 
 #### 2.3.2 **broker/** — GitHub Agent Access Broker
 - **src/policy_engine.py** — Policy evaluation for agent actions
@@ -155,9 +156,18 @@
 - Lock file format definition for branch coordination
 
 #### `.agents/`
-- **hooks/** — Pre-commit, pre-push hooks for validation
-- **logs/** — Test and execution logs (JSON timestamped format)
-- **review-intake/** — Review queue staging area
+- **hooks/** — Claude Code hook scripts wired via `.claude/settings.json`
+  - `pre_tool_guard.py` — PreToolUse gate; blocks destructive Bash commands (force-push, --no-verify, `reset --hard`, DROP TABLE); exit 2 to block, writes `tool-guard.jsonl`
+  - `post_tool_audit.py` — PostToolUse audit trail; logs every tool call to `tool-audit.jsonl`; always exit 0
+  - `subagent_stop.py` — SubagentStop swarm coordinator; advances matching queue item from `in-progress` → `needs-review` via `CHROMATIC_TASK_ID`; writes `subagent-completions.jsonl`
+  - `context_snapshot.py` — Stop hook; captures session context snapshot on agent stop
+  - `validate_hooks.py` — 23-check validation suite for all hook wiring and behavior
+- **logs/** — Audit log files (`tool-audit.jsonl`, `tool-guard.jsonl`, `subagent-completions.jsonl`)
+- **review-intake/** — Review queue staging area (`next-work.queue.json`)
+
+#### `.claude/`
+- **settings.json** — Wires all 4 Claude Code hook events: `PreToolUse` (Bash guard), `PostToolUse` (audit), `Stop` (snapshot), `SubagentStop` (swarm coordination)
+- **hooks/model-router.sh** — Multi-provider LLM router v3 (see 2.3.1 above)
 
 #### `.claude/`
 - Claude agent customization and instruction files
@@ -225,9 +235,10 @@ Review Queue → LangGraph State → Dispatcher → n8n Job → Agent Execution 
 ```
 Input → Router (Effort/Cost/Availability) → Model Selection
         ↓
-   Cross-provider matrix (CSV)
-   Model routing rules
-   Tier-based escalation (T0→T1→T3→T4)
+   .claude/hooks/model-router.sh v3
+   Cross-provider matrix (cross-provider-model-routing.csv)
+   Tier-based escalation: T0 (Ollama local) → T1 (Ollama Cloud) → T2 (Featherless) → T3 (Gemini)
+   Health-check per provider → fallback cascade on failure
 ```
 
 ---
@@ -253,8 +264,10 @@ Input → Router (Effort/Cost/Availability) → Model Selection
 - **Audit Trail** — Complete transition history and decision logs
 
 ### 4.4 Multi-Provider LLM Coordination
-- **Cross-Provider Routing** — Seamless fallback across Ollama (T0), Featherless (T1), Gemini (T3), Anthropic (T4)
-- **Cost & Effort Optimization** — Routing decisions based on model tier and complexity
+- **Cross-Provider Routing** — Seamless fallback across Ollama local (T0), Ollama Cloud (T1), Featherless (T2), Gemini (T3)
+- **Featherless** — OpenAI-compatible serverless inference at `https://api.featherless.ai/v1`; models use HuggingFace `Org/ModelName` paths
+- **Ollama Cloud** — Subscription-backed cloud GPU at `https://ollama.com/api`; same API as local Ollama
+- **Cost & Effort Optimization** — Routing decisions based on model tier, task complexity, latency budget, and offline constraint
 - **Infrastructure Testing** — Comprehensive test suite validating all provider endpoints
 - **Taxonomy Graph** — Queryable SQLite database of skills, providers, and relationships
 
@@ -262,7 +275,7 @@ Input → Router (Effort/Cost/Availability) → Model Selection
 - **Plugin Architecture** — 13 scoped plugin families (108 skills) load only when needed
 - **LangGraph State Machines** — Complex workflows defined as declarative state graphs
 - **n8n Integration** — No-code orchestration layer for business logic
-- **Webhook Hooks** — Pre-commit, pre-push validation gates
+- **Claude Code Hook Framework** — PreToolUse guard, PostToolUse audit, Stop snapshot, SubagentStop swarm coordination (23-check validated)
 
 ---
 

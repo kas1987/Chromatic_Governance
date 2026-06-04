@@ -21,35 +21,47 @@ on:
         description: 'Reason for transition'
         required: false
 
+permissions:
+  contents: read
+
+concurrency:
+  group: pdr-promotion-${{ github.run_id }}
+  cancel-in-progress: false
+
 jobs:
   promote-pdr:
     if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
 
       - name: Promote PDR
         working-directory: .01_PDRs
+        # Inputs passed via env, never inlined into the shell — a free-text
+        # `reason` like '; rm -rf #' must be data, not executable code.
+        env:
+          PDR_ID: ${{ github.event.inputs.pdr_id }}
+          TARGET_STATUS: ${{ github.event.inputs.target_status }}
+          REASON: ${{ github.event.inputs.reason }}
         run: |
-          python pdr_sync.py promote "${{ github.event.inputs.pdr_id }}" \
-            "${{ github.event.inputs.target_status }}" \
-            "${{ github.event.inputs.reason }}"
+          python pdr_sync.py promote "$PDR_ID" "$TARGET_STATUS" "$REASON"
 
       - name: Generate report
         working-directory: .01_PDRs
         run: python pdr_sync.py report > /tmp/pdr_report.md
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@4e1beaa7521e8b457b572c090b25bd3db56bf1c5 # v5
         with:
           commit-message: "chore(pdr): ${{ github.event.inputs.pdr_id }} → ${{ github.event.inputs.target_status }}"
           title: "PDR Promotion: ${{ github.event.inputs.pdr_id }} → ${{ github.event.inputs.target_status }}"

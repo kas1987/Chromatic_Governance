@@ -242,13 +242,13 @@ Track phase progress via related_pr in registry — the PR dashboard will show a
 
 ## Model Router
 
-The Chromatic harness routes subagent and LLM calls through a 5-tier provider stack. All sessions in this repo route via the global shell router.
+The Chromatic harness routes subagent and LLM calls through a 5-tier provider stack. Agent calls trigger the global shell router hook for advisory routing guidance, but to enforce a specific model, you must set `model:` explicitly on each Agent call.
 
 ### Where the router lives
 
 | File | Purpose |
 |------|---------|
-| `~/.claude/hooks/model-router.sh` | PreToolUse hook — fires before every Agent call |
+| `.claude/hooks/model-router.sh` | PreToolUse advisory hook (wired in settings.json). Emits routing guidance only; cannot change subagent model. Set `model:` explicitly on Agent calls to override tier recommendations. |
 | `~/.claude/config/provider-tiers.json` | Tier 0–4 provider + model config |
 | `~/.claude/config/router-patterns.json` | Keyword patterns for task classification |
 | `~/.claude/.agents/router/log.jsonl` | Per-decision audit log |

@@ -7,8 +7,10 @@ Generates audit trail of all transitions.
 """
 
 import json
+import os
 import shutil
 import sys
+import tempfile
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -56,13 +58,36 @@ class PDRRegistry:
     def _load_registry(self) -> dict:
         if not self.registry_path.exists():
             raise FileNotFoundError(f"Registry not found: {self.registry_path}")
-        with open(self.registry_path, "r") as f:
-            return json.load(f)
+        # Guard against a torn write from a concurrent/aborted _save_registry.
+        try:
+            with open(self.registry_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, ValueError) as exc:
+            raise RuntimeError(
+                f"Registry is corrupt or partially written: {self.registry_path} ({exc})"
+            ) from exc
 
     def _save_registry(self) -> None:
         self.data["last_updated"] = datetime.now(timezone.utc).isoformat()
-        with open(self.registry_path, "w") as f:
-            json.dump(self.data, f, indent=2)
+        # Atomic write: serialize to a temp file in the same dir, fsync, then
+        # os.replace() — readers never observe a partially-written registry.
+        fd, tmp_path = tempfile.mkstemp(
+            dir=str(self.registry_path.parent),
+            prefix=f".{self.registry_path.name}.",
+            suffix=".tmp",
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                json.dump(self.data, f, indent=2)
+                f.flush()
+                os.fsync(f.fileno())
+            os.replace(tmp_path, self.registry_path)
+        except BaseException:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+            raise
 
     def _sync_zip_backlog(self) -> None:
         """Track Backlog ZIP bundles and reconcile artifact entries by ZIP name."""
