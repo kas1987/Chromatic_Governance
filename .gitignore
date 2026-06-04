@@ -44,4 +44,6 @@ htmlcov/
 
 # Agent runtime logs (JSONL entries; not source-controlled by default)
 .agents/logs/*.jsonl
+# Review intake: lock files are transient; findings log and queue are tracked
+.agents/review-intake/locks/*.json
 # Keep the directory itself tracked via .gitkeep — do not ignore the dir
