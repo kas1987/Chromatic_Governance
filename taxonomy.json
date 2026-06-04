@@ -1,0 +1,102 @@
+{
+  "nodes": [
+    {
+      "id": "skill-orchestration",
+      "type": "skill",
+      "name": "Orchestration",
+      "tier": "T2"
+    },
+    {
+      "id": "skill-validation",
+      "type": "skill",
+      "name": "Validation",
+      "tier": "T1"
+    },
+    {
+      "id": "skill-routing",
+      "type": "skill",
+      "name": "Provider Routing",
+      "tier": "T1"
+    },
+    {
+      "id": "skill-dispatch",
+      "type": "skill",
+      "name": "Dispatch",
+      "tier": "T2"
+    },
+    {
+      "id": "skill-governance",
+      "type": "skill",
+      "name": "Governance",
+      "tier": "T3"
+    },
+    {
+      "id": "skill-safety",
+      "type": "skill",
+      "name": "Multi-Session Safety",
+      "tier": "T2"
+    },
+    {
+      "id": "skill-audit",
+      "type": "skill",
+      "name": "Audit",
+      "tier": "T1"
+    },
+    {
+      "id": "provider-ollama",
+      "type": "provider",
+      "name": "Ollama (T0)",
+      "tier": "T0"
+    },
+    {
+      "id": "provider-featherless",
+      "type": "provider",
+      "name": "Featherless (T1)",
+      "tier": "T1"
+    },
+    {
+      "id": "provider-gemini",
+      "type": "provider",
+      "name": "Gemini (T3)",
+      "tier": "T3"
+    },
+    {
+      "id": "provider-anthropic",
+      "type": "provider",
+      "name": "Anthropic (T4)",
+      "tier": "T4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "skill-routing",
+      "target": "provider-ollama",
+      "relation": "routes_to"
+    },
+    {
+      "source": "skill-routing",
+      "target": "provider-featherless",
+      "relation": "routes_to"
+    },
+    {
+      "source": "skill-routing",
+      "target": "provider-gemini",
+      "relation": "routes_to"
+    },
+    {
+      "source": "skill-orchestration",
+      "target": "skill-dispatch",
+      "relation": "uses"
+    },
+    {
+      "source": "skill-safety",
+      "target": "skill-audit",
+      "relation": "depends_on"
+    }
+  ],
+  "metadata": {
+    "node_count": 11,
+    "edge_count": 5,
+    "synced_at": "2026-06-04T17:10:42.939379"
+  }
+}
