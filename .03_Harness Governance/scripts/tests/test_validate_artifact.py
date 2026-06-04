@@ -5,8 +5,6 @@ from pathlib import Path
 
 import validate_artifact
 
-HARNESS_ROOT = Path(__file__).resolve().parents[3]
-
 
 def _make_valid_manifest():
     return {

@@ -1,7 +1,6 @@
 """Tests for AuditLog — file creation, secret filtering, and JSONL output."""
 import json
 import pytest
-from pathlib import Path
 
 from audit_log import AuditLog
 

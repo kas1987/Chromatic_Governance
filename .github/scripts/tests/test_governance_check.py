@@ -1,5 +1,4 @@
 """Tests for governance_check.py — required-file detection and exit behaviour."""
-import os
 import pytest
 from pathlib import Path
 

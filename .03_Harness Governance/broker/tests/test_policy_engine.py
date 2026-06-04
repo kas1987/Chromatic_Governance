@@ -105,49 +105,38 @@ class TestDeniedRepo:
     def test_repo_not_active(self, engine):
         """A repo present in config but with status != active should be denied."""
         engine.repos["example-org/example-repo"]["status"] = "inactive"
-        try:
-            decision = engine.decide(AccessRequest(
-                agent_id="repo_scout",
-                repo="example-org/example-repo",
-                profile="read_only",
-                action="read",
-            ))
-            assert not decision.allowed
-            assert decision.reason == "repo_not_active"
-        finally:
-            engine.repos["example-org/example-repo"]["status"] = "active"
+        decision = engine.decide(AccessRequest(
+            agent_id="repo_scout",
+            repo="example-org/example-repo",
+            profile="read_only",
+            action="read",
+        ))
+        assert not decision.allowed
+        assert decision.reason == "repo_not_active"
 
     def test_repo_not_allowed_for_agent(self, engine):
         """An agent whose allowed_repos doesn't include the target repo is denied."""
-        original = engine.agents["repo_scout"]["allowed_repos"]
         engine.agents["repo_scout"]["allowed_repos"] = []
-        try:
-            decision = engine.decide(AccessRequest(
-                agent_id="repo_scout",
-                repo="example-org/example-repo",
-                profile="read_only",
-                action="read",
-            ))
-            assert not decision.allowed
-            assert decision.reason == "repo_not_allowed_for_agent"
-        finally:
-            engine.agents["repo_scout"]["allowed_repos"] = original
+        decision = engine.decide(AccessRequest(
+            agent_id="repo_scout",
+            repo="example-org/example-repo",
+            profile="read_only",
+            action="read",
+        ))
+        assert not decision.allowed
+        assert decision.reason == "repo_not_allowed_for_agent"
 
     def test_agent_not_allowed_for_repo(self, engine):
         """A repo's allowed_agents list not containing the requesting agent is denied."""
-        original = engine.repos["example-org/example-repo"]["allowed_agents"]
         engine.repos["example-org/example-repo"]["allowed_agents"] = []
-        try:
-            decision = engine.decide(AccessRequest(
-                agent_id="repo_scout",
-                repo="example-org/example-repo",
-                profile="read_only",
-                action="read",
-            ))
-            assert not decision.allowed
-            assert decision.reason == "agent_not_allowed_for_repo"
-        finally:
-            engine.repos["example-org/example-repo"]["allowed_agents"] = original
+        decision = engine.decide(AccessRequest(
+            agent_id="repo_scout",
+            repo="example-org/example-repo",
+            profile="read_only",
+            action="read",
+        ))
+        assert not decision.allowed
+        assert decision.reason == "agent_not_allowed_for_repo"
 
 
 # ---------------------------------------------------------------------------

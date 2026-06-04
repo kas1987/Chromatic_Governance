@@ -1,23 +1,17 @@
 """Integration tests for request_access() — verifies decision + audit log together."""
-import json
-import sys
 import pytest
 from pathlib import Path
 from unittest.mock import patch
 
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "broker" / "src"))
-
-CONFIG = str(ROOT / "config")
-
 import main as access_main
 from models import AccessRequest
+
+CONFIG = str(Path(__file__).resolve().parents[2] / "config")
 
 
 @pytest.fixture(autouse=True)
 def patch_log_path(tmp_path):
     """Redirect AuditLog to a temp file so tests don't write to the repo."""
-    log_file = str(tmp_path / "access_events.jsonl")
     with patch("main.AuditLog") as MockLog:
         instance = MockLog.return_value
         written = []
