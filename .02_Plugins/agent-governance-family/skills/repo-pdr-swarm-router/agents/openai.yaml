@@ -1,0 +1,15 @@
+interface:
+  display_name: Repo PDR Swarm Router
+  short_description: Parse Repo PDR packages into governed Chromatic Harness agent
+    dispatch queues.
+  icon: assets/icon.svg
+  brand_color: '#7C3AED'
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
