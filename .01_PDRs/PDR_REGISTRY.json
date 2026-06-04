@@ -1,0 +1,127 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-06-04T18:22:19.267963+00:00",
+  "pdrs": [
+    {
+      "id": "PDR-002",
+      "title": "Skill Ecosystem Technical Foundation",
+      "description": "MCP skill server, Stop hook, CI governance, skill bridge, access policy",
+      "status": "In-Process",
+      "phase": 2,
+      "owner": "Claude",
+      "created_at": "2026-01-15T00:00:00Z",
+      "updated_at": "2026-06-04T00:00:00Z",
+      "file_path": ".01_PDRs\\In-Process\\PDR-002-skill-ecosystem-technical-foundation.md",
+      "transitions": [
+        {
+          "from": "Backlog",
+          "to": "In-Process",
+          "timestamp": "2026-02-01T10:30:00Z",
+          "actor": "Claude",
+          "reason": "Phase 2 implementation started"
+        },
+        {
+          "from": "In-Process",
+          "to": "Completed",
+          "timestamp": null,
+          "actor": null,
+          "reason": null
+        }
+      ],
+      "related_issues": [
+        "#1"
+      ],
+      "related_pr": "https://github.com/kas1987/Chromatic_Governance/pull/1",
+      "tags": [
+        "governance",
+        "skill-ecosystem",
+        "phase-2"
+      ],
+      "acceptance_criteria": [
+        "MCP skill server scaffold complete",
+        "Stop hook integrated",
+        "CI governance gates passing",
+        "Access policy documented"
+      ],
+      "completion_percentage": 85
+    },
+    {
+      "id": "PDR-004",
+      "title": "Review Intake System",
+      "description": "Chromatic Review Intake system \u00e2\u20ac\u201d Phase 1-5 passive intake, dispatch, collision control, resolution logging",
+      "status": "In-Process",
+      "phase": 5,
+      "owner": "Claude",
+      "created_at": "2026-03-10T00:00:00Z",
+      "updated_at": "2026-06-04T00:00:00Z",
+      "file_path": ".01_PDRs\\In-Process\\PDR-004-review-intake-system.md",
+      "transitions": [
+        {
+          "from": "Backlog",
+          "to": "In-Process",
+          "timestamp": "2026-03-15T09:00:00Z",
+          "actor": "Claude",
+          "reason": "Phase 1-5 implementation prioritized"
+        },
+        {
+          "from": "In-Process",
+          "to": "Completed",
+          "timestamp": null,
+          "actor": null,
+          "reason": null
+        }
+      ],
+      "related_issues": [],
+      "related_pr": "https://github.com/kas1987/Chromatic_Governance/pull/1",
+      "tags": [
+        "governance",
+        "review-intake",
+        "phase-1",
+        "phase-2",
+        "phase-3",
+        "phase-4",
+        "phase-5"
+      ],
+      "acceptance_criteria": [
+        "Phase 1: Passive intake workflow operational",
+        "Phase 2-4: Dispatch, resolution, playbooks complete",
+        "Phase 5: Bundle integration and findings DB",
+        "All acceptance tests passing",
+        "Documentation complete"
+      ],
+      "completion_percentage": 90
+    }
+  ],
+  "status_workflow": {
+    "Backlog": {
+      "description": "PDR proposed, awaiting prioritization",
+      "allowed_transitions": [
+        "In-Process"
+      ]
+    },
+    "In-Process": {
+      "description": "PDR actively being worked on",
+      "allowed_transitions": [
+        "Completed",
+        "Backlog"
+      ]
+    },
+    "Completed": {
+      "description": "PDR implementation complete, awaiting review",
+      "allowed_transitions": [
+        "Reviewed",
+        "In-Process"
+      ]
+    },
+    "Reviewed": {
+      "description": "PDR approved through governance review",
+      "allowed_transitions": [
+        "Archived"
+      ]
+    },
+    "Archived": {
+      "description": "PDR archived for historical reference",
+      "allowed_transitions": []
+    }
+  }
+}
