@@ -187,8 +187,8 @@ def main():
     # Export JSON summary
     summary = export_json(conn)
     json_path = WORKSPACE_ROOT / "taxonomy.json"
-    with open(json_path, "w") as f:
-        json.dump(summary, f, indent=2)
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=2, ensure_ascii=False)
     print(f"  [+] JSON export: {json_path}")
     
     conn.close()

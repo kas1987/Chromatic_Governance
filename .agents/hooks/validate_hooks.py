@@ -14,6 +14,7 @@ for e in ["PreToolUse", "PostToolUse", "Stop", "SubagentStop"]:
 
 # 2. Script syntax check
 import ast
+
 for f in ["pre_tool_guard.py", "post_tool_audit.py", "subagent_stop.py", "context_snapshot.py"]:
     try:
         ast.parse(pathlib.Path(f".agents/hooks/{f}").read_text(encoding="utf-8"))

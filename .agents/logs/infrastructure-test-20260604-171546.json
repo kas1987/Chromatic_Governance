@@ -1,0 +1,51 @@
+[
+  {
+    "Notes": "Model loaded and accessible",
+    "Status": "Ready",
+    "DurationMs": 60,
+    "Component": "T0 Ollama llama3.2:3b",
+    "Timestamp": "2026-06-04T17:15:45.4150476-04:00"
+  },
+  {
+    "Notes": "Unexpected response structure",
+    "Status": "Degraded",
+    "DurationMs": 578,
+    "Component": "T1 Featherless Hermes-3-8B",
+    "Timestamp": "2026-06-04T17:15:45.9976939-04:00"
+  },
+  {
+    "Notes": "Cloud endpoint healthy, low latency",
+    "Status": "Live",
+    "DurationMs": 839,
+    "Component": "T3 Gemini gemini-2.5-flash",
+    "Timestamp": "2026-06-04T17:15:46.8455927-04:00"
+  },
+  {
+    "Notes": "v2 hook wired in settings.json",
+    "Status": "Present",
+    "DurationMs": 0,
+    "Component": "model-router.sh hook",
+    "Timestamp": "2026-06-04T17:15:46.8657462-04:00"
+  },
+  {
+    "Notes": "v3 with concurrency metadata detected",
+    "Status": "Valid",
+    "DurationMs": 0,
+    "Component": "provider-tiers configuration",
+    "Timestamp": "2026-06-04T17:15:46.8732715-04:00"
+  },
+  {
+    "Notes": "11 nodes, 5 edges synced to taxonomy.db",
+    "Status": "Working",
+    "DurationMs": 0,
+    "Component": "taxonomy_sync.py",
+    "Timestamp": "2026-06-04T17:15:46.8749655-04:00"
+  },
+  {
+    "Notes": "API key not configured",
+    "Status": "Skipped",
+    "DurationMs": 0,
+    "Component": "Featherless 2× concurrency",
+    "Timestamp": "2026-06-04T17:15:46.8767764-04:00"
+  }
+]

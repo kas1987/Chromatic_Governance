@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hermes Evaluation Result",
+  "type": "object",
+  "required": [
+    "run_id",
+    "model_id",
+    "task_id",
+    "task_class",
+    "complexity",
+    "passed",
+    "scores",
+    "governance"
+  ],
+  "properties": {
+    "run_id": { "type": "string" },
+    "model_id": { "type": "string" },
+    "task_id": { "type": "string" },
+    "task_class": {
+      "type": "string",
+      "enum": [
+        "bead_triage",
+        "handoff_compression",
+        "mission_packet",
+        "governance_checklist",
+        "documentation_cleanup"
+      ]
+    },
+    "complexity": { "type": "string", "enum": ["C1", "C2", "C3", "C4"] },
+    "privacy_class": { "type": "string" },
+    "latency_ms": { "type": ["integer", "null"], "minimum": 0 },
+    "passed": { "type": "boolean" },
+    "scores": {
+      "type": "object",
+      "required": ["format", "accuracy", "completeness", "path_grounding"],
+      "properties": {
+        "format": { "type": "number", "minimum": 0, "maximum": 1 },
+        "accuracy": { "type": "number", "minimum": 0, "maximum": 1 },
+        "completeness": { "type": "number", "minimum": 0, "maximum": 1 },
+        "path_grounding": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "required": ["critical_violation", "hallucinated_paths", "malformed_output"],
+      "properties": {
+        "critical_violation": { "type": "boolean" },
+        "hallucinated_paths": { "type": "integer", "minimum": 0 },
+        "malformed_output": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    },
+    "failure_reason": { "type": ["string", "null"] },
+    "evaluator_notes": { "type": "string" }
+  }
+}

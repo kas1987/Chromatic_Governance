@@ -1,0 +1,59 @@
+[
+  {
+    "id": "hermes-pipeline-001",
+    "title": "Add Hermes to model capability registry",
+    "status": "ready",
+    "priority": "P1",
+    "repo": "kas1987/chromatic-harness-v2",
+    "area": "routing",
+    "specialties": ["yaml", "model-routing", "local-agents"],
+    "owner_agent": "Hermes or Qwen",
+    "depends_on": [],
+    "blocked_by": [],
+    "acceptance_checks": [
+      "hermes3:8b exists in model-capabilities.yaml",
+      "YAML parses",
+      "no existing model entries removed"
+    ],
+    "links": ["05_AGENT_MISSIONS/mission-001-add-hermes-capability-registry.md"],
+    "notes": "Start here. Low-risk registry-only patch."
+  },
+  {
+    "id": "hermes-pipeline-002",
+    "title": "Add Hermes to local C1/C2 routing paths",
+    "status": "planned",
+    "priority": "P1",
+    "repo": "kas1987/chromatic-harness-v2",
+    "area": "routing",
+    "specialties": ["yaml", "router", "tests"],
+    "owner_agent": "Qwen",
+    "depends_on": ["hermes-pipeline-001"],
+    "blocked_by": [],
+    "acceptance_checks": [
+      "Hermes appears in C1/C2 routes",
+      "Hermes does not appear in C4 routes",
+      "routing YAML parses"
+    ],
+    "links": ["05_AGENT_MISSIONS/mission-002-add-hermes-routing.md"],
+    "notes": "Use Qwen because this impacts routing behavior."
+  },
+  {
+    "id": "hermes-pipeline-003",
+    "title": "Add eval receipt schema and validation test",
+    "status": "planned",
+    "priority": "P2",
+    "repo": "kas1987/chromatic-harness-v2",
+    "area": "evals-ci",
+    "specialties": ["schema", "pytest", "ci"],
+    "owner_agent": "Qwen",
+    "depends_on": ["hermes-pipeline-001"],
+    "blocked_by": [],
+    "acceptance_checks": [
+      "valid eval receipt passes",
+      "invalid eval receipt fails",
+      "CI command documented"
+    ],
+    "links": ["05_AGENT_MISSIONS/mission-003-add-eval-receipts.md"],
+    "notes": "This creates measurement infrastructure before broad rollout."
+  }
+]

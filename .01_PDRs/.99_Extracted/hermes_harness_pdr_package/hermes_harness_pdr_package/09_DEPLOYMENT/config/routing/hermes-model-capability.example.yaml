@@ -1,0 +1,13 @@
+# Patch example for 09_DEPLOYMENT/config/routing/model-capabilities.yaml
+
+hermes3:8b:
+  best_at: [instruction, speed, agentic]
+  good_at: [reasoning, coding]
+  weak_at: [creativity, vision, deep_architecture]
+  observed_by: "local-evaluation-pending"
+  source: "Nous Hermes / local Ollama validation"
+  notes: >
+    Experimental local agent-ops worker. Use for C1/C2 operational tasks:
+    bead triage, mission packet drafting, handoff summarization,
+    governance checklist validation, documentation cleanup, and lightweight
+    classification. Do not use as default C3/C4 architect until benchmarked.

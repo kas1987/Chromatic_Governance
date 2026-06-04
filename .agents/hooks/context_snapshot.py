@@ -14,7 +14,6 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-
 _THRESHOLDS = [
     (0.90, "critical"),
     (0.80, "red"),
