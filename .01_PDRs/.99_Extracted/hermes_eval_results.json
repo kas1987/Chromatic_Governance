@@ -1,0 +1,44 @@
+[
+  {
+    "task": "T1-comprehension",
+    "desc": "Mission comprehension — extract fields as JSON",
+    "f_model": "Qwen/Qwen2.5-Coder-32B-Instruct",
+    "f_score": 100,
+    "f_ms": 31339,
+    "f_tokens": null,
+    "f_detail": "6/6 fields: task_summary, allowed_files, forbidden_files, acceptance_criteria, complexity, risk_class",
+    "g_model": "gemini-2.5-flash",
+    "g_score": 100,
+    "g_ms": 3381,
+    "g_tokens": null,
+    "g_detail": "6/6 fields: task_summary, allowed_files, forbidden_files, acceptance_criteria, complexity, risk_class"
+  },
+  {
+    "task": "T2-yaml-edit",
+    "desc": "YAML edit — add hermes3:8b to capability registry",
+    "f_model": "Qwen/Qwen2.5-Coder-32B-Instruct",
+    "f_score": 100,
+    "f_ms": 14364,
+    "f_tokens": null,
+    "f_detail": "hermes3:8b found; best present; good present; weak present; worker_type:local; existing entries preserved",
+    "g_model": "gemini-2.5-flash",
+    "g_score": 100,
+    "g_ms": 5260,
+    "g_tokens": null,
+    "g_detail": "hermes3:8b found; best present; good present; weak present; worker_type:local; existing entries preserved"
+  },
+  {
+    "task": "T3-scope-compliance",
+    "desc": "Scope compliance — add Hermes to C1/C2 only, never C4",
+    "f_model": "Qwen/Qwen2.5-Coder-32B-Instruct",
+    "f_score": 100,
+    "f_ms": 16837,
+    "f_tokens": null,
+    "f_detail": "hermes appears; hermes in C1; hermes in C2; C4 CLEAN (PASS)",
+    "g_model": "gemini-2.5-flash",
+    "g_score": 100,
+    "g_ms": 3136,
+    "g_tokens": null,
+    "g_detail": "hermes appears; hermes in C1; hermes in C2; C4 CLEAN (PASS)"
+  }
+]
