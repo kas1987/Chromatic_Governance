@@ -32,3 +32,9 @@ logs/
 dist/
 build/
 *.egg-info/
+
+# Test / coverage artifacts
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
