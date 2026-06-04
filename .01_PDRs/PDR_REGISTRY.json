@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-06-04T18:22:19.267963+00:00",
+  "last_updated": "2026-06-04T18:28:23.948393+00:00",
   "pdrs": [
     {
       "id": "PDR-002",
@@ -55,6 +55,7 @@
       "created_at": "2026-03-10T00:00:00Z",
       "updated_at": "2026-06-04T00:00:00Z",
       "file_path": ".01_PDRs\\In-Process\\PDR-004-review-intake-system.md",
+      "extracted_path": ".01_PDRs/chromatic_review_intake_pdr_extracted",
       "transitions": [
         {
           "from": "Backlog",

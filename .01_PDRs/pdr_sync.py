@@ -8,9 +8,9 @@ Generates audit trail of all transitions.
 
 import json
 import sys
-from pathlib import Path
-from datetime import datetime, timezone
 from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
+from pathlib import Path
 
 
 @dataclass
@@ -40,6 +40,16 @@ class PDRRegistry:
         with open(self.registry_path, "w") as f:
             json.dump(self.data, f, indent=2)
 
+    def _resolve_path(self, path_str: str) -> Path:
+        """Resolve registry paths consistently whether script is run from repo root or .01_PDRs."""
+        raw = Path(path_str)
+        if raw.is_absolute():
+            return raw
+        parts = raw.parts
+        if parts and parts[0] == ".01_PDRs":
+            return self.base_dir.parent / raw
+        return self.base_dir / raw
+
     def sync_files(self) -> list[PDRTransition]:
         """
         Scan folders and ensure PDR file locations match registry status.
@@ -68,7 +78,7 @@ class PDRRegistry:
         for pdr in self.data.get("pdrs", []):
             pdr_id = pdr["id"]
             current_status = pdr["status"]
-            current_file_path = Path(pdr.get("file_path", ""))
+            current_file_path = self._resolve_path(pdr.get("file_path", ""))
 
             if pdr_id in pdr_files:
                 actual_status, actual_file_path = pdr_files[pdr_id]
@@ -79,7 +89,7 @@ class PDRRegistry:
                         f"⚠️  Mismatch: {pdr_id} in {actual_status} but registry says {current_status}"
                     )
                     pdr["status"] = actual_status
-                    pdr["file_path"] = str(actual_file_path.relative_to(self.base_dir))
+                    pdr["file_path"] = str(actual_file_path.relative_to(self.base_dir.parent))
                     pdr["updated_at"] = datetime.now(timezone.utc).isoformat()
 
                     # Record transition
@@ -124,7 +134,7 @@ class PDRRegistry:
             return False
 
         # Move file
-        old_path = Path(pdr.get("file_path", ""))
+        old_path = self._resolve_path(pdr.get("file_path", ""))
         new_path = self.base_dir / to_status / old_path.name
 
         if old_path.exists():
@@ -136,8 +146,23 @@ class PDRRegistry:
 
         # Update registry
         pdr["status"] = to_status
-        pdr["file_path"] = str(new_path.relative_to(self.base_dir))
+        pdr["file_path"] = str(new_path.relative_to(self.base_dir.parent))
         pdr["updated_at"] = datetime.now(timezone.utc).isoformat()
+
+        # Extracted bundle lifecycle: keep while active, move to archive shelf when Archived.
+        extracted_path = pdr.get("extracted_path")
+        if to_status == "Archived" and extracted_path:
+            source_extracted = self._resolve_path(extracted_path)
+            if source_extracted.exists():
+                archive_shelf = self.base_dir / "Archived" / "_extracted"
+                archive_shelf.mkdir(parents=True, exist_ok=True)
+                target_extracted = archive_shelf / pdr_id
+                if target_extracted.exists():
+                    print(f"⚠️  Archive shelf exists for {pdr_id}, leaving extracted bundle in place")
+                else:
+                    source_extracted.rename(target_extracted)
+                    pdr["archived_extracted_path"] = str(target_extracted.relative_to(self.base_dir.parent))
+                    print(f"📦 Archived extracted bundle: {source_extracted.name} -> {target_extracted}")
 
         # Record transition
         pdr.setdefault("transitions", []).append(

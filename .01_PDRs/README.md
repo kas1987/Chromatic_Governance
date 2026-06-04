@@ -116,6 +116,13 @@ Use the automated promotion workflow:
 
 ## Constraints
 
+### Extracted Bundle Lifecycle
+
+- Keep extracted bundles during Backlog, In-Process, Completed, and Reviewed.
+- Do not treat extracted bundles as the authoritative PDR source; they are scaffold snapshots.
+- On promotion to Archived, extracted bundles are moved to `Archived/_extracted/<PDR-ID>` automatically by `pdr_sync.py` when `extracted_path` is set in the registry.
+- Hard delete is optional and should be a separate manual retention action after archive.
+
 ### Allowed Transitions
 
 | From State | Allowed Transitions |
