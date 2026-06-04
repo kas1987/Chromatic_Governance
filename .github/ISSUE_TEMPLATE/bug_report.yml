@@ -1,0 +1,59 @@
+name: Bug report
+description: Report a reproducible problem in workflows, scripts, or governance automation.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please provide enough detail to reproduce it quickly.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened and what did you expect?
+      placeholder: Short description of the problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include exact commands, files, and branch context.
+      placeholder: |
+        1. Run ...
+        2. Edit ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: Paste logs or error output (redact secrets).
+      render: shell
+    validations:
+      required: false
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit SHA
+      description: Commit where the issue was observed.
+      placeholder: abcdef1
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched for existing issues
+          required: true
+        - label: I removed or redacted secrets from logs
+          required: true

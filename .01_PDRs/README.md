@@ -280,6 +280,36 @@ ollama pull qwen2.5-coder:14b   # best local coding model
 ollama list                      # verify
 ```
 
+### Concurrency limits
+
+**Featherless Premium ($25/mo) — 4 total concurrency units**
+
+| Model size | Units used | Max simultaneous |
+|-----------|-----------|-----------------|
+| 7B–15B (e.g. `Hermes-3-Llama-3.1-8B`) | 1 | **4 concurrent** |
+| 24B–34B (e.g. `Qwen2.5-Coder-32B`) | 2 | **2 concurrent** |
+| 70B–72B | 4 | **1 concurrent** |
+
+Requests over the limit receive HTTP 429. Docs: https://featherless.ai/docs/concurrency-limits
+
+**Ollama Cloud Pro ($20/mo)**
+
+| Plan | Concurrent models | Usage |
+|------|------------------|-------|
+| Pro ($20/mo) | 3 | 50× Free |
+| Max ($100/mo) | 10 | 5× Pro |
+
+Session limits reset every 5h; weekly limits every 7d. Docs: https://ollama.com/settings/billing
+
+### ART-HERMES Eval Results (2026-06-04)
+
+Both `Qwen/Qwen2.5-Coder-32B-Instruct` and `gemini-2.5-flash` scored **100/100** across 3 C1/C2 tasks (mission comprehension, YAML edit, scope compliance). Gemini is **5.3× faster** (3.9s vs 20.8s avg). Full report: `.99_Extracted/hermes_eval_report.md`
+
+**Swarm strategy:**
+- C1 bulk: 4× `Hermes-3-8B` in parallel (1 unit each, fills Featherless 4-unit plan)
+- C2 coding: 2× `Qwen2.5-Coder-32B` in parallel (2 units each)
+- Latency-critical: `gemini-2.5-flash` (T3)
+
 ---
 
 ## Best Practices
