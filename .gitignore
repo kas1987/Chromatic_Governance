@@ -38,3 +38,10 @@ build/
 .coverage.*
 htmlcov/
 .pytest_cache/
+
+# PDR extraction working directories (zips are canonical)
+.01_PDRs/extracted/
+
+# Agent runtime logs (JSONL entries; not source-controlled by default)
+.agents/logs/*.jsonl
+# Keep the directory itself tracked via .gitkeep — do not ignore the dir
