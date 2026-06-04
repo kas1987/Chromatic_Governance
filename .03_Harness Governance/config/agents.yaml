@@ -5,7 +5,7 @@ agents:
     allowed_profiles:
       - read_only
     allowed_repos:
-      - example-org/example-repo
+      - kas1987/Chromatic_Governance
     branch_prefix: agent/reposcout/
     require_task_id_for_write: true
 
@@ -16,7 +16,7 @@ agents:
       - read_only
       - issue_triage
     allowed_repos:
-      - example-org/example-repo
+      - kas1987/Chromatic_Governance
     branch_prefix: agent/auditor/
     require_task_id_for_write: true
 
@@ -27,7 +27,7 @@ agents:
       - read_only
       - patch_standard
     allowed_repos:
-      - example-org/example-repo
+      - kas1987/Chromatic_Governance
     branch_prefix: agent/codesentinel/
     require_task_id_for_write: true
     require_pull_request: true
@@ -40,6 +40,6 @@ agents:
       - read_only
       - cleanup_limited
     allowed_repos:
-      - example-org/example-repo
+      - kas1987/Chromatic_Governance
     branch_prefix: agent/janitor/
     require_task_id_for_write: true

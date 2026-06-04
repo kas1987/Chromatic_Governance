@@ -137,14 +137,21 @@ Use the automated promotion workflow:
 
 ### Automated ZIP Intake Review
 
-- `pdr_zip_intake.py` scans `.01_PDRs/.01_Backlog/*.zip` and auto-reviews integrity (`zipfile` validation + file count).
+- `pdr_zip_intake.py` scans `.01_PDRs/.01_Backlog/*.zip` and keeps `.01_PDRs/.01_Backlog/.99_Dups/*.zip` tracked as current inventory.
 - Historical/current/new ZIP states are recorded in SQLite at `.01_PDRs/.intake/zip_intake.db`.
 - Event stream is logged to `.01_PDRs/.intake/zip_intake-log.jsonl`.
 - Pipeline stage/status is correlated from `PDR_REGISTRY.json` (`artifact_backlog` and `pdrs`).
 - PDR IDs are auto-detected from archive contents (e.g., `PDR-001`) and stored.
 - An implementation signal is computed per ZIP: `not_implemented | preflight_ready | in_progress | implemented | unknown`.
 - Implementation signal uses pipeline status + extracted readiness for local/repo implementation awareness.
+- A duplicate gate computes `duplicate | redundant | possible_redundant | unique | unknown` with a confidence score.
+- High-confidence `duplicate` or `redundant` ZIPs are moved into `.01_PDRs/.01_Backlog/.99_Dups/` automatically and the evidence is stored in SQLite.
 - Workflow `.github/workflows/pdr-zip-intake.yml` runs automatically on ZIP drops.
+- `.01_PDRs/AUTOMATION_WIRING_LOG.md` tracks which pipeline and intake processes should later be wired into `n8n`, `LangGraph`, `LangSmith`, or related automation tooling.
+- `.01_PDRs/AUTOMATION_EXECUTION_BOARD.md` tracks implementation-ready phases, owners, priorities, and acceptance checks.
+- `.01_PDRs/N8N_PHASE1_INTAKE_WORKFLOW_SPEC.md` defines the concrete Phase 1 event-bridge workflow for intake orchestration.
+- `.01_PDRs/LANGGRAPH_DISPATCHER_SPEC.md` defines the queue-to-agent lock-safe dispatcher for multi-agent execution.
+- `.03_Harness Governance/orchestration/README.md` links runnable n8n and LangGraph scaffolds aligned with those specs.
 
 Manual run:
 

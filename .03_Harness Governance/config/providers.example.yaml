@@ -1,0 +1,53 @@
+# Provider inventory and endpoint wiring template.
+# Copy to providers.yaml for local use if your runtime supports provider config files.
+# Do not commit real secrets.
+
+providers:
+  github_broker:
+    enabled: true
+    type: github_app
+    app_id_env: GITHUB_APP_ID
+    private_key_path_env: GITHUB_APP_PRIVATE_KEY_PATH
+
+  ollama_local:
+    enabled: true
+    type: ollama
+    base_url_env: OLLAMA_LOCAL_BASE_URL
+    default_models:
+      c1: OLLAMA_MODEL_C1
+      c2: OLLAMA_MODEL_C2
+
+  ollama_remote:
+    enabled: false
+    type: ollama
+    base_url_env: OLLAMA_REMOTE_BASE_URL
+    use_when:
+      - desktop_awake
+      - low_lan_latency
+
+  openai:
+    enabled: false
+    type: openai
+    api_key_env: OPENAI_API_KEY
+
+  anthropic:
+    enabled: false
+    type: anthropic
+    api_key_env: ANTHROPIC_API_KEY
+
+  gemini:
+    enabled: false
+    type: gemini
+    api_key_env: GEMINI_API_KEY
+
+routing_defaults:
+  prefer_local_for:
+    - c1
+    - c2
+  escalate_to_cloud_for:
+    - c3
+    - c4
+  cloud_preference_order:
+    - gemini
+    - anthropic
+    - openai

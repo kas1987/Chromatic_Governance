@@ -17,15 +17,51 @@ import shutil
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib import error, request
 
 from pdr_zip_intake import scan_zip_intake
-
 
 BACKLOG_ZIP_FOLDER = ".01_Backlog"
 
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def emit_webhook_event(
+    *,
+    webhook_url: str | None,
+    webhook_secret: str | None,
+    event_type: str,
+    zip_path: Path,
+    base_dir: Path,
+    source: str,
+) -> None:
+    if not webhook_url:
+        return
+
+    rel_path = str(zip_path.relative_to(base_dir)).replace("\\", "/")
+    payload = {
+        "event_id": f"zip-{zip_path.stem}-{int(zip_path.stat().st_mtime)}",
+        "event_type": event_type,
+        "zip_name": zip_path.name,
+        "zip_rel_path": rel_path,
+        "source": source,
+        "occurred_at": utc_now(),
+    }
+
+    data = json.dumps(payload).encode("utf-8")
+    req = request.Request(webhook_url, data=data, method="POST")
+    req.add_header("Content-Type", "application/json")
+    if webhook_secret:
+        req.add_header("X-Chromatic-Webhook-Secret", webhook_secret)
+
+    try:
+        with request.urlopen(req, timeout=10) as resp:  # noqa: S310 - explicit internal webhook target
+            if resp.status >= 300:
+                raise RuntimeError(f"Webhook responded with HTTP {resp.status}")
+    except (error.URLError, TimeoutError, RuntimeError) as exc:
+        print(f"[{utc_now()}] webhook warning: {exc}")
 
 
 def state_path(base_dir: Path) -> Path:
@@ -78,7 +114,7 @@ def run_once(base_dir: Path) -> None:
     print(f"[{utc_now()}] one-shot intake complete: {counts}")
 
 
-def run_watch(base_dir: Path, interval: int) -> None:
+def run_watch(base_dir: Path, interval: int, webhook_url: str | None, webhook_secret: str | None) -> None:
     previous = load_state(base_dir)
     print(f"Watching {base_dir} for ZIP drops every {interval}s (Ctrl+C to stop)")
 
@@ -87,6 +123,14 @@ def run_watch(base_dir: Path, interval: int) -> None:
             changed, current = detect_changed_zips(base_dir, previous)
             for zip_path in changed:
                 intake_zip(base_dir, zip_path.name)
+                emit_webhook_event(
+                    webhook_url=webhook_url,
+                    webhook_secret=webhook_secret,
+                    event_type="zip_detected",
+                    zip_path=zip_path,
+                    base_dir=base_dir,
+                    source="local_watcher",
+                )
             if changed:
                 save_state(base_dir, current)
             previous = current
@@ -96,7 +140,13 @@ def run_watch(base_dir: Path, interval: int) -> None:
         print("Stopped watcher.")
 
 
-def import_from_source(base_dir: Path, source_dir: Path, move: bool) -> None:
+def import_from_source(
+    base_dir: Path,
+    source_dir: Path,
+    move: bool,
+    webhook_url: str | None,
+    webhook_secret: str | None,
+) -> None:
     if not source_dir.exists():
         raise SystemExit(f"Source folder does not exist: {source_dir}")
 
@@ -117,7 +167,7 @@ def import_from_source(base_dir: Path, source_dir: Path, move: bool) -> None:
             stem = dest.stem
             suffix = dest.suffix
             ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-            dest = base_dir / f"{stem}-{ts}{suffix}"
+            dest = backlog_dir / f"{stem}-{ts}{suffix}"
 
         if move:
             shutil.move(str(src), str(dest))
@@ -126,6 +176,14 @@ def import_from_source(base_dir: Path, source_dir: Path, move: bool) -> None:
 
         imported += 1
         intake_zip(base_dir, dest.name)
+        emit_webhook_event(
+            webhook_url=webhook_url,
+            webhook_secret=webhook_secret,
+            event_type="zip_imported",
+            zip_path=dest,
+            base_dir=base_dir,
+            source="import",
+        )
 
     print(
         f"Import complete from {source_dir}: imported={imported}, skipped={skipped}, mode={'move' if move else 'copy'}"
@@ -160,6 +218,16 @@ def main() -> None:
         action="store_true",
         help="Move ZIPs from source instead of copying (mode=import)",
     )
+    parser.add_argument(
+        "--webhook-url",
+        default="",
+        help="Optional n8n webhook URL for event bridge",
+    )
+    parser.add_argument(
+        "--webhook-secret",
+        default="",
+        help="Optional shared secret sent as X-Chromatic-Webhook-Secret",
+    )
     args = parser.parse_args()
 
     base_dir = Path(args.base_dir)
@@ -169,9 +237,20 @@ def main() -> None:
     if args.mode == "once":
         run_once(base_dir)
     elif args.mode == "watch":
-        run_watch(base_dir, interval=args.interval)
+        run_watch(
+            base_dir,
+            interval=args.interval,
+            webhook_url=args.webhook_url or None,
+            webhook_secret=args.webhook_secret or None,
+        )
     elif args.mode == "import":
-        import_from_source(base_dir, Path(args.source_dir), move=args.move)
+        import_from_source(
+            base_dir,
+            Path(args.source_dir),
+            move=args.move,
+            webhook_url=args.webhook_url or None,
+            webhook_secret=args.webhook_secret or None,
+        )
 
 
 if __name__ == "__main__":

@@ -24,6 +24,14 @@ vars.CHROMATIC_AGENT_APP_ID
 secrets.CHROMATIC_AGENT_PRIVATE_KEY
 ```
 
+Optional external provider keys (set only if you want cloud-provider routing):
+
+```text
+secrets.OPENAI_API_KEY
+secrets.ANTHROPIC_API_KEY
+secrets.GEMINI_API_KEY
+```
+
 Local broker `.env`:
 
 ```text
@@ -31,6 +39,13 @@ GITHUB_APP_ID=...
 GITHUB_APP_PRIVATE_KEY_PATH=...
 GITHUB_API_VERSION=2026-03-10
 BROKER_DRY_RUN=true
+OPENAI_API_KEY=...
+ANTHROPIC_API_KEY=...
+GEMINI_API_KEY=...
+OLLAMA_LOCAL_BASE_URL=http://127.0.0.1:11434
+OLLAMA_REMOTE_BASE_URL=http://desktop.local:11434
+OLLAMA_MODEL_C1=llama3.2:3b
+OLLAMA_MODEL_C2=qwen2.5-coder:14b
 ```
 
 ## 3. Configure policy
@@ -46,16 +61,38 @@ config/permission_profiles.yaml
 Replace:
 
 ```text
-example-org/example-repo
+kas1987/Chromatic_Governance
 REPLACE_WITH_INSTALLATION_ID
 @REPLACE_WITH_OWNER
 ```
+
+Provider config template:
+
+```text
+config/providers.example.yaml
+```
+
+Copy and adjust for your runtime if needed.
 
 ## 4. Validate
 
 ```bash
 python scripts/validate_artifact.py
 python broker/tests/test_policy_engine.py
+```
+
+GitHub secret/variable checks:
+
+```bash
+gh secret list --repo kas1987/Chromatic_Governance
+gh variable list --repo kas1987/Chromatic_Governance
+```
+
+Ollama checks:
+
+```bash
+curl http://127.0.0.1:11434/api/tags
+curl http://desktop.local:11434/api/tags
 ```
 
 ## 5. First live test

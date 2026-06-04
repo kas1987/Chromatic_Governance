@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-06-04T19:01:31.119355+00:00",
+  "last_updated": "2026-06-04T20:00:00+00:00",
   "pdrs": [
     {
       "id": "PDR-002",
@@ -19,13 +19,6 @@
           "timestamp": "2026-02-01T10:30:00Z",
           "actor": "Claude",
           "reason": "Phase 2 implementation started"
-        },
-        {
-          "from": "In-Process",
-          "to": "Completed",
-          "timestamp": null,
-          "actor": null,
-          "reason": null
         }
       ],
       "related_issues": [
@@ -63,13 +56,6 @@
           "timestamp": "2026-03-15T09:00:00Z",
           "actor": "Claude",
           "reason": "Phase 1-5 implementation prioritized"
-        },
-        {
-          "from": "In-Process",
-          "to": "Completed",
-          "timestamp": null,
-          "actor": null,
-          "reason": null
         }
       ],
       "related_issues": [],
@@ -91,6 +77,43 @@
         "Documentation complete"
       ],
       "completion_percentage": 90
+    },
+    {
+      "id": "PDR-005",
+      "title": "n8n Intake Orchestration",
+      "description": "Phased n8n orchestration for ZIP intake, registry-aware routing, and governed handoff automation",
+      "status": "Backlog",
+      "phase": 1,
+      "owner": "Kas/Claude",
+      "created_at": "2026-06-04T00:00:00Z",
+      "updated_at": "2026-06-04T00:00:00Z",
+      "file_path": ".01_PDRs\\.01_Backlog\\PDR-005-n8n-intake-orchestration.md",
+      "transitions": [
+        {
+          "from": null,
+          "to": "Backlog",
+          "timestamp": "2026-06-04T00:00:00Z",
+          "actor": "Claude",
+          "reason": "Created per request for phased n8n integration planning"
+        }
+      ],
+      "related_issues": [],
+      "related_pr": "https://github.com/kas1987/Chromatic_Governance/pull/1",
+      "tags": [
+        "n8n",
+        "intake",
+        "orchestration",
+        "governance",
+        "phase-1"
+      ],
+      "acceptance_criteria": [
+        "Phased n8n workflow plan documented",
+        "Intake bridge design captured for local ZIP drop automation",
+        "Registry-aware routing requirements documented",
+        "No direct In-Process transition without Pre-flight readiness",
+        "Design approved for Pre-flight"
+      ],
+      "completion_percentage": 10
     }
   ],
   "status_workflow": {
@@ -137,39 +160,23 @@
       "id": "ART-CHROMATIC_SKILL_UTILIZATION_ROADMAP_PDR",
       "status": "Backlog",
       "zip_path": ".01_PDRs\\.01_Backlog\\chromatic-skill-utilization-roadmap-pdr.zip",
-      "extracted_path": ".01_PDRs/.99_Extracted/chromatic-skill-utilization-roadmap-pdr",
+      "extracted_path": null,
       "registered_at": "2026-06-04T18:40:08.896571+00:00",
-      "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight."
-    },
-    {
-      "id": "ART-CLAUDE_PLUGIN_FAMILIES_SCAFFOLD",
-      "status": "Backlog",
-      "zip_path": ".01_PDRs\\.01_Backlog\\claude_plugin_families_scaffold.zip",
-      "extracted_path": ".01_PDRs/.99_Extracted/claude_plugin_families_scaffold",
-      "registered_at": "2026-06-04T18:40:08.898165+00:00",
-      "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight."
-    },
-    {
-      "id": "ART-CLAUDE_PLUGIN_FAMILIES_SCAFFOLD_V13_FRONTEND_CORE",
-      "status": "Backlog",
-      "zip_path": ".01_PDRs\\.01_Backlog\\claude_plugin_families_scaffold_v13_frontend_core.zip",
-      "extracted_path": ".01_PDRs/.99_Extracted/claude_plugin_families_scaffold_v13_frontend_core",
-      "registered_at": "2026-06-04T18:40:08.898165+00:00",
       "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight."
     },
     {
       "id": "ART-CLAUDE_PLUGIN_FAMILIES_SCAFFOLD_V14_GOLD",
       "status": "Backlog",
-      "zip_path": ".01_PDRs\\.01_Backlog\\claude_plugin_families_scaffold_v14_gold.zip",
-      "extracted_path": ".01_PDRs/.99_Extracted/claude_plugin_families_scaffold_v14_gold",
+      "zip_path": ".01_PDRs\\.01_Backlog\\.99_Dups\\claude_plugin_families_scaffold_v14_gold.zip",
+      "extracted_path": null,
       "registered_at": "2026-06-04T18:40:08.898165+00:00",
-      "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight."
+      "notes": "Classified redundant by intake duplicate gate and routed to duplicate shelf."
     },
     {
       "id": "ART-REPO_PDR_SWARM_ROUTER",
       "status": "Backlog",
       "zip_path": ".01_PDRs\\.01_Backlog\\repo-pdr-swarm-router.zip",
-      "extracted_path": ".01_PDRs/.99_Extracted/repo-pdr-swarm-router",
+      "extracted_path": null,
       "registered_at": "2026-06-04T18:40:08.898165+00:00",
       "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight."
     }

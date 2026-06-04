@@ -51,3 +51,7 @@ htmlcov/
 .agents/review-intake/locks/*.json
 .agents/review-intake/logs/*.jsonl
 # Keep the directory itself tracked via .gitkeep — do not ignore the dir
+
+# Transient local plugin/runtime artifacts
+.02_Plugins/**/.orphaned_at
+.03_Harness Governance/config/providers.yaml
