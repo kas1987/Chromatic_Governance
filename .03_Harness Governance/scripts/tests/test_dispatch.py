@@ -97,10 +97,10 @@ class TestRenderMissionPacket:
 class TestDispatchItem:
     def test_creates_mission_file(self, tmp_path):
         item = _ready_item("NW-D-001")
-        q = tmp_path / "q.json"
         missions = tmp_path / "missions"
         log = tmp_path / "dispatch.jsonl"
-        entry = dq.dispatch_item(item, missions, log, dry_run=False)
+        locks = tmp_path / "locks"
+        entry = dq.dispatch_item(item, missions, log, dry_run=False, lock_dir=str(locks))
         mission_file = missions / "NW-D-001.md"
         assert mission_file.exists()
         assert "NW-D-001" in mission_file.read_text()
@@ -109,7 +109,8 @@ class TestDispatchItem:
         item = _ready_item("NW-D-002")
         missions = tmp_path / "missions"
         log = tmp_path / "dispatch.jsonl"
-        dq.dispatch_item(item, missions, log, dry_run=False)
+        locks = tmp_path / "locks"
+        dq.dispatch_item(item, missions, log, dry_run=False, lock_dir=str(locks))
         lines = [json.loads(l) for l in log.read_text().splitlines() if l.strip()]
         assert len(lines) == 1
         assert lines[0]["task_id"] == "NW-D-002"
@@ -129,6 +130,34 @@ class TestDispatchItem:
         assert entry["dispatch_id"].startswith("DISP-")
         assert entry["agent"] == "Auditor"
         assert entry["task_id"] == "NW-D-004"
+
+    def test_lock_acquired_field_present(self, tmp_path):
+        item = _ready_item("NW-D-005")
+        entry = dq.dispatch_item(item, tmp_path / "m", tmp_path / "l.jsonl", dry_run=True)
+        assert "lock_acquired" in entry
+        assert entry["lock_acquired"] is True  # dry_run always treats lock as acquired
+
+    def test_lock_fail_skips_mission_file(self, tmp_path, monkeypatch):
+        item = _ready_item("NW-D-006")
+        missions = tmp_path / "missions"
+        log = tmp_path / "dispatch.jsonl"
+        monkeypatch.setattr(dq, "acquire_branch_lock", lambda *a, **kw: False)
+        entry = dq.dispatch_item(item, missions, log, dry_run=False)
+        assert entry["lock_acquired"] is False
+        assert entry["status"] == "lock-failed"
+        assert not (missions / "NW-D-006.md").exists()
+        # dispatch log entry is still written even on lock failure
+        assert log.exists()
+
+    def test_human_gate_blocks_non_ready_item(self, tmp_path):
+        item = {**_ready_item("NW-D-007"), "status": "blocked"}
+        q = tmp_path / "queue.json"
+        q.write_text(json.dumps({"items": [item]}) + "\n")
+        queue = dq.load_queue(q)
+        non_ready = [i for i in queue["items"] if i.get("status") in dq._HUMAN_GATE_STATUSES]
+        assert len(non_ready) == 1
+        ready = [i for i in queue["items"] if i.get("status") == "ready"]
+        assert len(ready) == 0
 
 
 class TestMainDispatch:
@@ -186,9 +215,10 @@ class TestMainDispatch:
         _make_queue([_ready_item("NW-IP-001")], q)
         missions = tmp_path / "missions"
         log = tmp_path / "dispatch.jsonl"
+        locks = tmp_path / "locks"
         queue = dq.load_queue(q)
         item = queue["items"][0]
-        dq.dispatch_item(item, missions, log, dry_run=False)
+        dq.dispatch_item(item, missions, log, dry_run=False, lock_dir=str(locks))
         # Simulate status update
         for qi in queue["items"]:
             if qi["id"] == item["id"]:

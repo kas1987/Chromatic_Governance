@@ -1,7 +1,7 @@
 # PDR-004: Chromatic Review Intake System
 
 ## Status
-Implemented v1.0 — Phase 1 (passive intake) live
+Implemented v1.1 — Phase 1 (passive intake) + Phase 2 (queue dispatch) live
 
 ## Date
 2026-06-04
@@ -115,7 +115,7 @@ One active mutating agent per PR branch at any time. `lock_pr_branch.py acquire`
 | Phase | Status | Description |
 |---|---|---|
 | 1 — Passive Intake | **Live** | Normalize events → findings.jsonl + queue |
-| 2 — Queue Dispatch | Backlog | Dispatcher picks up `ready` items and creates mission packets |
+| 2 — Queue Dispatch | **Live** | Dispatcher picks up `ready` items and creates mission packets |
 | 3 — Agent Patching | Backlog | Scoped patch + lock + validation + resolution comment |
 | 4 — Learning Loop | Backlog | Weekly pattern analysis → tool/template improvements |
 | 5 — Central Collector | Future | GitHub App + SQLite across multiple repos |
@@ -142,6 +142,38 @@ One active mutating agent per PR branch at any time. `lock_pr_branch.py acquire`
 - `lock_pr_branch`: 5 lock lifecycle tests
 - `update_next_work_queue`: 4 queue management tests
 - `post_review_resolution`: 2 rendering tests
+
+---
+
+## Acceptance criteria (Phase 2 — Queue Dispatch)
+
+- [x] Dispatcher polls `next-work.queue.json` and picks up `ready` items
+- [x] Mission packet is generated per finding with agent routing, scope, and acceptance checks populated
+- [x] `review-required` and `blocked` items are not dispatched without explicit human approval
+- [x] Dispatcher acquires PR branch lock before handing off to a mutating agent
+- [x] Dispatch event is appended to `agent-dispatch-log.jsonl`
+
+## Acceptance criteria (Phase 3 — Agent Patching)
+
+- [ ] Dispatched agent applies a scoped patch within the lock window
+- [ ] Patch passes tests and lint before resolution comment is posted
+- [ ] `post_review_resolution.py` generates a well-formed Chromatic resolution comment
+- [ ] Resolution event is appended to `review-resolution-log.jsonl`
+- [ ] Lock is released on both success and failure paths
+
+## Acceptance criteria (Phase 4 — Learning Loop)
+
+- [ ] Weekly analysis job runs against `reviewer-patterns.jsonl`
+- [ ] Patterns with ≥3 occurrences generate a staged improvement proposal
+- [ ] Proposals are written to a staging location; nothing is auto-implemented
+- [ ] Analysis output is human-reviewable before any change is applied
+
+## Acceptance criteria (Phase 5 — Central Collector)
+
+- [ ] GitHub App installed and receiving webhook events from at least one repo
+- [ ] Findings persisted in SQLite with schema conforming to `review_finding.schema.json`
+- [ ] Multi-repo deduplication handles the same finding across branches/forks
+- [ ] Migration path from JSONL to SQLite is documented and tested
 
 ---
 

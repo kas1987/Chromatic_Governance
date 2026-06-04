@@ -22,10 +22,18 @@ from urllib import error, request
 from pdr_zip_intake import scan_zip_intake
 
 BACKLOG_ZIP_FOLDER = ".01_Backlog"
+WEBHOOK_TELEMETRY_FILE = ".intake/drop_watcher-webhook-telemetry.jsonl"
 
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def append_webhook_telemetry(base_dir: Path, payload: dict[str, object]) -> None:
+    telemetry_path = base_dir / WEBHOOK_TELEMETRY_FILE
+    telemetry_path.parent.mkdir(parents=True, exist_ok=True)
+    with telemetry_path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(payload, sort_keys=True) + "\n")
 
 
 def emit_webhook_event(
@@ -36,9 +44,11 @@ def emit_webhook_event(
     zip_path: Path,
     base_dir: Path,
     source: str,
-) -> None:
+    retries: int,
+    backoff_seconds: float,
+) -> bool:
     if not webhook_url:
-        return
+        return True
 
     rel_path = str(zip_path.relative_to(base_dir)).replace("\\", "/")
     payload = {
@@ -56,12 +66,38 @@ def emit_webhook_event(
     if webhook_secret:
         req.add_header("X-Chromatic-Webhook-Secret", webhook_secret)
 
-    try:
-        with request.urlopen(req, timeout=10) as resp:  # noqa: S310 - explicit internal webhook target
-            if resp.status >= 300:
-                raise RuntimeError(f"Webhook responded with HTTP {resp.status}")
-    except (error.URLError, TimeoutError, RuntimeError) as exc:
-        print(f"[{utc_now()}] webhook warning: {exc}")
+    max_attempts = max(1, retries + 1)
+    for attempt in range(1, max_attempts + 1):
+        try:
+            with request.urlopen(req, timeout=10) as resp:  # noqa: S310 - explicit internal webhook target
+                if resp.status >= 300:
+                    raise RuntimeError(f"Webhook responded with HTTP {resp.status}")
+            return True
+        except (error.URLError, TimeoutError, RuntimeError) as exc:
+            telemetry = {
+                "ts": utc_now(),
+                "event_type": event_type,
+                "zip_name": zip_path.name,
+                "zip_rel_path": rel_path,
+                "source": source,
+                "webhook_url": webhook_url,
+                "status": "failed",
+                "attempt": attempt,
+                "max_attempts": max_attempts,
+                "error": str(exc),
+            }
+            append_webhook_telemetry(base_dir, telemetry)
+            if attempt < max_attempts:
+                sleep_for = backoff_seconds * (2 ** (attempt - 1))
+                print(
+                    f"[{utc_now()}] webhook retry {attempt}/{max_attempts - 1} "
+                    f"for {zip_path.name} after {sleep_for:.2f}s: {exc}"
+                )
+                time.sleep(sleep_for)
+            else:
+                print(f"[{utc_now()}] webhook warning: permanent failure for {zip_path.name}: {exc}")
+                return False
+    return False
 
 
 def state_path(base_dir: Path) -> Path:
@@ -114,7 +150,14 @@ def run_once(base_dir: Path) -> None:
     print(f"[{utc_now()}] one-shot intake complete: {counts}")
 
 
-def run_watch(base_dir: Path, interval: int, webhook_url: str | None, webhook_secret: str | None) -> None:
+def run_watch(
+    base_dir: Path,
+    interval: int,
+    webhook_url: str | None,
+    webhook_secret: str | None,
+    webhook_retries: int,
+    webhook_backoff_seconds: float,
+) -> None:
     previous = load_state(base_dir)
     print(f"Watching {base_dir} for ZIP drops every {interval}s (Ctrl+C to stop)")
 
@@ -130,6 +173,8 @@ def run_watch(base_dir: Path, interval: int, webhook_url: str | None, webhook_se
                     zip_path=zip_path,
                     base_dir=base_dir,
                     source="local_watcher",
+                    retries=webhook_retries,
+                    backoff_seconds=webhook_backoff_seconds,
                 )
             if changed:
                 save_state(base_dir, current)
@@ -146,6 +191,8 @@ def import_from_source(
     move: bool,
     webhook_url: str | None,
     webhook_secret: str | None,
+    webhook_retries: int,
+    webhook_backoff_seconds: float,
 ) -> None:
     if not source_dir.exists():
         raise SystemExit(f"Source folder does not exist: {source_dir}")
@@ -183,6 +230,8 @@ def import_from_source(
             zip_path=dest,
             base_dir=base_dir,
             source="import",
+            retries=webhook_retries,
+            backoff_seconds=webhook_backoff_seconds,
         )
 
     print(
@@ -228,6 +277,18 @@ def main() -> None:
         default="",
         help="Optional shared secret sent as X-Chromatic-Webhook-Secret",
     )
+    parser.add_argument(
+        "--webhook-retries",
+        type=int,
+        default=3,
+        help="Webhook retry count for event emission failures",
+    )
+    parser.add_argument(
+        "--webhook-backoff-seconds",
+        type=float,
+        default=1.0,
+        help="Initial webhook retry backoff in seconds (exponential)",
+    )
     args = parser.parse_args()
 
     base_dir = Path(args.base_dir)
@@ -242,6 +303,8 @@ def main() -> None:
             interval=args.interval,
             webhook_url=args.webhook_url or None,
             webhook_secret=args.webhook_secret or None,
+            webhook_retries=args.webhook_retries,
+            webhook_backoff_seconds=args.webhook_backoff_seconds,
         )
     elif args.mode == "import":
         import_from_source(
@@ -250,6 +313,8 @@ def main() -> None:
             move=args.move,
             webhook_url=args.webhook_url or None,
             webhook_secret=args.webhook_secret or None,
+            webhook_retries=args.webhook_retries,
+            webhook_backoff_seconds=args.webhook_backoff_seconds,
         )
 
 

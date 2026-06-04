@@ -232,12 +232,22 @@ def apply_writeback(
         return None
 
     dispatch_entry = write_dispatch_artifacts(item, trace, missions_dir, dispatch_log)
+    result = str(trace.get("result", ""))
+    failure_class = trace.get("failure_class")
     for queue_item in queue.get("items", []):
         if queue_item.get("id") == item.get("id"):
-            queue_item["status"] = "in-progress"
+            if result == "completed":
+                queue_item["status"] = "in-progress"
+            elif result == "failed_retryable":
+                queue_item["status"] = "review-required"
+            elif result == "failed_terminal":
+                queue_item["status"] = "needs-human-decision"
             queue_item["dispatched_at"] = dispatch_entry["started_at"]
             queue_item["dispatch_id"] = dispatch_entry["dispatch_id"]
             queue_item["trace_id"] = trace.get("trace_id")
+            queue_item["last_dispatch_result"] = result
+            queue_item["last_dispatch_error"] = failure_class
+            queue_item["updated_at"] = utc_now()
             break
     save_queue(queue_path, queue)
     return dispatch_entry

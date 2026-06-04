@@ -125,8 +125,8 @@ Add a `plugin-access-policy.md` to `.03_Harness Governance/governance/` that map
 
 | ID | Priority | Status | Task | Inputs | Output | Stop condition |
 |---|---:|---|---|---|---|---|
-| FOUND-001 | P0 | ready | Integrate `parse_repo_pdr.py` into `agent-governance-family/scripts/` and update router SKILL.md reference | `repo-pdr-swarm-router.zip` extracted scripts | Committed script + updated SKILL.md | Stop if script has undocumented external dependencies |
-| FOUND-002 | P0 | ready | Update `README.md` and `SCOPE_MATRIX.md` to v15 (118 skills, 5 new skills, new docs) | Current file content | Updated files committed | Stop if scope of changes is unclear |
+| FOUND-001 | P0 | done | Integrate `parse_repo_pdr.py` into `agent-governance-family/scripts/` and update router SKILL.md reference | `repo-pdr-swarm-router.zip` extracted scripts | Committed script + updated SKILL.md | Stop if script has undocumented external dependencies |
+| FOUND-002 | P0 | done | Update `README.md` and `SCOPE_MATRIX.md` to v15 (118 skills, 5 new skills, new docs) | Current file content | Updated files committed | Stop if scope of changes is unclear |
 | FOUND-003 | P1 | ready | Build `chromatic-skills-mcp` server: `list_skills`, `get_skill`, `search_skills` tools | SKILL_TAXONOMY.md; all SKILL.md files; MCP SDK docs | Working MCP server in `.02_Plugins/mcp/` with tests | Stop if MCP SDK API is unclear or unavailable |
 | FOUND-004 | P1 | ready | Add `Stop` hook to write context-usage snapshot | `context-monitor` SKILL.md; Claude Code hook docs | `settings.json` hook entry + hook script in `.agents/hooks/` | Stop if hook format is incompatible with current Claude Code version |
 | FOUND-005 | P1 | ready | Add `.github/workflows/skill-governance.yml` CI check | `validate-scaffold.sh`; governance standard; all SKILL.md files | Passing CI workflow | Stop if `validate-scaffold.sh` produces false positives |
@@ -176,8 +176,8 @@ FOUND-008 (invocation logging), FOUND-009 (skill versioning), FOUND-010 (CLI sea
 
 This PDR is complete when:
 
-- [ ] `parse_repo_pdr.py` is in `agent-governance-family/scripts/` and the SKILL.md reference is live
-- [ ] README.md and SCOPE_MATRIX.md say 118 skills and reference v15 additions
+- [x] `parse_repo_pdr.py` is in `agent-governance-family/scripts/` and the SKILL.md reference is live
+- [x] README.md and SCOPE_MATRIX.md say 118 skills and reference v15 additions
 - [ ] `chromatic-skills-mcp` server passes: `list_skills()`, `get_skill("context-monitor")`, `search_skills("track token usage")`
 - [ ] A session end event writes a well-formed JSONL entry to `.agents/logs/context-usage.jsonl` automatically
 - [ ] A PR adding a SKILL.md without `name` frontmatter fails the skill-governance CI check
@@ -189,6 +189,8 @@ This PDR is complete when:
 
 ## Next action
 
-Execute Phase A (FOUND-001, FOUND-002) immediately — these are corrections that take less than one session and unblock accurate documentation for everything that follows.
+Phase A (FOUND-001, FOUND-002) is complete as of 2026-06-04. Both corrections are done:
+- `parse_repo_pdr.py` integrated (canonical ZIP version, SHA256: `817354BCA5391F18E2148683B27907645BB84307DFF926FF4C60EA7961446DA7`)
+- README.md and SCOPE_MATRIX.md already reflected v0.15.0 / 118 skills / 13 families
 
-Then open FOUND-003 as a separate session with `llm-ide-handoff-packager` output targeting Claude Code / Python MCP SDK.
+Open FOUND-003 as a separate session with `llm-ide-handoff-packager` output targeting Claude Code / Python MCP SDK.

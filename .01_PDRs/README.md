@@ -240,6 +240,48 @@ Link acceptance criteria to issues via related_issues in registry:
 
 Track phase progress via related_pr in registry — the PR dashboard will show all linked PDRs.
 
+## Model Router
+
+The Chromatic harness routes subagent and LLM calls through a 5-tier provider stack. All sessions in this repo route via the global shell router.
+
+### Where the router lives
+
+| File | Purpose |
+|------|---------|
+| `~/.claude/hooks/model-router.sh` | PreToolUse hook — fires before every Agent call |
+| `~/.claude/config/provider-tiers.json` | Tier 0–4 provider + model config |
+| `~/.claude/config/router-patterns.json` | Keyword patterns for task classification |
+| `~/.claude/.agents/router/log.jsonl` | Per-decision audit log |
+| `~/.claude/governance/multi-router-matrix.yaml` | Canonical policy (C-levels, T-levels, effort routing) |
+| `C:\.00_Governance\cross-provider-model-routing.md` | Human-readable routing reference |
+
+### Current tier map
+
+| Tier | Provider | Model | When |
+|------|----------|-------|------|
+| T0 nano | Ollama local | `llama3.2:3b` | Tables, formatting, zero-judgment transforms |
+| T1 micro | Featherless | `NousResearch/Hermes-3-Llama-3.1-8B` | Scaffold, boilerplate, seed templates |
+| T2 small | OpenAI | `gpt-4o-mini` | Smoke tests, spec compliance, single-file PR review |
+| T3 medium | Gemini | `gemini-2.5-flash` | Debug, root cause, multi-file integration |
+| T4 large | Claude | `claude-sonnet-4-6` | Brainstorm, design, architecture — orchestrator default |
+
+### Status
+
+- **Ollama**: installed at `C:\Users\kas41\AppData\Local\Programs\Ollama\ollama.exe`, port 11434 live, no models loaded yet
+- **Featherless**: key configured in `~/.claude/settings.json` (env: `FEATHERLESS_API_KEY`)
+- **OpenAI / Gemini**: keys present
+- **Router log**: `~/.claude/.agents/router/log.jsonl` — read to review routing decisions
+
+### Loading an Ollama model
+
+```powershell
+ollama pull llama3.2:3b          # T0 nano
+ollama pull qwen2.5-coder:14b   # best local coding model
+ollama list                      # verify
+```
+
+---
+
 ## Best Practices
 
 1. **Update registry early** — add PDR entry before creating the file
