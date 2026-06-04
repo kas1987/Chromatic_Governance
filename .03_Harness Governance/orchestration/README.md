@@ -30,6 +30,7 @@ Webhook emission failures are logged as JSONL records at `.01_PDRs/.intake/drop_
 - Dispatcher scaffold: `orchestration/langgraph/review_dispatch_graph.py`
 - Runs without LangGraph in simulation mode and can be upgraded when `langgraph` is installed.
 - Optional writeback mode updates queue status and emits mission/log artifacts.
+- **Multi-session safety:** Uses PR branch locking to prevent concurrent mutations on the same PR.
 
 Example:
 
@@ -40,3 +41,24 @@ python ".03_Harness Governance/orchestration/langgraph/review_dispatch_graph.py"
 ```
 
 Writeback now updates queue item status/metadata and persists mission packet artifacts under `.agents/review-intake/missions/`.
+
+### Lock Coordination
+
+When the dispatcher mutates a PR branch:
+
+1. **Acquire lock** before patching:
+   ```python
+   python .01_PDRs/scripts/lock_pr_branch.py acquire \
+     --repo kas1987/Chromatic_Governance --pr-number 1 \
+     --holder "agent-dispatch-review-intake" \
+     --queue-item-id "<queue_id>" --ttl-minutes 30
+   ```
+2. **Patch and validate** (commit locally, run tests)
+3. **Push to branch**
+4. **Release lock**:
+   ```python
+   python .01_PDRs/scripts/lock_pr_branch.py release \
+     --repo kas1987/Chromatic_Governance --pr-number 1
+   ```
+
+See `.03_Harness Governance/03_PLAYBOOKS/MULTI_SESSION_SAFETY.md` for full collision safety procedures.

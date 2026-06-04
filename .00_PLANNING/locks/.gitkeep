@@ -1,0 +1,2 @@
+# Placeholder to ensure locks/ directory is tracked by git
+# Lock files (*.lock.json) are gitignored but directory structure is preserved
