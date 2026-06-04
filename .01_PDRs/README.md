@@ -257,13 +257,14 @@ The Chromatic harness routes subagent and LLM calls through a 5-tier provider st
 
 ### Current tier map
 
-| Tier | Provider | Model | When |
-|------|----------|-------|------|
-| T0 nano | Ollama local | `llama3.2:3b` | Tables, formatting, zero-judgment transforms |
-| T1 micro | Featherless | `NousResearch/Hermes-3-Llama-3.1-8B` | Scaffold, boilerplate, seed templates |
-| T2 small | OpenAI | `gpt-4o-mini` | Smoke tests, spec compliance, single-file PR review |
-| T3 medium | Gemini | `gemini-2.5-flash` | Debug, root cause, multi-file integration |
-| T4 large | Claude | `claude-sonnet-4-6` | Brainstorm, design, architecture — orchestrator default |
+| Tier | Name | Primary | Alts | When |
+|------|------|---------|------|------|
+| T0 nano | local | `llama3.2:3b` (Ollama) | `llama3.2:1b` | Tables, formatting, zero-judgment transforms |
+| T1 micro | Featherless swarm | `Qwen2.5-7B` · `Qwen2.5-14B` | `Qwen2.5-Coder-32B`, `Qwen2.5-72B` | Scaffold, boilerplate, seed templates; 4-unit concurrency |
+| T2 small | OpenAI fast | `gpt-4.1-nano` | `gpt-5-nano` | Structured transforms, single-file checks, cheap bulk |
+| T3 medium | OpenAI / Gemini | `gpt-4o-mini` · `gemini-2.5-flash` | `gpt-4.1-mini`, `o3-mini`, `gpt-5-mini` | Debug, spec compliance, multi-file review |
+| T4 large | OpenAI / Gemini | `gpt-4o` · `gpt-5` · `gpt-5.5` | `o4-mini`, `o3`, `gemini-2.5-pro` | Design, architecture, deep reasoning |
+| T5 orchestrator | Claude native | `claude-sonnet-4-6` | `claude-opus-4-8` *(deferred)* | Session orchestrator — not dispatched via API yet |
 
 ### Status
 
