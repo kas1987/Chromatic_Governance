@@ -1,6 +1,7 @@
 ---
 name: github-org-governance-manager
 description: Plan, audit, and standardize GitHub organization and repository governance — including personal-to-org repo transfers, branch protection, rulesets, team permissions, labels, repository settings, secrets review, and post-transfer validation. Use when moving repos into an organization, auditing existing permissions, generating settings checklists, or producing migration runbooks.
+skill_api_version: 1
 ---
 
 # GitHub Org Governance Manager

@@ -1,6 +1,7 @@
 ---
 name: chromatic-memory-registrar
 description: Capture durable project memory after significant decisions, repo changes, PDR completions, migrations, agent dispatches, audits, or implementation cycles. Use when updating project state, decision registers, changelogs, memory logs, source-of-truth maps, or next actions across Claude, Codex, Cursor, Gemini, GitHub, and local repositories.
+skill_api_version: 1
 ---
 
 # Chromatic Memory Registrar

@@ -1,6 +1,7 @@
 ---
 name: context-monitor
 description: Track, report, and manage context window and token usage across models and agent sessions. Use when diagnosing slow responses, planning context-heavy tasks, monitoring subagent token budgets, logging usage across sessions, or deciding when to invoke context-prune, handoff, or model switching.
+skill_api_version: 1
 ---
 
 # Context Monitor

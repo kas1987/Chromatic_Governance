@@ -1,6 +1,7 @@
 ---
 name: repo-pdr-swarm-router
 description: Ingest, decompose, govern, and route large repository PDR packages into agent-routable work queues with manifests, decision registers, risk registers, governance gates, and swarm-ready handoff packets. Use when the user provides repo PDR packages, audit bundles, project design records, implementation plans, backlog packs, or governance artifacts and wants them parsed, scored, split into agent assignments, and dispatched through the Chromatic router.
+skill_api_version: 1
 ---
 
 # Repo PDR Swarm Router

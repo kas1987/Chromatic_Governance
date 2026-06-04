@@ -1,6 +1,7 @@
 ---
 name: llm-ide-handoff-packager
 description: Convert PDRs, repo-router dispatch boards, project queues, audit findings, and agent tasks into execution-ready handoff packages for Cursor, Codex, Claude, Gemini, GitHub Issues, and local LLM/IDE agents. Use when operationalizing plans across other LLMs or IDEs, creating implementation briefs, generating target-specific task files, or packaging repo work into portable handoffs with allowed actions, blocked actions, acceptance criteria, and stop conditions.
+skill_api_version: 1
 ---
 
 # LLM / IDE Handoff Packager

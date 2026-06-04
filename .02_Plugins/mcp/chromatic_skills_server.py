@@ -13,8 +13,11 @@ Run:
 """
 from __future__ import annotations
 
+import json
+import os
 import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -23,6 +26,9 @@ from mcp.server.fastmcp import FastMCP
 
 # Root of the .02_Plugins directory — one level up from this file
 PLUGINS_ROOT = Path(__file__).resolve().parent.parent
+
+# Invocation log — written on every get_skill call; gitignored
+_INVOCATION_LOG = Path(__file__).resolve().parents[2] / ".agents" / "logs" / "skill-invocation.jsonl"
 
 mcp = FastMCP(
     "chromatic-skills",
@@ -93,6 +99,24 @@ def _reset_index() -> None:
     _SKILL_INDEX = []
 
 
+def _log_invocation(skill: str, family: str, outcome: str) -> None:
+    """Append a JSONL entry to .agents/logs/skill-invocation.jsonl. Fails silently."""
+    try:
+        _INVOCATION_LOG.parent.mkdir(parents=True, exist_ok=True)
+        entry = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "session_id": os.environ.get("CLAUDE_SESSION_ID", "unknown"),
+            "model": os.environ.get("CLAUDE_MODEL", "unknown"),
+            "skill": skill,
+            "family": family,
+            "outcome": outcome,
+        }
+        with _INVOCATION_LOG.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(entry) + "\n")
+    except Exception:
+        pass
+
+
 # ---------------------------------------------------------------------------
 # MCP tools
 # ---------------------------------------------------------------------------
@@ -139,9 +163,13 @@ def get_skill(skill_name: str) -> str:
         dir_match = Path(entry["path"]).parent.name.lower() == needle
         if name_match or dir_match:
             try:
-                return Path(entry["path"]).read_text(encoding="utf-8")
+                content = Path(entry["path"]).read_text(encoding="utf-8")
+                _log_invocation(entry["name"], entry["family"], "found")
+                return content
             except OSError as exc:
+                _log_invocation(entry["name"], entry["family"], "read_error")
                 return f"Error reading skill '{skill_name}': {exc}"
+    _log_invocation(skill_name, "unknown", "not_found")
     return (
         f"Skill '{skill_name}' not found. "
         f"Call list_skills() to see available skills."
