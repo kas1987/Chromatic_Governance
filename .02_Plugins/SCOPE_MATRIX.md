@@ -15,6 +15,18 @@
 | Incident / production issue | `observability-family`, `release-family`, `rpi`, `security-family` | Triage first, then rollback or patch. |
 | Plugin ecosystem maintenance | `toolchain-family`, `docs-family`, `qa-eval-family`, `agent-governance-family` | Audit structure, docs, skill quality, and permissions. |
 
+## Additional mission types (v0.15.0)
+
+| Work scope | Recommended plugins | Notes |
+|---|---|---|
+| PDR intake / agent routing | `agent-governance-family`, `context-family` | Run `repo-pdr-swarm-router`, then `chromatic-memory-registrar` |
+| Cross-LLM / IDE handoff | `toolchain-family`, `context-family` | Use `llm-ide-handoff-packager` + `chromatic-memory-registrar` |
+| GitHub org governance | `agent-governance-family`, `security-family` | Use `github-org-governance-manager`; plan before executing |
+| Context budget check | `observability-family` | Run `context-monitor` before loading a 3rd+ family |
+| Durable memory update | `context-family` | Run `chromatic-memory-registrar` after major events |
+
 ## Loading rule
 
-Default to 2-4 plugin families per mission. More than 5 loaded families should be treated as a sign that scope needs splitting.
+Default to 2–4 plugin families per mission. More than 5 loaded families should be treated as a sign that scope needs splitting.
+
+Before loading a 3rd or subsequent family, run `/context-monitor` to confirm budget. See `AGENT_GUIDE.md` for the full on-demand loading protocol.

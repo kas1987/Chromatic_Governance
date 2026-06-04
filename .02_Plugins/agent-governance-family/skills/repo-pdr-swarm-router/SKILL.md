@@ -13,7 +13,13 @@ Never treat a Repo PDR as a normal document summary. Always convert it into a co
 
 ## Core procedure
 
-1. **Intake the package.** Inspect the supplied PDR using available file, connector, repo, or archive tools. Build an artifact inventory: all files, paths, inferred purpose, artifact class, and evidence status.
+1. **Intake the package.** Inspect the supplied PDR using available file, connector, repo, or archive tools. Build an artifact inventory: all files, paths, inferred purpose, artifact class, and evidence status. For large packages with many files, optionally run the intake script:
+
+```bash
+python agent-governance-family/scripts/parse_repo_pdr.py --input <path> --output <output-dir>
+```
+
+The script produces a manifest, queue seed, risk register, evidence map, and dispatch board.
 2. **Classify every artifact** by role: requirements, decisions, constraints, risks, tasks, governance, or reference material.
 3. **Extract and register** decisions already made, unresolved decisions, contradictions, non-negotiables, router rules, and runtime limits into a `decision_register` and `constraint_register`.
 4. **Build the work queue.** Convert actionable tasks into queue items with `task_id`, dependencies, owner, priority, and stop conditions.
