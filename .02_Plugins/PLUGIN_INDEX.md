@@ -2,9 +2,9 @@
 
 | Plugin | Skills | Primary purpose |
 |---|---:|---|
-| `rpi` | 16 | Full research, planning, implementation, review, and iteration lifecycle for scoped delivery work. |
-| `toolchain-family` | 8 | Infrastructure and authoring utilities: agent workspaces, handoffs, harvesting, repo operations, and LLM/IDE handoff packaging. |
-| `context-family` | 9 | Context, memory, decision log, source-of-truth, session handoff, and durable memory registration. |
+| `rpi` | 17 | Full research, planning, implementation, review, and iteration lifecycle for scoped delivery work. |
+| `toolchain-family` | 11 | Infrastructure and authoring utilities: agent workspaces, handoffs, harvesting, repo operations, LLM/IDE handoff packaging, and repo tree governance. |
+| `context-family` | 10 | Context, memory, decision log, source-of-truth, session handoff, durable memory registration, and cognitive stack triage. |
 | `security-family` | 8 | Security, trust-boundary, secrets, prompt-injection, and permission review controls for agentic development. |
 | `architecture-family` | 8 | Design governance for architecture, interfaces, module boundaries, ADRs, migrations, and technical debt. |
 | `qa-eval-family` | 8 | Testing, acceptance criteria, regression harnesses, LLM/agent evals, golden cases, and failure analysis. |
@@ -16,7 +16,7 @@
 | `data-research-family` | 8 | Evidence gathering, source scans, benchmarks, documentation digests, API change watches, and citation audits. |
 | `frontend-family` | 10 | Frontend/UI-UX delivery, asset extraction, CSS/Tailwind/component systems, dashboards, local apps, and 3D assets. |
 
-**Total: 120 skills across 13 families** (v0.15.0)
+**Total: 123 skills across 13 families** (v0.16.0)
 
 ---
 
@@ -75,14 +75,19 @@
 | `harvest-insights` | Extract insights from logs |
 | `harvest` | Harvest data from repos |
 | `plugin` | Create or validate a plugin |
+| `repo-tree-architect` | Audit and redesign repo folder structure and root hygiene |
 | `status` | Repo status report |
 | `system-audit` | System health audit |
+| `tree-repo-auditor` | Enforce numbered folder naming standards |
 | `using-git-worktrees` | Git worktree guidance |
 | `llm-ide-handoff-packager` | Convert outputs to Cursor/Codex/Claude/Gemini/Issue handoffs |
+| `writing-skills` | Skill authoring support |
 
 ### context-family
 | Skill | Trigger |
 |---|---|
+| `chromatic-memory-registrar` | Register durable decisions, state, and changelogs |
+| `cognitive-stack-architect` | Triage scattered thinking into a structured decision stack |
 | `context-map` | Audit current project state |
 | `context-prune` | Remove stale context |
 | `decision-log` | Record decisions with evidence |
@@ -91,7 +96,6 @@
 | `onboarding-brief` | Quick project onboarding |
 | `session-brief` | Compact session summary |
 | `source-of-truth-audit` | Verify authoritative sources |
-| `chromatic-memory-registrar` | Register durable decisions, state, and changelogs |
 
 ### observability-family
 | Skill | Trigger |

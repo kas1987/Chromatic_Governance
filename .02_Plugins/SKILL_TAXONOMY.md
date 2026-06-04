@@ -1,7 +1,7 @@
 # Chromatic Skill Taxonomy
 
-**Version:** 0.15.0  
-**Skills:** 118 across 13 families  
+**Version:** 0.16.0  
+**Skills:** 123 across 13 families  
 **Governance standard:** One skill, one primary trigger, one output contract.
 
 ---
@@ -124,6 +124,7 @@ Apply to preserve state, prevent context loss, and enable clean session hand-off
 | Skill | Family | Primary trigger |
 |---|---|---|
 | `chromatic-memory-registrar` | context | "Save durable decisions, project state, and changelogs after major events" |
+| `cognitive-stack-architect` | context | "Too many threads; triage scattered thinking into a prioritised decision stack" |
 | `memory-sync` | context | "Sync context into durable repo files" |
 | `decision-log` | context | "Record decisions with evidence" |
 | `source-of-truth-audit` | context | "Verify authoritative sources" |
@@ -183,11 +184,13 @@ Support tools used during any tier. Load individually as needed.
 
 | Skill | Family | Primary trigger |
 |---|---|---|
+| `repo-tree-architect` | toolchain | "Audit and redesign repo folder structure and root hygiene" |
 | `status` | toolchain | "Repo status report" |
 | `system-audit` | toolchain | "System health audit" |
 | `harvest` | toolchain | "Harvest data from repos" |
 | `harvest-insights` | toolchain | "Extract insights from logs" |
 | `plugin` | toolchain | "Create or validate a plugin" |
+| `tree-repo-auditor` | toolchain | "Enforce numbered folder naming standards" |
 | `using-git-worktrees` | toolchain | "Git worktree guidance" |
 | `writing-skills` | toolchain | "Skill authoring support" |
 

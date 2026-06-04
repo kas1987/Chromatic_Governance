@@ -1,6 +1,6 @@
 # Skill Bridge Map — Poly-Chromatic Operating Skills ↔ Plugin Families
 
-**Version:** 0.15.0  
+**Version:** 0.16.0  
 **Purpose:** Resolve ambiguity for agents that know both the Poly-Chromatic operating-skill stack (used in ChatGPT and cross-LLM contexts) and the Claude Code plugin-family ecosystem. These are two separate activation systems; this document maps their overlaps, gaps, and guidance.
 
 ---
@@ -54,16 +54,16 @@
 ---
 
 ### `repo-tree-architect`
-- **Plugin equivalent:** None
-- **Relationship:** gap
-- **Guidance:** This skill audits and redesigns repo trees, root hygiene, scattered files, and folder structure. No equivalent exists in the plugin families. When working in Claude Code, use `toolchain-family/system-audit` for broad health checks and `docs-family/doc-audit` for documentation structure, but neither covers repo-tree redesign. **Candidate for a new skill in `toolchain-family`** (PDR-003 backlog).
+- **Plugin equivalent:** `toolchain-family/repo-tree-architect`
+- **Relationship:** exact
+- **Guidance:** Integrated into `toolchain-family` in v0.16.0 (PDR-003). Use `/repo-tree-architect` in Claude Code sessions when `toolchain-family` is loaded. Audits and redesigns repo folder structure, root hygiene, and naming. Produces a migration plan using `git mv` — use `rpi/implement` to execute.
 
 ---
 
 ### `tree-repo-auditor`
-- **Plugin equivalent:** None
-- **Relationship:** gap
-- **Guidance:** This skill enforces numbered folder and subfolder naming standards. No equivalent in the plugin families. Use `toolchain-family/system-audit` as a partial substitute. **Candidate for a new skill in `toolchain-family`** (PDR-003 backlog).
+- **Plugin equivalent:** `toolchain-family/tree-repo-auditor`
+- **Relationship:** exact
+- **Guidance:** Integrated into `toolchain-family` in v0.16.0 (PDR-003). Use `/tree-repo-auditor` in Claude Code sessions when `toolchain-family` is loaded. Audits numbered folder naming conventions (e.g. `.01_`, `01-`), detects gaps and duplicates, and produces rename operations. Pairs with `/repo-tree-architect` for full structural governance.
 
 ---
 
@@ -89,9 +89,9 @@
 ---
 
 ### `cognitive-stack-architect`
-- **Plugin equivalent:** `product-family/prioritize` + `rpi/discovery`
-- **Relationship:** partial
-- **Guidance:** `cognitive-stack-architect` organizes scattered nonlinear thinking into structured decisions, priorities, and handoffs — specifically useful when the project is ambiguous or overloaded. In the plugin ecosystem, `rpi/discovery` maps unknowns before planning, and `product-family/prioritize` creates a structured ranking. Neither fully replicates the "triage scattered context" framing. **Candidate for a new skill in `context-family`** (PDR-003 backlog) or `product-family`.
+- **Plugin equivalent:** `context-family/cognitive-stack-architect`
+- **Relationship:** exact
+- **Guidance:** Integrated into `context-family` in v0.16.0 (PDR-003). Use `/cognitive-stack-architect` in Claude Code sessions when `context-family` is loaded. Triages scattered, nonlinear, or overloaded project thinking into a DECIDE-framework decision stack with priority scoring and action lanes. Pairs with `/handoff-pack` when context is high or session must end.
 
 ---
 
@@ -125,16 +125,14 @@
 | `queue-dispatcher` | partial | `agent-governance/delegate` + `agent-governance/parallel-plan` |
 | `chromatic-systems-auditor` | partial | `qa-eval/failure-analysis` + `observability/health-report` + `security/threat-model` |
 | `fusion-computer` | partial | `rpi/implement` + `qa-eval/eval-suite` + `release/deploy-checklist` |
-| `repo-tree-architect` | **gap** | None — PDR-003 candidate |
-| `tree-repo-auditor` | **gap** | None — PDR-003 candidate |
+| `repo-tree-architect` | **exact** | `toolchain-family/repo-tree-architect` |
+| `tree-repo-auditor` | **exact** | `toolchain-family/tree-repo-auditor` |
 | `skill-agent-utilization-auditor` | partial | `toolchain/system-audit` |
 | `github-repo-scout` | partial | `data-research/source-scan` + `data-research/benchmark-compare` |
 | `inventory-matrix-manager` | partial | `context/context-map` + `toolchain/harvest` |
-| `cognitive-stack-architect` | partial | `rpi/discovery` + `product/prioritize` — PDR-003 candidate |
+| `cognitive-stack-architect` | **exact** | `context-family/cognitive-stack-architect` |
 | `llm-ide-handoff-packager` | **exact** | `toolchain-family/llm-ide-handoff-packager` |
 | `chromatic-memory-registrar` | **exact** | `context-family/chromatic-memory-registrar` |
 | `github-org-governance-manager` | **exact** | `agent-governance-family/github-org-governance-manager` |
 
-**4 exact matches · 7 partial matches · 3 gaps**
-
-Gaps (`repo-tree-architect`, `tree-repo-auditor`, `cognitive-stack-architect`) are tracked in PDR-003.
+**7 exact matches · 7 partial matches · 0 gaps** (PDR-003 complete)

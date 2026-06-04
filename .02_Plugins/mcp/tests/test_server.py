@@ -74,7 +74,7 @@ class TestBuildIndex:
 
     def test_skill_count_matches_expected(self):
         index = srv._build_index(PLUGINS_ROOT)
-        assert len(index) == 120, f"Expected 120 skills, got {len(index)}"
+        assert len(index) == 123, f"Expected 123 skills, got {len(index)}"
 
     def test_no_duplicate_names(self):
         names = [e["name"] for e in srv._build_index(PLUGINS_ROOT)]
@@ -92,11 +92,11 @@ class TestBuildIndex:
 class TestListSkills:
     def test_returns_all_skills_when_no_filter(self):
         skills = srv.list_skills()
-        assert len(skills) == 120
+        assert len(skills) == 123
 
     def test_filters_by_exact_family(self):
         skills = srv.list_skills(family="context-family")
-        assert len(skills) == 9
+        assert len(skills) == 10
         assert all(s["family"] == "context-family" for s in skills)
 
     def test_filters_by_partial_family_name(self):
@@ -147,6 +147,21 @@ class TestGetSkill:
     def test_repo_pdr_swarm_router_is_findable(self):
         content = srv.get_skill("repo-pdr-swarm-router")
         assert "not found" not in content.lower()
+
+    def test_repo_tree_architect_is_findable(self):
+        content = srv.get_skill("repo-tree-architect")
+        assert "not found" not in content.lower()
+        assert "## Core procedure" in content
+
+    def test_tree_repo_auditor_is_findable(self):
+        content = srv.get_skill("tree-repo-auditor")
+        assert "not found" not in content.lower()
+        assert "## Core procedure" in content
+
+    def test_cognitive_stack_architect_is_findable(self):
+        content = srv.get_skill("cognitive-stack-architect")
+        assert "not found" not in content.lower()
+        assert "## Core procedure" in content
 
 
 # ---------------------------------------------------------------------------
