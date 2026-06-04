@@ -26,10 +26,10 @@ $results = @()
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
 # Color helpers
-function Write-Success { Write-Host "[✅]" -ForegroundColor Green -NoNewline; Write-Host " $args" }
-function Write-Warning { Write-Host "[⚠️ ]" -ForegroundColor Yellow -NoNewline; Write-Host " $args" }
-function Write-Error { Write-Host "[❌]" -ForegroundColor Red -NoNewline; Write-Host " $args" }
-function Write-Skip { Write-Host "[⊘ ]" -ForegroundColor Gray -NoNewline; Write-Host " $args" }
+function Write-Success { Write-Host "[OK]" -ForegroundColor Green -NoNewline; Write-Host " $args" }
+function Write-Warning { Write-Host "[!]" -ForegroundColor Yellow -NoNewline; Write-Host " $args" }
+function Write-Error { Write-Host "[X]" -ForegroundColor Red -NoNewline; Write-Host " $args" }
+function Write-Skip { Write-Host "[-]" -ForegroundColor Gray -NoNewline; Write-Host " $args" }
 
 # Test Result Record
 function New-TestResult {
@@ -40,19 +40,19 @@ function New-TestResult {
         [long]$DurationMs = 0
     )
     return @{
-        Component   = $Component
-        Status      = $Status
-        Notes       = $Notes
-        DurationMs  = $DurationMs
-        Timestamp   = Get-Date -Format "o"
+        Component  = $Component
+        Status     = $Status
+        Notes      = $Notes
+        DurationMs = $DurationMs
+        Timestamp  = Get-Date -Format "o"
     }
 }
 
 Write-Host ""
-Write-Host "═══════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host "Infrastructure Test Suite" -ForegroundColor Cyan
 Write-Host "Started: $timestamp" -ForegroundColor Cyan
-Write-Host "═══════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
 
 # ─────────────────────────────────────────────────────────────
@@ -68,11 +68,13 @@ try {
     if ($models) {
         Write-Success "T0 Ollama llama3.2:3b available"
         $results += New-TestResult -Component "T0 Ollama llama3.2:3b" -Status "Ready" -Notes "Model loaded and accessible" -DurationMs $ollamaDuration
-    } else {
+    }
+    else {
         Write-Warning "T0 Ollama "
         $results += New-TestResult -Component "T0 Ollama" -Status "Missing" -Notes "llama3.2:3b not found in ollama list" -DurationMs $ollamaDuration
     }
-} catch {
+}
+catch {
     Write-Error "T0 Ollama service check failed: $_"
     $results += New-TestResult -Component "T0 Ollama" -Status "Unreachable" -Notes "ollama CLI error: $_"
 }
@@ -98,11 +100,13 @@ try {
     if ($featherResponse.choices -and $featherResponse.choices[0].message.content -like "*OK*") {
         Write-Success "T1 Featherless responsive (${featherDuration}ms)"
         $results += New-TestResult -Component "T1 Featherless Hermes-3-8B" -Status "Live" -Notes "API responsive, concurrent calls supported" -DurationMs $featherDuration
-    } else {
+    }
+    else {
         Write-Warning "T1 Featherless response malformed"
         $results += New-TestResult -Component "T1 Featherless Hermes-3-8B" -Status "Degraded" -Notes "Unexpected response structure" -DurationMs $featherDuration
     }
-} catch {
+}
+catch {
     Write-Error "T1 Featherless test failed: $_"
     $results += New-TestResult -Component "T1 Featherless Hermes-3-8B" -Status "Error" -Notes "API unreachable or misconfigured"
 }
@@ -126,15 +130,18 @@ try {
     if ($geminiResponse.candidates -and $geminiResponse.candidates[0].content.parts[0].text -like "*OK*") {
         Write-Success "T3 Gemini responsive (${geminiDuration}ms)"
         $results += New-TestResult -Component "T3 Gemini gemini-2.5-flash" -Status "Live" -Notes "Cloud endpoint healthy, low latency" -DurationMs $geminiDuration
-    } else {
+    }
+    else {
         Write-Warning "T3 Gemini response malformed"
         $results += New-TestResult -Component "T3 Gemini gemini-2.5-flash" -Status "Degraded" -Notes "Unexpected response structure" -DurationMs $geminiDuration
     }
-} catch {
+}
+catch {
     if ($null -eq $env:GEMINI_API_KEY) {
         Write-Skip "T3 Gemini (GEMINI_API_KEY not set; skipping)"
         $results += New-TestResult -Component "T3 Gemini gemini-2.5-flash" -Status "Skipped" -Notes "API key not configured"
-    } else {
+    }
+    else {
         Write-Error "T3 Gemini test failed: $_"
         $results += New-TestResult -Component "T3 Gemini gemini-2.5-flash" -Status "Error" -Notes "API unreachable or auth failed"
     }
@@ -149,7 +156,8 @@ $routerPath = ".\.claude\hooks\model-router.sh"
 if (Test-Path $routerPath) {
     Write-Success "model-router.sh present (v2)"
     $results += New-TestResult -Component "model-router.sh hook" -Status "Present" -Notes "v2 hook wired in settings.json"
-} else {
+}
+else {
     Write-Warning "model-router.sh not found at $routerPath"
     $results += New-TestResult -Component "model-router.sh hook" -Status "Missing" -Notes "Hook path: $routerPath"
 }
@@ -165,11 +173,13 @@ if (Test-Path $configPath) {
     if ($configContent -match "provider|tier|model") {
         Write-Success "Provider configuration found"
         $results += New-TestResult -Component "provider-tiers configuration" -Status "Valid" -Notes "v3 with concurrency metadata detected"
-    } else {
+    }
+    else {
         Write-Warning "Provider config found but may be incomplete"
         $results += New-TestResult -Component "provider-tiers configuration" -Status "Incomplete" -Notes "Missing expected structure"
     }
-} else {
+}
+else {
     Write-Warning "Provider config not found at $configPath"
     $results += New-TestResult -Component "provider-tiers configuration" -Status "Missing" -Notes "Configuration file not detected"
 }
@@ -183,7 +193,8 @@ $taxonomyScript = ".\taxonomy_sync.py"
 if (Test-Path $taxonomyScript) {
     Write-Success "taxonomy_sync.py found (11 nodes, 5 edges → taxonomy.db)"
     $results += New-TestResult -Component "taxonomy_sync.py" -Status "Working" -Notes "11 nodes, 5 edges synced to taxonomy.db"
-} else {
+}
+else {
     Write-Warning "taxonomy_sync.py not found"
     $results += New-TestResult -Component "taxonomy_sync.py" -Status "Missing" -Notes "Script not located"
 }
@@ -215,11 +226,13 @@ if ($env:FEATHERLESS_API_KEY) {
     if ($results1 -and $results2) {
         Write-Success "Featherless 2× concurrency confirmed (${concurrentDuration}ms parallel)"
         $results += New-TestResult -Component "Featherless 2× concurrency" -Status "Confirmed" -Notes "Both jobs completed in parallel" -DurationMs $concurrentDuration
-    } else {
+    }
+    else {
         Write-Warning "Concurrent calls incomplete"
         $results += New-TestResult -Component "Featherless 2× concurrency" -Status "Degraded" -Notes "One or both requests failed" -DurationMs $concurrentDuration
     }
-} else {
+}
+else {
     Write-Skip "Concurrent test (requires FEATHERLESS_API_KEY)"
     $results += New-TestResult -Component "Featherless 2× concurrency" -Status "Skipped" -Notes "API key not configured"
 }
@@ -228,9 +241,9 @@ if ($env:FEATHERLESS_API_KEY) {
 # Summary Table
 # ─────────────────────────────────────────────────────────────
 Write-Host ""
-Write-Host "═══════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host "Test Results Summary" -ForegroundColor Cyan
-Write-Host "═══════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
 
 $table = $results | Select-Object Component, Status, Notes | Format-Table -AutoSize -Wrap
@@ -250,9 +263,10 @@ Write-Success "Results exported to: $exportPath"
 $failedTests = $results | Where-Object { $_.Status -match "Error|Unreachable|Missing|Degraded" }
 if ($failedTests) {
     Write-Host ""
-    Write-Host "⚠️  Some tests failed or were skipped. Review output above." -ForegroundColor Yellow
+    Write-Host "[!] Some tests failed or were skipped. Review output above." -ForegroundColor Yellow
     exit 1
-} else {
+}
+else {
     Write-Host ""
     Write-Success "All infrastructure tests passed!"
     exit 0

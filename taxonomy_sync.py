@@ -10,11 +10,11 @@ Usage:
     python taxonomy_sync.py --export json
 """
 
-import sqlite3
 import json
-from pathlib import Path
+import sqlite3
 from datetime import datetime
-from typing import List, Dict, Tuple
+from pathlib import Path
+from typing import Dict, List, Tuple
 
 # Configuration
 WORKSPACE_ROOT = Path(__file__).parent
@@ -175,11 +175,11 @@ def main():
     
     print(f"Syncing {len(TAXONOMY_NODES)} nodes...")
     node_count = sync_nodes(conn)
-    print(f"  ✓ {node_count} nodes synced")
+    print(f"  [+] {node_count} nodes synced")
     
     print(f"Syncing {len(TAXONOMY_EDGES)} edges...")
     edge_count = sync_edges(conn)
-    print(f"  ✓ {edge_count} edges synced")
+    print(f"  [+] {edge_count} edges synced")
     
     print("Updating metadata...")
     update_metadata(conn)
@@ -189,11 +189,11 @@ def main():
     json_path = WORKSPACE_ROOT / "taxonomy.json"
     with open(json_path, "w") as f:
         json.dump(summary, f, indent=2)
-    print(f"  ✓ JSON export: {json_path}")
+    print(f"  [+] JSON export: {json_path}")
     
     conn.close()
     
-    print(f"\n✅ Taxonomy sync complete!")
+    print(f"\n[OK] Taxonomy sync complete!")
     print(f"   Database: {DB_PATH}")
     print(f"   Nodes: {node_count} | Edges: {edge_count}")
 
