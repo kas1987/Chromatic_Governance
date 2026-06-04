@@ -44,6 +44,9 @@ htmlcov/
 
 # Agent runtime logs (JSONL entries; not source-controlled by default)
 .agents/logs/*.jsonl
+# PDR intake runtime state (SQLite + JSONL)
+.01_PDRs/.intake/*.db
+.01_PDRs/.intake/*.jsonl
 # Review intake: lock files and runtime logs are transient; findings log and queue are tracked
 .agents/review-intake/locks/*.json
 .agents/review-intake/logs/*.jsonl

@@ -134,6 +134,24 @@ Use the automated promotion workflow:
 - Moving a PDR from Pre-flight to In-Process is blocked unless extracted content exists and is non-empty.
 - `python pdr_sync.py sync` auto-registers untracked ZIP files into `artifact_backlog` in `PDR_REGISTRY.json`.
 
+### Automated ZIP Intake Review
+
+- `pdr_zip_intake.py` scans `.01_PDRs/*.zip` and auto-reviews integrity (`zipfile` validation + file count).
+- Historical/current/new ZIP states are recorded in SQLite at `.01_PDRs/.intake/zip_intake.db`.
+- Event stream is logged to `.01_PDRs/.intake/zip_intake-log.jsonl`.
+- Pipeline stage/status is correlated from `PDR_REGISTRY.json` (`artifact_backlog` and `pdrs`).
+- Workflow `.github/workflows/pdr-zip-intake.yml` runs automatically on ZIP drops.
+
+Manual run:
+
+```bash
+cd .01_PDRs
+python pdr_zip_intake.py
+
+# Test a single ZIP
+python pdr_zip_intake.py --zip-name repo-pdr-swarm-router.zip
+```
+
 ### Allowed Transitions
 
 | From State | Allowed Transitions |
