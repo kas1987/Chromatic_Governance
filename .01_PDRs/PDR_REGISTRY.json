@@ -171,11 +171,11 @@
       "id": "PDR-005",
       "title": "n8n Intake Orchestration",
       "description": "Phased n8n orchestration for ZIP intake, registry-aware routing, and governed handoff automation",
-      "status": "Backlog",
+      "status": "In-Process",
       "phase": 1,
       "owner": "Kas/Claude",
       "created_at": "2026-06-04T00:00:00Z",
-      "updated_at": "2026-06-04T00:00:00Z",
+      "updated_at": "2026-06-04T23:00:00Z",
       "file_path": ".01_PDRs\\.01_Backlog\\PDR-005-n8n-intake-orchestration.md",
       "transitions": [
         {
@@ -184,6 +184,13 @@
           "timestamp": "2026-06-04T00:00:00Z",
           "actor": "Claude",
           "reason": "Created per request for phased n8n integration planning"
+        },
+        {
+          "from": "Backlog",
+          "to": "In-Process",
+          "timestamp": "2026-06-04T23:00:00Z",
+          "actor": "Claude",
+          "reason": "Phase 1 (intake_event_bridge.py) and Phase 2 (registry_router.py) implemented with unit tests"
         }
       ],
       "related_issues": [],
@@ -202,7 +209,7 @@
         "No direct In-Process transition without Pre-flight readiness",
         "Design approved for Pre-flight"
       ],
-      "completion_percentage": 10
+      "completion_percentage": 40
     }
   ],
   "status_workflow": {
