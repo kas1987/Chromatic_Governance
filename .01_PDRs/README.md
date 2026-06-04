@@ -152,6 +152,42 @@ python pdr_zip_intake.py
 python pdr_zip_intake.py --zip-name repo-pdr-swarm-router.zip
 ```
 
+### GPT ZIP Drop Automation (Local + Repo)
+
+If ZIPs are coming from ChatGPT (web or desktop), you have two easy options:
+
+1. **Easiest: set ChatGPT/browser download folder to `.01_PDRs` directly**
+  - Drop/download ZIP files straight into `.01_PDRs/`
+  - Run local watcher for immediate intake:
+
+```powershell
+cd .01_PDRs
+./start_zip_drop_watcher.ps1
+```
+
+2. **Keep normal Downloads folder, then import automatically**
+  - Import all ZIPs from Downloads into `.01_PDRs` and intake each one:
+
+```powershell
+cd .01_PDRs
+python pdr_zip_ingest.py import --source-dir "$env:USERPROFILE\Downloads"
+
+# Move instead of copy
+python pdr_zip_ingest.py import --source-dir "$env:USERPROFILE\Downloads" --move
+```
+
+3. **Repo-side automation (GitHub Actions)**
+  - Once ZIPs are committed/pushed, `.github/workflows/pdr-zip-intake.yml` runs automatically.
+  - This is event-based on push; local-only drops do not trigger GitHub Actions until pushed.
+
+The local helper script supports three modes:
+
+```powershell
+python pdr_zip_ingest.py once
+python pdr_zip_ingest.py watch --interval 5
+python pdr_zip_ingest.py import --source-dir "$env:USERPROFILE\Downloads"
+```
+
 ### Allowed Transitions
 
 | From State | Allowed Transitions |
