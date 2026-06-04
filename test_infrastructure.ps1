@@ -148,18 +148,26 @@ catch {
 }
 
 # ─────────────────────────────────────────────────────────────
-# Test 4: Model Router Hook
+# Test 4: Model Route Selector (standalone CLI helper, NOT a Claude Code hook)
 # ─────────────────────────────────────────────────────────────
-Write-Host "Testing Router Hook..." -ForegroundColor Blue
+Write-Host "Testing Route Selector..." -ForegroundColor Blue
 
 $routerPath = ".\.claude\hooks\model-router.sh"
 if (Test-Path $routerPath) {
-    Write-Success "model-router.sh present (v2)"
-    $results += New-TestResult -Component "model-router.sh hook" -Status "Present" -Notes "v2 hook wired in settings.json"
+    # Assert it actually selects a route, not merely that the file exists.
+    $route = (& bash $routerPath "medium" "5000" "false") 2>$null
+    if ($route -match '^[a-z_]+:.+') {
+        Write-Success "model-router.sh selects a route: $route"
+        $results += New-TestResult -Component "model-router.sh (CLI selector)" -Status "Functional" -Notes "Standalone CLI helper; NOT wired as a settings.json hook (by design)"
+    }
+    else {
+        Write-Warning "model-router.sh present but did not return a provider:model route"
+        $results += New-TestResult -Component "model-router.sh (CLI selector)" -Status "Broken" -Notes "Output: '$route'"
+    }
 }
 else {
     Write-Warning "model-router.sh not found at $routerPath"
-    $results += New-TestResult -Component "model-router.sh hook" -Status "Missing" -Notes "Hook path: $routerPath"
+    $results += New-TestResult -Component "model-router.sh (CLI selector)" -Status "Missing" -Notes "Path: $routerPath"
 }
 
 # ─────────────────────────────────────────────────────────────

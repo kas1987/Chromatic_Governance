@@ -62,3 +62,12 @@ htmlcov/
 # Transient local plugin/runtime artifacts
 .02_Plugins/**/.orphaned_at
 .03_Harness Governance/config/providers.yaml
+
+# Generated SQLite taxonomy DBs — regenerated from JSON source of truth via
+# taxonomy_sync.py. Tracking them as binary blobs causes merge conflicts.
+# Fresh clones: run `python taxonomy_sync.py` (root) and
+# `python .01_PDRs/taxonomy_sync.py` to rebuild.
+/taxonomy.db
+/.01_PDRs/taxonomy.db
+*.db-wal
+*.db-shm

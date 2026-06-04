@@ -10,6 +10,10 @@ Usage:
     python taxonomy_sync.py --export json
 """
 
+# NOTE: This script is located at C:\.00_Governance\taxonomy_sync.py
+# and writes to: C:\.00_Governance\taxonomy.db (skill/provider taxonomy)
+# See also: .01_PDRs/taxonomy_sync.py which writes to .01_PDRs/taxonomy.db (artifact taxonomy)
+
 import json
 import sqlite3
 from datetime import datetime

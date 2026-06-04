@@ -60,13 +60,27 @@ CI/CD workflows, governance templates, automation rules.
 
 ---
 
+### 5. **Hook Safety Framework** (.claude/ + .agents/hooks/)
+Claude Code hook infrastructure for multi-agent safety and audit.
+
+**Key files:**
+- `.claude/settings.json` — Wires all 4 hook events (PreToolUse, PostToolUse, Stop, SubagentStop)
+- `.agents/hooks/pre_tool_guard.py` — Blocks destructive commands before execution (force-push, --no-verify, DROP TABLE)
+- `.agents/hooks/post_tool_audit.py` — Immutable audit trail of every tool call → `tool-audit.jsonl`
+- `.agents/hooks/subagent_stop.py` — Swarm coordination: advances queue item `in-progress` → `needs-review` on subagent stop
+- `.agents/hooks/validate_hooks.py` — 23-check validation suite (run: `python .agents/hooks/validate_hooks.py`)
+
+**When to use:** When configuring multi-agent swarms, auditing agent actions, or validating the safety net.
+
+---
+
 ## Critical Reference Files (Root)
 
 | File | Read First If… |
 |------|---|
 | `REPOSITORY_STRUCTURE_ANALYSIS.md` | You want full architecture overview |
 | `multi-session-safety-and-gemini-billing.md` | Multiple agents might run simultaneously |
-| `cross-provider-model-routing.md` | Routing decisions across T0-T4 providers |
+| `cross-provider-model-routing.md` | Routing decisions across T0-T3 providers (Ollama local/Cloud, Featherless, Gemini) |
 | `gemini-billing-audit.md` | Concerned about unexpected API charges |
 | `INFRASTRUCTURE_TEST_REPORT.md` | Validating provider endpoints |
 
@@ -215,6 +229,11 @@ permissions:
 → Run emergency unlock procedure in `03_PLAYBOOKS/MULTI_SESSION_SAFETY.md`
 → Verify no dispatcher processes are hanging
 
+### Hook guard blocking a command
+→ Review `.agents/hooks/pre_tool_guard.py` DESTRUCTIVE_PATTERNS and PROTECTED_BRANCHES
+→ Run `python .agents/hooks/validate_hooks.py` to confirm 23/23 checks pass
+→ Check `.agents/logs/tool-guard.jsonl` for the blocked command context
+
 ### Unexpected Gemini charges
 → Verify no long-lived API credentials in workspace
 → See `gemini-billing-audit.md` for audit findings
@@ -225,12 +244,12 @@ permissions:
 ## Key Principles
 
 1. **Policy as Code** — Rules enforced programmatically, not manual gates
-2. **Audit Everything** — Immutable logs of all agent actions
+2. **Audit Everything** — Immutable logs of all agent actions (tool-audit.jsonl, tool-guard.jsonl)
 3. **Least Privilege** — Agents start with no permissions
 4. **Graceful Degradation** — System continues if optional components fail
-5. **Safety First** — Multi-session collision detection, lock TTLs, recovery procedures
+5. **Safety First** — Multi-session collision detection, lock TTLs, recovery procedures, PreToolUse guard
 6. **Extensible** — Plugin architecture for domain-specific skills
-7. **Validated** — Schema validators on all critical data structures
+7. **Validated** — Schema validators on all critical data structures; 23-check hook suite
 
 ---
 

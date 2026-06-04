@@ -6,27 +6,36 @@ on:
   pull_request:
     branches: ["Main"]
 
+# Deny-by-default: this job only reads the repo and scans it.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Generate App token
         id: app-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
         continue-on-error: true
         with:
           client-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}  # pragma: allowlist secret
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token || github.token }}  # pragma: allowlist secret
       - name: Check for secrets
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Validate markdown
-        uses: DavidAnson/markdownlint-cli2-action@v16
+        uses: DavidAnson/markdownlint-cli2-action@b4c9feab76d8025d1e83c653fa3990936df0e6c8 # v16
         with:
           globs: "**/*.md"

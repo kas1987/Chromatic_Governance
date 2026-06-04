@@ -10,9 +10,15 @@ Usage:
     python taxonomy_sync.py --query "SELECT ..." # run a raw query
 """
 
+# NOTE: This script is located at C:\.00_Governance\.01_PDRs\taxonomy_sync.py
+# and writes to: C:\.00_Governance\.01_PDRs\taxonomy.db (artifact/PDR taxonomy)
+# See also: ../taxonomy_sync.py which writes to ../taxonomy.db (skill/provider taxonomy)
+
 import json
+import os
 import sqlite3
 import sys
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -186,14 +192,14 @@ def _upsert_node(cur, node):
 
 def sync(report=False, raw_query=None):
     try:
-        with open(TAXONOMY_PATH) as f:
+        with open(TAXONOMY_PATH, encoding="utf-8") as f:
             taxonomy = json.load(f)
     except (json.JSONDecodeError, FileNotFoundError) as e:
         print(f"ERROR reading {TAXONOMY_PATH}: {e}")
         sys.exit(1)
 
     try:
-        with open(EDGES_PATH) as f:
+        with open(EDGES_PATH, encoding="utf-8") as f:
             edges_data = json.load(f)
     except (json.JSONDecodeError, FileNotFoundError) as e:
         print(f"ERROR reading {EDGES_PATH}: {e}")
@@ -217,13 +223,31 @@ def sync(report=False, raw_query=None):
         node["priority_score"] = score
         node["is_blocked"] = blocked
 
-    # Write computed fields back to taxonomy JSON
+    # Write computed fields back to taxonomy JSON (atomic: temp + os.replace
+    # so a crash mid-write can't tear the declared source of truth).
     taxonomy["last_updated"] = datetime.now(timezone.utc).isoformat()
-    with open(TAXONOMY_PATH, "w") as f:
-        json.dump(taxonomy, f, indent=2)
+    fd, tmp_path = tempfile.mkstemp(
+        dir=str(TAXONOMY_PATH.parent),
+        prefix=f".{TAXONOMY_PATH.name}.",
+        suffix=".tmp",
+    )
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(taxonomy, f, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp_path, TAXONOMY_PATH)
+    except BaseException:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
 
-    # Sync to SQLite
-    con = sqlite3.connect(DB_PATH)
+    # Sync to SQLite (timeout so a concurrent watcher write doesn't instantly
+    # raise "database is locked"; WAL for better reader/writer concurrency).
+    con = sqlite3.connect(DB_PATH, timeout=30)
+    con.execute("PRAGMA journal_mode=WAL")
     cur = con.cursor()
     _create_schema(cur)
 
