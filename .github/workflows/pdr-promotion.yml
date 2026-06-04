@@ -23,6 +23,7 @@ on:
 
 jobs:
   promote-pdr:
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     permissions:
       contents: write

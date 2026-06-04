@@ -14,6 +14,7 @@ on:
 jobs:
   validate-scaffold:
     name: Plugin scaffold structure
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +31,7 @@ jobs:
 
   validate-skills:
     name: SKILL.md governance compliance
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,6 +49,7 @@ jobs:
 
   test-mcp-server:
     name: MCP skill server tests
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

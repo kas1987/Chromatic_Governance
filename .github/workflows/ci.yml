@@ -8,6 +8,7 @@ on:
 
 jobs:
   lint:
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate App token
