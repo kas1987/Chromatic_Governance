@@ -280,33 +280,65 @@ ollama pull qwen2.5-coder:14b   # best local coding model
 ollama list                      # verify
 ```
 
-### Concurrency limits
+### Hardware profiles
+
+**Laptop** — Intel Core Ultra 9 285H / 32 GB RAM / Intel Arc 140T (integrated GPU, shared VRAM)
+- Ollama: `llama3.2:1b`, `llama3.2:3b`, `nomic-embed-text` only — Arc 140T shares system RAM; 14B+ models degrade performance
+- `qwen2.5-coder:14b` is on disk but reserved for desktop; do not load on laptop
+- All inference >4B routes to Featherless or Ollama Cloud endpoints
+
+**Desktop** — profile TBD; discrete GPU expected to support 14B+ locally
+
+### Concurrency limits & retry strategy
 
 **Featherless Premium ($25/mo) — 4 total concurrency units**
 
-| Model size | Units used | Max simultaneous |
-|-----------|-----------|-----------------|
-| 7B–15B (e.g. `Hermes-3-Llama-3.1-8B`) | 1 | **4 concurrent** |
-| 24B–34B (e.g. `Qwen2.5-Coder-32B`) | 2 | **2 concurrent** |
-| 70B–72B | 4 | **1 concurrent** |
+| Model size | Units | Max simultaneous | Working models (2026-06-04) |
+|-----------|-------|-----------------|----------------------------|
+| 7B–15B | 1 | **4 concurrent** | `Qwen2.5-7B` ✅ · `Hermes-3-8B` 503 upstream |
+| 24B–34B | 2 | **2 concurrent** | `Qwen2.5-Coder-32B` ✅ · `Qwen2.5-14B` ✅ |
+| 70B–72B | 4 | **1 concurrent** | `Qwen2.5-72B` ✅ |
 
-Requests over the limit receive HTTP 429. Docs: https://featherless.ai/docs/concurrency-limits
+**Error codes:**
+
+| Code | Meaning | Action |
+|------|---------|--------|
+| `429` | Plan concurrency exceeded | Check `/account/concurrency`; queue; wait for slot |
+| `503` | Temporary GPU shortage / cold model | Retry: 1s → 2s → 4s → 8s + 0–1s jitter |
+| `400` | Model cold / not initialized | Long retry: 5s → 10s → 30s (warm-up 30–60s) |
+| `403` | Model gated on HuggingFace | Accept HF license; retry |
+
+**Monitoring:** `GET https://api.featherless.ai/account/concurrency` · `/account/concurrency/stream` (SSE)
+
+Docs: https://featherless.ai/docs/concurrency-limits
 
 **Ollama Cloud Pro ($20/mo)**
 
-| Plan | Concurrent models | Usage |
+| Plan | Concurrent models | Notes |
 |------|------------------|-------|
-| Pro ($20/mo) | 3 | 50× Free |
+| Pro ($20/mo) | 3 | 50× Free; laptop cloud endpoint for >4B models |
 | Max ($100/mo) | 10 | 5× Pro |
 
-Session limits reset every 5h; weekly limits every 7d. Docs: https://ollama.com/settings/billing
+Session resets every 5h; weekly every 7d. Docs: https://ollama.com/settings/billing
+
+### Gemini tier map
+
+| T-level | Model | Cost in/out per 1M | Notes |
+|---------|-------|--------------------|-------|
+| T1 micro | `gemini-2.5-flash-lite` | $0.10 / $0.40 | Fastest; free tier |
+| T2 small | `gemini-2.5-flash` | $0.30 / $2.50 | **Primary T3 in router** — confirmed live |
+| T3 medium | `gemini-2.5-pro` | $1.25 / $10.00 | Deep reasoning; 429 under rapid burst |
+| Embed | `text-embedding-004` | $0.15 / — | Text embeddings |
+
+- `gemini-2.0-flash` / `gemini-1.5-flash` — deprecated/retired; do not use
+- Batch API: 50% discount · Context caching: 90% off reads at $1/1M tokens/hr storage
 
 ### ART-HERMES Eval Results (2026-06-04)
 
 Both `Qwen/Qwen2.5-Coder-32B-Instruct` and `gemini-2.5-flash` scored **100/100** across 3 C1/C2 tasks (mission comprehension, YAML edit, scope compliance). Gemini is **5.3× faster** (3.9s vs 20.8s avg). Full report: `.99_Extracted/hermes_eval_report.md`
 
 **Swarm strategy:**
-- C1 bulk: 4× `Hermes-3-8B` in parallel (1 unit each, fills Featherless 4-unit plan)
+- C1 bulk: 4× `Qwen2.5-7B` in parallel (1 unit each, fills 4-unit plan) — Hermes-3-8B fallback when recovered
 - C2 coding: 2× `Qwen2.5-Coder-32B` in parallel (2 units each)
 - Latency-critical: `gemini-2.5-flash` (T3)
 
