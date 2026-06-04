@@ -8,7 +8,7 @@ Generates audit trail of all transitions.
 
 import json
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -21,6 +21,25 @@ class PDRTransition:
     timestamp: str
     reason: str
     actor: str = "system-sync"
+
+
+STATUS_ORDER = [
+    "Backlog",
+    "Pre-flight",
+    "In-Process",
+    "Completed",
+    "Reviewed",
+    "Archived",
+]
+
+STATUS_FOLDER_MAP = {
+    "Backlog": ".01_Backlog",
+    "Pre-flight": ".02_Pre-flight",
+    "In-Process": ".03_In-Process",
+    "Completed": ".04_Completed",
+    "Reviewed": ".05_Reviewed",
+    "Archived": ".00_Archived",
+}
 
 
 class PDRRegistry:
@@ -56,13 +75,7 @@ class PDRRegistry:
         Returns list of transitions performed.
         """
         transitions = []
-        status_folders = {
-            "Backlog": self.base_dir / "Backlog",
-            "In-Process": self.base_dir / "In-Process",
-            "Completed": self.base_dir / "Completed",
-            "Reviewed": self.base_dir / "Reviewed",
-            "Archived": self.base_dir / "Archived",
-        }
+        status_folders = {status: self.base_dir / folder for status, folder in STATUS_FOLDER_MAP.items()}
 
         # Map of PDR ID to its current file location
         pdr_files = {}
@@ -133,9 +146,13 @@ class PDRRegistry:
             )
             return False
 
+        if to_status not in STATUS_FOLDER_MAP:
+            print(f"❌ Unknown target status: {to_status}")
+            return False
+
         # Move file
         old_path = self._resolve_path(pdr.get("file_path", ""))
-        new_path = self.base_dir / to_status / old_path.name
+        new_path = self.base_dir / STATUS_FOLDER_MAP[to_status] / old_path.name
 
         if old_path.exists():
             new_path.parent.mkdir(parents=True, exist_ok=True)
@@ -154,7 +171,7 @@ class PDRRegistry:
         if to_status == "Archived" and extracted_path:
             source_extracted = self._resolve_path(extracted_path)
             if source_extracted.exists():
-                archive_shelf = self.base_dir / "Archived" / "_extracted"
+                archive_shelf = self.base_dir / STATUS_FOLDER_MAP["Archived"] / "_extracted"
                 archive_shelf.mkdir(parents=True, exist_ok=True)
                 target_extracted = archive_shelf / pdr_id
                 if target_extracted.exists():
@@ -187,7 +204,7 @@ class PDRRegistry:
             status = pdr["status"]
             by_status.setdefault(status, []).append(pdr)
 
-        for status in ["Backlog", "In-Process", "Completed", "Reviewed", "Archived"]:
+        for status in STATUS_ORDER:
             pdrs = by_status.get(status, [])
             lines.append(f"## {status} ({len(pdrs)})")
             for pdr in pdrs:
