@@ -57,7 +57,7 @@
       "owner": "Claude",
       "assigned_agent_family": "agent-governance-family",
       "registered_at": "2026-01-15T00:00:00Z",
-      "updated_at": "2026-06-04T21:41:41.532025+00:00",
+      "updated_at": "2026-06-04T22:00:00+00:00",
       "last_activity_at": "2026-02-01T10:30:00Z",
       "priority_score": 70.0,
       "is_blocked": false,
@@ -80,7 +80,7 @@
       "extraction_status": null,
       "artifact_type": null,
       "zip_path": null,
-      "completion_percentage": 60,
+      "completion_percentage": 75,
       "acceptance_criteria": [
         "parse_repo_pdr.py in agent-governance-family/scripts/ with SKILL.md reference live",
         "README.md and SCOPE_MATRIX.md updated to v15 (118 skills)",
@@ -92,7 +92,7 @@
         "All items committed, pushed, and referenced from AGENT_GUIDE.md"
       ],
       "target_quarter": null,
-      "notes": "10 tasks across Phases A-D, all status ready (not started). Phase A unblocks Phase B."
+      "notes": "Phase A: COMPLETE (MCP server, Stop hook, CI governance, skill bridge, access policy, invocation logging, CLI wrapper all delivered). Phase B: unblocked and ready to start."
     },
     {
       "seq": 3,
