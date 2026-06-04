@@ -255,16 +255,25 @@ The Chromatic harness routes subagent and LLM calls through a 5-tier provider st
 | `~/.claude/governance/multi-router-matrix.yaml` | Canonical policy (C-levels, T-levels, effort routing) |
 | `C:\.00_Governance\cross-provider-model-routing.md` | Human-readable routing reference |
 
-### Current tier map
+### Current tier map (subscription-first — no pay-per-token in active dispatch)
 
-| Tier | Name | Primary | Alts | When |
-|------|------|---------|------|------|
-| T0 nano | local | `llama3.2:3b` (Ollama) | `llama3.2:1b` | Tables, formatting, zero-judgment transforms |
-| T1 micro | Featherless swarm | `Qwen2.5-7B` · `Qwen2.5-14B` | `Qwen2.5-Coder-32B`, `Qwen2.5-72B` | Scaffold, boilerplate, seed templates; 4-unit concurrency |
-| T2 small | OpenAI fast | `gpt-4.1-nano` | `gpt-5-nano` | Structured transforms, single-file checks, cheap bulk |
-| T3 medium | OpenAI / Gemini | `gpt-4o-mini` · `gemini-2.5-flash` | `gpt-4.1-mini`, `o3-mini`, `gpt-5-mini` | Debug, spec compliance, multi-file review |
-| T4 large | OpenAI / Gemini | `gpt-4o` · `gpt-5` · `gpt-5.5` | `o4-mini`, `o3`, `gemini-2.5-pro` | Design, architecture, deep reasoning |
-| T5 orchestrator | Claude native | `claude-sonnet-4-6` | `claude-opus-4-8` *(deferred)* | Session orchestrator — not dispatched via API yet |
+| Tier | Name | Provider | Model | Billing | When |
+|------|------|----------|-------|---------|------|
+| T0 | nano | Ollama local | `llama3.2:3b` / `1b` | Free | Tables, formatting, zero-judgment transforms |
+| T1 | micro | Featherless | `Qwen2.5-7B` (1 unit) | $25/mo flat | Scaffold, boilerplate, seed templates; swarm ×4 |
+| T2 | small | Featherless | `Qwen2.5-14B` (2 units) | $25/mo flat | Smoke tests, spec compliance, single-file review |
+| T3 | medium | Featherless | `Qwen2.5-72B` (4 units) | $25/mo flat | Debug, multi-file, root cause; gemini last-resort fallback |
+| T4 | orchestrator | Claude native | `claude-sonnet-4-6` | CC subscription | Brainstorm, design, architecture |
+
+**Blocked (pay-per-token):**
+- `openai` — `sk-proj` API key bills per token; router redirects any openai call → Featherless T1. Unblock by setting `ROUTER_WEEKLY_BUDGET_USD` or confirming subscription coverage.
+
+**Deferred (wire in later):**
+- `claude API` — native CC session used instead; no dispatch to `api.anthropic.com`
+- `gemini` — confirmed live (`gemini-2.5-flash`) but metered; only as T3 fallback if Featherless 72B unavailable
+
+**OpenAI model inventory (confirmed on account, available when unblocked):**
+`gpt-4.1-nano` · `gpt-4.1-mini` · `gpt-4.1` · `gpt-4o-mini` · `gpt-4o` · `gpt-5-nano` · `gpt-5-mini` · `gpt-5` · `gpt-5.5` · `o3-mini` · `o4-mini` · `o3` · `o1` · `text-embedding-3-small` (1536d) · `text-embedding-3-large` (3072d)
 
 ### Status
 
