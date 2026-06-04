@@ -332,3 +332,10 @@ Focused review of one file — useful for security-sensitive modules.
 | Council doesn't activate on `--deep` | Runtime doesn't support subagent spawning | Falls back to single-model review automatically; output notes degradation |
 | Review flagging false positives | Standards loaded for wrong language | Verify language detection at top of output; pass `--lang go` to force |
 | Diff too large for one review pass | PR is too big | Split the PR. `/review` works best on diffs under 500 LOC |
+
+## Guardrails
+
+- Do not approve PRs with critical-severity SCORED findings unresolved
+- Scope review to the diff only; do not audit unrelated code
+- Preserve SCORED rubric order and do not skip categories
+- In `--agent` mode, flag hallucinated file references as critical findings

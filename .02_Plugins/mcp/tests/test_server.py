@@ -74,7 +74,7 @@ class TestBuildIndex:
 
     def test_skill_count_matches_expected(self):
         index = srv._build_index(PLUGINS_ROOT)
-        assert len(index) == 118, f"Expected 118 skills, got {len(index)}"
+        assert len(index) == 120, f"Expected 120 skills, got {len(index)}"
 
     def test_no_duplicate_names(self):
         names = [e["name"] for e in srv._build_index(PLUGINS_ROOT)]
@@ -92,7 +92,7 @@ class TestBuildIndex:
 class TestListSkills:
     def test_returns_all_skills_when_no_filter(self):
         skills = srv.list_skills()
-        assert len(skills) == 118
+        assert len(skills) == 120
 
     def test_filters_by_exact_family(self):
         skills = srv.list_skills(family="context-family")
@@ -113,8 +113,8 @@ class TestListSkills:
     def test_unknown_family_returns_empty_list(self):
         assert srv.list_skills(family="nonexistent-family-xyz") == []
 
-    def test_rpi_family_has_16_skills(self):
-        assert len(srv.list_skills(family="rpi")) == 16
+    def test_rpi_family_has_17_skills(self):
+        assert len(srv.list_skills(family="rpi")) == 17
 
 
 # ---------------------------------------------------------------------------

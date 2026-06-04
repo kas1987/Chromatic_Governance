@@ -18,7 +18,7 @@
     "frontend-family"
   ],
   "plugin_count": 13,
-  "skill_count": 118,
+  "skill_count": 120,
   "status": "v15 PDR skill integration + context monitor",
   "changelog": {
     "0.15.0": [

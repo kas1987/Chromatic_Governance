@@ -653,3 +653,16 @@ Same cycle: RED (baseline) → GREEN (write skill) → REFACTOR (close loopholes
 Same benefits: Better quality, fewer surprises, bulletproof results.
 
 If you follow TDD for code, follow it for skills. It's the same discipline applied to documentation.
+
+## Core procedure
+
+See RED-GREEN-REFACTOR for Skills and Skill Creation Checklist sections above.
+Apply TDD-adapted discipline: write failing acceptance criteria first (RED),
+draft the minimal SKILL.md (GREEN), close loopholes via the rationalization table,
+and verify the final file against the Skill Creation Checklist (REFACTOR).
+
+## Output format
+
+A `SKILL.md` file placed at `<family>/skills/<skill-name>/SKILL.md`, conforming
+to the SKILL.md Structure template defined in this document. Optionally accompanied
+by `scripts/` or `references/` subdirectories if the skill requires external assets.

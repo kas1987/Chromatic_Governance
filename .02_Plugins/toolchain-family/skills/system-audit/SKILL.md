@@ -304,3 +304,15 @@ To add a new property to the manifest, add a row to the table in the Property Ma
 - **No snapshot for diff** — run `/system-audit snapshot` first, then make the change, then diff
 - **Grep returns too many hits** — add `--include="*.sh" --include="*.py" --include="*.yaml" --include="*.md"` to narrow scope
 - **tier0_degraded location unknown** — `grep -r 'tier0_degraded' ~/.agents/ ~/.claude/ 2>/dev/null | grep -v Binary | head -5` to locate it
+
+## Output format
+
+Audit report written to `.agents/audits/system-audit-<timestamp>.md` containing
+the property manifest snapshot, live consumer list, and impact summary. In diff
+mode, includes a delta table comparing current values to the last snapshot.
+
+## Guardrails
+
+- Audit is read-only; do not modify any property values during the run
+- In diff mode, if no snapshot exists, report missing snapshot and stop
+- Limit grep scope to the repo root; do not make network requests

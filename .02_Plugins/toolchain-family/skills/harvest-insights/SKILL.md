@@ -133,3 +133,9 @@ Run /insights first, then /harvest-insights
 - **No /insights output in context** — Ask user to run `/insights` first, then re-invoke this skill.
 - **next-session-queue.md missing** — Create it with `mkdir -p ~/.agents/evolve && touch ~/.agents/evolve/next-session-queue.md`.
 - **Duplicate PDRs** — Check existing PDRs before creating; if a matching slug exists, update status instead of creating a new file.
+
+## Guardrails
+
+- Only generate PDRs for items explicitly marked ready in the insights output
+- Do not modify or overwrite existing PDR files; create new ones only
+- If insights output is absent or empty, report and stop without creating files

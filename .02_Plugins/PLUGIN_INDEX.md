@@ -16,7 +16,7 @@
 | `data-research-family` | 8 | Evidence gathering, source scans, benchmarks, documentation digests, API change watches, and citation audits. |
 | `frontend-family` | 10 | Frontend/UI-UX delivery, asset extraction, CSS/Tailwind/component systems, dashboards, local apps, and 3D assets. |
 
-**Total: 118 skills across 13 families** (v0.15.0)
+**Total: 120 skills across 13 families** (v0.15.0)
 
 ---
 

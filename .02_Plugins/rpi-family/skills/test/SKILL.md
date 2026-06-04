@@ -439,3 +439,10 @@ Keeps generating tests until the 80% threshold is met.
 - [`vibe`](../vibe/SKILL.md) — Validate overall code quality after test generation
 - [`implement`](../implement/SKILL.md) — TDD integration during feature development
 - [`references/support.md`](references/support.md) — Extended patterns, bad-test catalogue, TDD examples
+
+## Guardrails
+
+- Never delete existing passing tests to inflate coverage percentages
+- Mock only external dependencies; do not mock the system under test
+- Stop and report if generated tests require source-code changes to pass
+- TDD mode requires Red to precede Green; do not skip the failing-test phase

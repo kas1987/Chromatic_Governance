@@ -23,10 +23,24 @@ except ImportError:
 
 PLUGINS_ROOT = Path(__file__).resolve().parents[2] / ".02_Plugins"
 
-REQUIRED_SECTIONS = [
-    r"^##\s+Core procedure",
-    r"^##\s+Output format",
-    r"^##\s+Guardrails",
+# Each entry is (regex_pattern, canonical_display_name).
+# Patterns accept both the canonical section name and common legacy equivalents
+# used in skills that pre-date this governance standard.
+REQUIRED_SECTIONS: list[tuple[str, str]] = [
+    (
+        r"^##\s+(Core\s+procedure|Execution\s+Steps?|Procedure|The\s+Process"
+        r"|Execution\b|Step\b|Mode\b|Phase\b|DAG\b)",
+        "## Core procedure",
+    ),
+    (
+        r"^##\s+(Output(\s+\w+)?|Expected\s+outputs?|Examples?|Handoff\s+format)",
+        "## Output format",
+    ),
+    (
+        r"^##\s+(Guardrails?|Key\s+Rules?|Tool\s+Governance|Red\s+Flags?"
+        r"|Safety(\s+Rules?)?|Operating\s+rules?)",
+        "## Guardrails",
+    ),
 ]
 
 
@@ -81,10 +95,9 @@ def validate() -> int:
                 seen_names[name] = str(rel)
 
         # 3. Required section headers
-        for pattern in REQUIRED_SECTIONS:
+        for pattern, canonical_name in REQUIRED_SECTIONS:
             if not re.search(pattern, text, re.MULTILINE | re.IGNORECASE):
-                section = pattern.replace(r"^##\s+", "## ")
-                failures.append(f"{rel}: missing required section '{section}'")
+                failures.append(f"{rel}: missing required section '{canonical_name}'")
 
     if failures:
         print(f"Skill governance validation FAILED — {len(failures)} issue(s):\n")

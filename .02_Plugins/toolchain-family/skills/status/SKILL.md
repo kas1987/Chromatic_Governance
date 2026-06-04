@@ -320,3 +320,9 @@ Render this with a single code block. No visual dashboard when `--json` is activ
 - [`goals`](../goals/SKILL.md) — Track goal fitness alongside current work
 - [`evolve`](../evolve/SKILL.md) — Goal-driven improvement loop that builds on status output
 - [`references/support.md`](references/support.md) — Output format examples and state file reference
+
+## Guardrails
+
+- Read-only skill: report state only; do not modify any project files
+- If the ao CLI is unavailable, degrade gracefully to git-based state reporting
+- Do not infer or extrapolate status beyond what observable state supports

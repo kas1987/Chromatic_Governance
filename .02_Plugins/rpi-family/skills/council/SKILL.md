@@ -688,3 +688,9 @@ Judge names: `judge-{N}` for independent judges (e.g., `judge-1`, `judge-2`), or
 - [../shared/references/backend-inline.md](../shared/references/backend-inline.md)
 - [../shared/references/claude-code-latest-features.md](../shared/references/claude-code-latest-features.md)
 - [../shared/references/ralph-loop-contract.md](../shared/references/ralph-loop-contract.md)
+
+## Core procedure
+
+See Quick Start and Architecture sections above. Spawn judge agents via the Task
+tool using the Packet Format spec, collect structured responses, apply Consensus
+Rules, extract findings via Finding Extraction, and emit the Output Format block.
