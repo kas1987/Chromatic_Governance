@@ -66,10 +66,20 @@ def main() -> None:
         pct_used = round(used_tokens / limit_tokens, 4)
         status = _status(pct_used)
 
+    agent_id = (
+        payload.get("agent_id")
+        or os.environ.get("CHROMATIC_AGENT_ID")
+        or os.environ.get("AGENT_ID")
+        or "unknown"
+    )
+    task_id = os.environ.get("CHROMATIC_TASK_ID", "")
+
     entry = {
         "ts": datetime.now(timezone.utc).isoformat(),
         "model": model,
         "session": session_id,
+        "agent_id": agent_id,
+        "task_id": task_id or None,
         "used_tokens": used_tokens,
         "limit_tokens": limit_tokens,
         "pct_used": pct_used,

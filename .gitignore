@@ -28,6 +28,10 @@ desktop.ini
 *.log
 logs/
 
+# Agent logs — JSONL audit trails are tracked for governance visibility
+!.agents/logs/
+!.agents/logs/*.jsonl
+
 # Build / dist
 dist/
 build/
