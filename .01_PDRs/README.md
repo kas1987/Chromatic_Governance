@@ -140,6 +140,9 @@ Use the automated promotion workflow:
 - Historical/current/new ZIP states are recorded in SQLite at `.01_PDRs/.intake/zip_intake.db`.
 - Event stream is logged to `.01_PDRs/.intake/zip_intake-log.jsonl`.
 - Pipeline stage/status is correlated from `PDR_REGISTRY.json` (`artifact_backlog` and `pdrs`).
+- PDR IDs are auto-detected from archive contents (e.g., `PDR-001`) and stored.
+- An implementation signal is computed per ZIP: `not_implemented | preflight_ready | in_progress | implemented | unknown`.
+- Implementation signal uses pipeline status + extracted readiness for local/repo implementation awareness.
 - Workflow `.github/workflows/pdr-zip-intake.yml` runs automatically on ZIP drops.
 
 Manual run:

@@ -13,6 +13,7 @@ Behavior:
 import argparse
 import hashlib
 import json
+import re
 import sqlite3
 import zipfile
 from datetime import datetime, timezone
@@ -90,6 +91,21 @@ def pipeline_lookup(registry: dict[str, Any]) -> dict[str, dict[str, str]]:
     return lookup
 
 
+def pdr_registry_lookup(registry: dict[str, Any]) -> dict[str, dict[str, str]]:
+    lookup: dict[str, dict[str, str]] = {}
+    for pdr in registry.get("pdrs", []):
+        if not isinstance(pdr, dict):
+            continue
+        pdr_id = str(pdr.get("id", "")).strip()
+        if not pdr_id:
+            continue
+        lookup[pdr_id] = {
+            "status": str(pdr.get("status", "Backlog")),
+            "title": str(pdr.get("title", "")),
+        }
+    return lookup
+
+
 def ensure_schema(conn: sqlite3.Connection) -> None:
     conn.execute(
         """
@@ -104,6 +120,9 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
             pipeline_status TEXT NOT NULL,
             linked_pdr_id TEXT,
             extracted_path TEXT,
+            detected_pdr_id TEXT,
+            implementation_status TEXT,
+            implementation_notes TEXT,
             review_result TEXT NOT NULL,
             review_notes TEXT
         )
@@ -120,6 +139,20 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
         )
         """
     )
+    conn.commit()
+
+    # Forward-compatible migrations for existing local DBs.
+    existing_cols = {
+        row[1]
+        for row in conn.execute("PRAGMA table_info(zip_records)").fetchall()
+    }
+    for col_name, col_type in (
+        ("detected_pdr_id", "TEXT"),
+        ("implementation_status", "TEXT"),
+        ("implementation_notes", "TEXT"),
+    ):
+        if col_name not in existing_cols:
+            conn.execute(f"ALTER TABLE zip_records ADD COLUMN {col_name} {col_type}")
     conn.commit()
 
 
@@ -168,6 +201,68 @@ def review_zip(zip_path: Path) -> tuple[str, str, int]:
         return "fail", f"I/O error during ZIP review: {exc}", 0
 
 
+def detect_pdr_id_in_zip(zip_path: Path) -> tuple[str, str]:
+    """Return (detected_pdr_id, detection_note)."""
+    pattern = re.compile(r"PDR-\d{3,}", re.IGNORECASE)
+    try:
+        with zipfile.ZipFile(zip_path, "r") as zf:
+            candidates = [
+                n for n in zf.namelist()
+                if not n.endswith("/") and n.lower().endswith((".md", ".txt", ".json"))
+            ]
+            for name in candidates:
+                # Prioritize files that look like PDR docs.
+                if "pdr" not in name.lower() and not name.lower().endswith("readme.md"):
+                    continue
+                with zf.open(name, "r") as handle:
+                    content = handle.read(64 * 1024).decode("utf-8", errors="ignore")
+                match = pattern.search(content)
+                if match:
+                    return match.group(0).upper(), f"Detected in {name}"
+
+            # Fallback: detect from filenames themselves.
+            for name in candidates:
+                match = pattern.search(name)
+                if match:
+                    return match.group(0).upper(), f"Detected from filename {name}"
+    except (zipfile.BadZipFile, OSError):
+        pass
+    return "", "No PDR ID detected in archive"
+
+
+def assess_implementation_status(
+    zip_path: Path,
+    detected_pdr_id: str,
+    pipeline_meta: dict[str, str],
+    registry_pdrs: dict[str, dict[str, str]],
+    base_dir: Path,
+) -> tuple[str, str]:
+    """
+    Determine whether the ZIP appears implemented in this local repo context.
+    Statuses: not_implemented | preflight_ready | in_progress | implemented | unknown
+    """
+    extracted_path = pipeline_meta.get("extracted_path", "")
+    extracted_abs = (base_dir.parent / extracted_path) if extracted_path.startswith(".01_PDRs/") else (base_dir / extracted_path)
+    extracted_ready = extracted_abs.exists() and any(extracted_abs.iterdir()) if extracted_path else False
+
+    linked_pdr_id = pipeline_meta.get("linked_pdr_id", "")
+    pdr_id = linked_pdr_id or detected_pdr_id
+    pipeline_status = pipeline_meta.get("pipeline_status", "Backlog")
+
+    if pdr_id and pdr_id in registry_pdrs:
+        pipeline_status = registry_pdrs[pdr_id].get("status", pipeline_status)
+
+    if pipeline_status in {"Reviewed", "Archived", "Completed"}:
+        return "implemented", f"Pipeline status={pipeline_status}; extracted_ready={extracted_ready}"
+    if pipeline_status == "In-Process":
+        return "in_progress", f"Pipeline status=In-Process; extracted_ready={extracted_ready}"
+    if pipeline_status == "Pre-flight":
+        return "preflight_ready", f"Pipeline status=Pre-flight; extracted_ready={extracted_ready}"
+    if pipeline_status == "Backlog":
+        return "not_implemented", f"Pipeline status=Backlog; extracted_ready={extracted_ready}"
+    return "unknown", f"Pipeline status={pipeline_status}; extracted_ready={extracted_ready}"
+
+
 def scan_zip_intake(base_dir: Path, zip_name_filter: str | None = None) -> dict[str, int]:
     registry_path = base_dir / "PDR_REGISTRY.json"
     intake_dir = base_dir / ".intake"
@@ -177,6 +272,7 @@ def scan_zip_intake(base_dir: Path, zip_name_filter: str | None = None) -> dict[
     intake_dir.mkdir(parents=True, exist_ok=True)
     registry = load_registry(registry_path)
     lookup = pipeline_lookup(registry)
+    registry_pdrs = pdr_registry_lookup(registry)
 
     conn = sqlite3.connect(db_path)
     try:
@@ -205,6 +301,7 @@ def scan_zip_intake(base_dir: Path, zip_name_filter: str | None = None) -> dict[
             digest = sha256_file(zip_path)
             size_bytes = zip_path.stat().st_size
             review_result, review_notes, file_count = review_zip(zip_path)
+            detected_pdr_id, detection_note = detect_pdr_id_in_zip(zip_path)
 
             if review_result == "fail":
                 counts["failed_review"] += 1
@@ -216,6 +313,13 @@ def scan_zip_intake(base_dir: Path, zip_name_filter: str | None = None) -> dict[
                     "linked_pdr_id": "",
                     "extracted_path": f".01_PDRs/.99_Extracted/{zip_path.stem}",
                 },
+            )
+            impl_status, impl_notes = assess_implementation_status(
+                zip_path=zip_path,
+                detected_pdr_id=detected_pdr_id,
+                pipeline_meta=pipeline_meta,
+                registry_pdrs=registry_pdrs,
+                base_dir=base_dir,
             )
 
             existing = conn.execute(
@@ -244,9 +348,10 @@ def scan_zip_intake(base_dir: Path, zip_name_filter: str | None = None) -> dict[
                 INSERT INTO zip_records (
                     zip_name, zip_rel_path, first_seen_at, last_seen_at, sha256, size_bytes,
                     lifecycle_state, pipeline_status, linked_pdr_id, extracted_path,
+                    detected_pdr_id, implementation_status, implementation_notes,
                     review_result, review_notes
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(zip_name) DO UPDATE SET
                     zip_rel_path=excluded.zip_rel_path,
                     last_seen_at=excluded.last_seen_at,
@@ -256,6 +361,9 @@ def scan_zip_intake(base_dir: Path, zip_name_filter: str | None = None) -> dict[
                     pipeline_status=excluded.pipeline_status,
                     linked_pdr_id=excluded.linked_pdr_id,
                     extracted_path=excluded.extracted_path,
+                    detected_pdr_id=excluded.detected_pdr_id,
+                    implementation_status=excluded.implementation_status,
+                    implementation_notes=excluded.implementation_notes,
                     review_result=excluded.review_result,
                     review_notes=excluded.review_notes
                 """,
@@ -270,8 +378,11 @@ def scan_zip_intake(base_dir: Path, zip_name_filter: str | None = None) -> dict[
                     pipeline_meta.get("pipeline_status", "Backlog"),
                     pipeline_meta.get("linked_pdr_id", ""),
                     pipeline_meta.get("extracted_path", ""),
+                    detected_pdr_id,
+                    impl_status,
+                    impl_notes,
                     review_result,
-                    f"{review_notes}; file_count={file_count}",
+                    f"{review_notes}; file_count={file_count}; detection={detection_note}",
                 ),
             )
 
@@ -287,6 +398,9 @@ def scan_zip_intake(base_dir: Path, zip_name_filter: str | None = None) -> dict[
                     "pipeline_status": pipeline_meta.get("pipeline_status", "Backlog"),
                     "linked_pdr_id": pipeline_meta.get("linked_pdr_id", ""),
                     "extracted_path": pipeline_meta.get("extracted_path", ""),
+                    "detected_pdr_id": detected_pdr_id,
+                    "implementation_status": impl_status,
+                    "implementation_notes": impl_notes,
                     "review_result": review_result,
                     "review_notes": review_notes,
                     "file_count": file_count,
