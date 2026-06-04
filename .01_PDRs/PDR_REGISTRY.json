@@ -172,11 +172,11 @@
       "id": "PDR-005",
       "title": "n8n Intake Orchestration",
       "description": "Phased n8n orchestration for ZIP intake, registry-aware routing, and governed handoff automation",
-      "status": "In-Process",
-      "phase": 1,
+      "status": "Completed",
+      "phase": 5,
       "owner": "Kas/Claude",
       "created_at": "2026-06-04T00:00:00Z",
-      "updated_at": "2026-06-04T23:00:00Z",
+      "updated_at": "2026-06-04T23:59:00Z",
       "file_path": ".01_PDRs\\.01_Backlog\\PDR-005-n8n-intake-orchestration.md",
       "transitions": [
         {
@@ -192,6 +192,13 @@
           "timestamp": "2026-06-04T23:00:00Z",
           "actor": "Claude",
           "reason": "Phase 1 (intake_event_bridge.py) and Phase 2 (registry_router.py) implemented with unit tests"
+        },
+        {
+          "from": "In-Process",
+          "to": "Completed",
+          "timestamp": "2026-06-04T23:59:00Z",
+          "actor": "Claude",
+          "reason": "n8n workflow JSON nodes created — native intake orchestration workflow importable to n8n instance"
         }
       ],
       "related_issues": [],
@@ -201,19 +208,20 @@
         "intake",
         "orchestration",
         "governance",
-        "phase-1"
+        "phase-1",
+        "phase-5"
       ],
       "acceptance_criteria": [
         "Phased n8n workflow plan documented",
         "Intake bridge design captured for local ZIP drop automation",
         "Registry-aware routing requirements documented",
         "No direct In-Process transition without Pre-flight readiness",
-        "Design approved for Pre-flight"
+        "Design approved for Pre-flight",
+        "Native n8n workflow JSON created and importable"
       ],
-      "completion_percentage": 70,
-      "phase": 4,
-      "updated_at": "2026-06-04T23:30:00Z",
-      "notes": "Phases 1-4 Python scripts delivered: intake_event_bridge.py, registry_router.py, mission_packet_emitter.py, intake_metrics.py. Remaining 30%: actual n8n workflow JSON nodes not yet created (scripts implement equivalent logic but are not n8n-native workflows)."
+      "completion_percentage": 100,
+      "updated_at": "2026-06-04T23:59:00Z",
+      "notes": "Phases 1-4 Python scripts delivered: intake_event_bridge.py, registry_router.py, mission_packet_emitter.py, intake_metrics.py. Phase 5: n8n workflow JSON nodes created — intake-orchestration.json implements full Phase 1-4 pipeline with 5-minute schedule trigger, 5 command nodes (read backlog → route events → emit missions → compute metrics), conditional dispatch check, and summary formatting. metrics-dashboard.json provides daily reporting workflow."
     }
   ],
   "status_workflow": {
