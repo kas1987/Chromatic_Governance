@@ -1,0 +1,14 @@
+{
+  "mission_id": "mission-001-add-hermes-capability-registry",
+  "agent_model": "hermes3:8b",
+  "status": "pass",
+  "files_changed": [
+    "09_DEPLOYMENT/config/routing/model-capabilities.yaml"
+  ],
+  "validation_results": [
+    "PASS: hermes3:8b registered"
+  ],
+  "scope_compliance": "compliant",
+  "stop_condition_triggered": false,
+  "notes": "No forbidden files touched. YAML parsed successfully."
+}

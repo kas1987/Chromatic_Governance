@@ -1,0 +1,287 @@
+{
+  "name": "pdr-zip-intake-phase1",
+  "nodes": [
+    {
+      "id": "Webhook_Trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "parameters": {
+        "path": "pdr-zip-intake-phase1",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "Validate_Secret",
+      "name": "Validate Secret",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        450,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.headers['x-chromatic-webhook-secret'] || ''}}",
+              "operation": "equal",
+              "value2": "={{$env.CHROMATIC_WEBHOOK_SECRET || ''}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Normalize_Event",
+      "name": "Normalize Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        220
+      ],
+      "parameters": {
+        "language": "javascript",
+        "jsCode": "const body = $json.body || $json;\nif (!body.zip_name) {\n  throw new Error('zip_name is required');\n}\nif (!body.zip_rel_path) {\n  throw new Error('zip_rel_path is required');\n}\nconst normalized = String(body.zip_rel_path).replace(/\\\\/g, '/');\nif (!normalized.startsWith('.01_PDRs/')) {\n  throw new Error('zip_rel_path must be under .01_PDRs');\n}\nreturn [{\n  json: {\n    event_id: body.event_id || `${body.zip_name}-${Date.now()}`,\n    event_type: body.event_type || 'zip_detected',\n    zip_name: body.zip_name,\n    zip_rel_path: normalized,\n    source: body.source || 'local_watcher',\n    occurred_at: body.occurred_at || new Date().toISOString()\n  }\n}];"
+      }
+    },
+    {
+      "id": "Deduplicate",
+      "name": "Deduplicate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        220
+      ],
+      "parameters": {
+        "language": "javascript",
+        "jsCode": "const key = `${$json.zip_name}:${$json.zip_rel_path}`;\nconst staticData = $getWorkflowStaticData('global');\nconst seen = staticData.seen || {};\nconst now = Date.now();\nconst ttlMs = 10 * 60 * 1000;\nfor (const [k, ts] of Object.entries(seen)) {\n  if (now - Number(ts) > ttlMs) delete seen[k];\n}\nif (seen[key]) {\n  return [{ json: { ...$json, dedupe: 'hit', idempotency_key: key } }];\n}\nseen[key] = now;\nstaticData.seen = seen;\nreturn [{ json: { ...$json, dedupe: 'miss', idempotency_key: key } }];"
+      }
+    },
+    {
+      "id": "Dedupe_Gate",
+      "name": "Dedupe Gate",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        220
+      ],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.dedupe}}",
+              "operation": "equal",
+              "value2": "hit"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Execute_Intake",
+      "name": "Execute Intake",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1380,
+        120
+      ],
+      "parameters": {
+        "command": "python .01_PDRs/pdr_zip_intake.py --zip-name \"{{$json.zip_name}}\""
+      }
+    },
+    {
+      "id": "Refresh_Registry",
+      "name": "Refresh Registry",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        120
+      ],
+      "parameters": {
+        "command": "python .01_PDRs/pdr_sync.py sync"
+      }
+    },
+    {
+      "id": "Build_Result",
+      "name": "Build Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        120
+      ],
+      "parameters": {
+        "language": "javascript",
+        "jsCode": "let parsed = {};\ntry {\n  parsed = JSON.parse(($json.stdout || '').trim() || '{}');\n} catch (e) {\n  parsed = { parse_error: String(e) };\n}\nreturn [{\n  json: {\n    workflow: 'pdr-zip-intake-phase1',\n    event_id: $item(0).$node['Normalize Event'].json.event_id,\n    zip_name: $item(0).$node['Normalize Event'].json.zip_name,\n    result: parsed.failed_review && parsed.failed_review > 0 ? 'warning' : 'success',\n    intake_counts: parsed,\n    duplicate_status: parsed.duplicates && parsed.duplicates > 0 ? 'duplicate_or_redundant' : 'unique',\n    next_action: parsed.failed_review && parsed.failed_review > 0 ? 'manual_fix' : 'none'\n  }\n}];"
+      }
+    },
+    {
+      "id": "Noop_Result",
+      "name": "No-op Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1380,
+        320
+      ],
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "workflow",
+              "value": "pdr-zip-intake-phase1"
+            },
+            {
+              "name": "result",
+              "value": "noop"
+            },
+            {
+              "name": "next_action",
+              "value": "none"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Unauthorized",
+      "name": "Unauthorized",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        700,
+        420
+      ],
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "result",
+              "value": "unauthorized"
+            },
+            {
+              "name": "next_action",
+              "value": "manual_fix"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Secret",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Secret": {
+      "main": [
+        [
+          {
+            "node": "Normalize Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unauthorized",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Event": {
+      "main": [
+        [
+          {
+            "node": "Deduplicate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deduplicate": {
+      "main": [
+        [
+          {
+            "node": "Dedupe Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dedupe Gate": {
+      "main": [
+        [
+          {
+            "node": "No-op Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Intake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Intake": {
+      "main": [
+        [
+          {
+            "node": "Refresh Registry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refresh Registry": {
+      "main": [
+        [
+          {
+            "node": "Build Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "pdr-zip-intake-phase1-v1",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "chromatic-governance"
+  }
+}

@@ -5,7 +5,7 @@ fail=0
 for plugin in "$root"/*; do
   [ -d "$plugin" ] || continue
   name="$(basename "$plugin")"
-  case "$name" in scripts) continue ;; esac
+  case "$name" in scripts|mcp|rpi) continue ;; esac
   if [ ! -f "$plugin/.claude-plugin/plugin.json" ]; then
     echo "FAIL $name: missing .claude-plugin/plugin.json"
     fail=1

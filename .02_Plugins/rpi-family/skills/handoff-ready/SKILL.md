@@ -26,3 +26,19 @@ Full research, planning, implementation, review, and iteration lifecycle for sco
 ## Current behavior guidance
 
 Until this skill is implemented, treat it as an intent marker only. Do not perform destructive actions or external-system operations solely because this placeholder exists.
+
+## Core procedure
+
+This skill is a placeholder for a future implementation. Until implemented, document
+intent in `.agents/handoff/` and use the `/handoff` skill for session continuity.
+
+## Output format
+
+A structured handoff document placed at `.agents/handoff/YYYY-MM-DD-<topic>.md`
+containing session context, pause point, key files, and a continuation prompt.
+
+## Guardrails
+
+- This skill must not be invoked for destructive or irreversible operations
+- Until fully implemented, delegate to `/handoff` for session continuity needs
+- Do not invent behavior not described in the required-future-sections list

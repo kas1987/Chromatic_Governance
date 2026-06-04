@@ -1,0 +1,45 @@
+name: PDR ZIP Intake
+
+on:
+  push:
+    paths:
+      - ".01_PDRs/*.zip"
+      - ".01_PDRs/pdr_zip_intake.py"
+      - ".01_PDRs/PDR_REGISTRY.json"
+  workflow_dispatch:
+    inputs:
+      zip_name:
+        description: "Optional single ZIP filename (e.g. repo-pdr-swarm-router.zip)"
+        required: false
+
+jobs:
+  intake-review:
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run ZIP intake scan
+        working-directory: .01_PDRs
+        run: |
+          if [ -n "${{ github.event.inputs.zip_name }}" ]; then
+            python pdr_zip_intake.py --zip-name "${{ github.event.inputs.zip_name }}"
+          else
+            python pdr_zip_intake.py
+          fi
+
+      - name: Upload intake artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdr-zip-intake-artifacts
+          path: |
+            .01_PDRs/.intake/zip_intake.db
+            .01_PDRs/.intake/zip_intake-log.jsonl

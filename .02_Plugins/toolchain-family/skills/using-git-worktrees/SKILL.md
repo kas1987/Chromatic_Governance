@@ -213,3 +213,9 @@ Ready to implement <feature-name>
 - Verify directory is ignored for project-local
 - Auto-detect and run project setup
 - Verify clean test baseline
+
+## Output format
+
+An isolated git worktree created at a project-local path (e.g. `../proj-<branch>`),
+plus a verification report confirming the clean baseline test pass. The worktree
+path is emitted to the caller for use in subsequent agent dispatch steps.

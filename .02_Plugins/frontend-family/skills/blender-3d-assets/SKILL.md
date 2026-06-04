@@ -12,3 +12,20 @@ description: plan advanced blender and 3d asset workflows, including modeling, m
 5. Produce an asset manifest and pipeline checklist.
 
 Use `references/blender-3d-asset-pipeline.md`.
+
+## Core procedure
+
+See skill description above and `references/` subdirectory for detailed guidance.
+Follow the numbered steps in this document, produce the specified output artifacts,
+and verify against the guardrails before completing the task.
+
+## Output format
+
+Deliverables as described in the skill body above. Typically includes source files,
+component definitions, or documentation placed at paths specified in the skill steps.
+
+## Guardrails
+
+- Limit changes to UI/frontend layer only; do not modify backend logic or APIs
+- Validate accessibility (WCAG AA minimum) for any user-facing components produced
+- Do not introduce new dependencies without explicit user approval

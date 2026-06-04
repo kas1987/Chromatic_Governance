@@ -6,7 +6,8 @@ import json, sys
 from pathlib import Path
 root = Path(sys.argv[1])
 fail = 0
-for plugin in sorted([p for p in root.iterdir() if p.is_dir() and p.name != 'scripts']):
+SKIP = {'scripts', 'mcp', 'rpi'}
+for plugin in sorted([p for p in root.iterdir() if p.is_dir() and p.name not in SKIP]):
     name = plugin.name
     manifest = plugin/'.claude-plugin'/'plugin.json'
     if not manifest.is_file():

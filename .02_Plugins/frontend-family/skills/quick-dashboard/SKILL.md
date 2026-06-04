@@ -12,3 +12,20 @@ description: design or scaffold quick dashboards, admin panels, kpi views, inter
 5. Produce a layout spec, component list, and implementation scaffold.
 
 Use `references/dashboard-patterns.md`.
+
+## Core procedure
+
+See skill description above and `references/` subdirectory for detailed guidance.
+Follow the numbered steps in this document, produce the specified output artifacts,
+and verify against the guardrails before completing the task.
+
+## Output format
+
+Deliverables as described in the skill body above. Typically includes source files,
+component definitions, or documentation placed at paths specified in the skill steps.
+
+## Guardrails
+
+- Limit changes to UI/frontend layer only; do not modify backend logic or APIs
+- Validate accessibility (WCAG AA minimum) for any user-facing components produced
+- Do not introduce new dependencies without explicit user approval

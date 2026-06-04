@@ -28,7 +28,34 @@ desktop.ini
 *.log
 logs/
 
+# Agent logs — JSONL audit trails are tracked for governance visibility
+!.agents/logs/
+!.agents/logs/*.jsonl
+
 # Build / dist
 dist/
 build/
 *.egg-info/
+
+# Test / coverage artifacts
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+
+# PDR extraction working directories (zips are canonical)
+.01_PDRs/extracted/
+
+# Agent runtime logs (JSONL entries; not source-controlled by default)
+.agents/logs/*.jsonl
+# PDR intake runtime state (SQLite + JSONL)
+.01_PDRs/.intake/*.db
+.01_PDRs/.intake/*.jsonl
+# Review intake: lock files and runtime logs are transient; findings log and queue are tracked
+.agents/review-intake/locks/*.json
+.agents/review-intake/logs/*.jsonl
+# Keep the directory itself tracked via .gitkeep — do not ignore the dir
+
+# Transient local plugin/runtime artifacts
+.02_Plugins/**/.orphaned_at
+.03_Harness Governance/config/providers.yaml

@@ -1,0 +1,13 @@
+# Gitleaks configuration for Chromatic Governance
+# Docs: https://github.com/gitleaks/gitleaks#configuration
+
+title = "Chromatic Governance Gitleaks Config"
+
+[allowlist]
+description = "Allow pseudo-code and documentation patterns in spec/PDR files"
+paths = [
+    # PDR spec and design docs are documentation, not code — they contain
+    # illustrative variable assignments (e.g. idempotency_key = name + ":" + hash)
+    # that are not secrets.
+    '''^\.01_PDRs/.*\.md$''',
+]

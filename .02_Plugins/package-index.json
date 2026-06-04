@@ -1,7 +1,7 @@
 {
   "name": "poly-chromatic-plugin-families",
-  "version": "0.14.0",
-  "description": "Scoped Claude Code plugin-family operating ecosystem for agent workflows, including delivery, governance, research, docs, frontend, release, security, QA/evals, and toolchain controls.",
+  "version": "0.16.0",
+  "description": "Scoped Claude Code plugin-family operating ecosystem for agent workflows, including delivery, governance, research, docs, frontend, release, security, QA/evals, toolchain controls, and context monitoring.",
   "plugins": [
     "rpi",
     "toolchain-family",
@@ -18,6 +18,20 @@
     "frontend-family"
   ],
   "plugin_count": 13,
-  "skill_count": 113,
-  "status": "v14 ecosystem polish build"
+  "skill_count": 123,
+  "status": "v16 PDR-003 gap skills — repo-tree-architect, tree-repo-auditor, cognitive-stack-architect",
+  "changelog": {
+    "0.16.0": [
+      "Added repo-tree-architect to toolchain-family (PDR-003 gap closure)",
+      "Added tree-repo-auditor to toolchain-family (PDR-003 gap closure)",
+      "Added cognitive-stack-architect to context-family (PDR-003 gap closure)"
+    ],
+    "0.15.0": [
+      "Added repo-pdr-swarm-router to agent-governance-family (from repo-pdr-swarm-router.zip)",
+      "Added github-org-governance-manager to agent-governance-family (from chromatic-skill-utilization-roadmap-pdr)",
+      "Added llm-ide-handoff-packager to toolchain-family (from chromatic-skill-utilization-roadmap-pdr)",
+      "Added chromatic-memory-registrar to context-family (from chromatic-skill-utilization-roadmap-pdr)",
+      "Added context-monitor to observability-family (new: tracks token/context usage by model)"
+    ]
+  }
 }

@@ -1,0 +1,21 @@
+# Patch example for 09_DEPLOYMENT/config/routing/routing-table.yaml
+# Replace hermes3:8b with the installed Ollama tag if different.
+
+context_desktop:
+  balance:
+    C1: [ollama_local:hermes3:8b, ollama_local:llama3.1:8b]
+    C2: [ollama_local:hermes3:8b, ollama_local:qwen2.5-coder:14b]
+
+  low:
+    C1: [ollama_local:hermes3:8b, ollama_local:llama3.1:8b]
+    C2: [ollama_local:hermes3:8b, ollama_local:llama3.1:8b]
+
+context_laptop_remote:
+  balance:
+    C1: [ollama_local:hermes3:8b]
+    C2: [ollama_remote_desktop:hermes3:8b, ollama_remote_desktop:qwen2.5-coder:14b]
+
+context_server:
+  balance:
+    C1: [ollama_local:hermes3:8b, ollama_local:llama3.1:8b]
+    C2: [ollama_local:hermes3:8b, ollama_local:qwen2.5-coder:14b]

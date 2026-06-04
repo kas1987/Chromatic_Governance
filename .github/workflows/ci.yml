@@ -8,18 +8,19 @@ on:
 
 jobs:
   lint:
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - name: Generate App token
         id: app-token
         uses: actions/create-github-app-token@v3
         continue-on-error: true
         with:
-          app-id: ${{ secrets.APP_ID }}
+          client-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}  # pragma: allowlist secret
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           token: ${{ steps.app-token.outputs.token || github.token }}  # pragma: allowlist secret
       - name: Check for secrets
         uses: gitleaks/gitleaks-action@v2

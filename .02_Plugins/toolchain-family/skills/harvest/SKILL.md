@@ -105,3 +105,9 @@ ls -lt ~/.agents/learnings/*.md | head -10
 - **`ao harvest` not found** — Expected. `ao harvest` does not exist. This skill uses `ao forge transcript` + `ao extract` instead.
 - **`ao forge` not found** — Write learnings manually (Step 4). The goal is the `.md` files, not the tool.
 - **No transcript found** — Skip Step 2; proceed from Step 3 with any research docs.
+
+## Guardrails
+
+- Extract only factual learnings from the session transcript; no speculation
+- Do not fabricate entries if no transcript is found; skip and report instead
+- Harvesting is idempotent; re-running must not create duplicate entries

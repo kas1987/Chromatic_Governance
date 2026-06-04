@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PR Branch Lock Schema",
+  "description": "File-based distributed lock for coordinating single-agent mutations on GitHub PR branches",
+  "type": "object",
+  "required": [
+    "lock_id",
+    "repo",
+    "pr_number",
+    "branch",
+    "holder",
+    "queue_item_id",
+    "started_at",
+    "expires_at",
+    "ttl_minutes"
+  ],
+  "properties": {
+    "lock_id": {
+      "type": "string",
+      "pattern": "^LOCK-[a-zA-Z0-9/_-]+-PR[0-9]+$",
+      "description": "Globally unique lock identifier; format: LOCK-{repo}-PR{number}"
+    },
+    "repo": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$",
+      "description": "GitHub repository in org/repo format"
+    },
+    "pr_number": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "GitHub pull request number"
+    },
+    "branch": {
+      "type": "string",
+      "description": "Git branch name (usually matches PR head branch)"
+    },
+    "holder": {
+      "type": "string",
+      "description": "Agent, tool, or user ID holding the lock (e.g., 'agent-dispatch-review-intake', 'claude-session-abc')"
+    },
+    "queue_item_id": {
+      "type": "string",
+      "description": "Task/mission/queue item ID that acquired this lock (for traceability)"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when lock was acquired"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when lock expires and may be replaced"
+    },
+    "ttl_minutes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1440,
+      "description": "Time-to-live in minutes (default: 30, max: 24 hours)"
+    }
+  },
+  "additionalProperties": false
+}

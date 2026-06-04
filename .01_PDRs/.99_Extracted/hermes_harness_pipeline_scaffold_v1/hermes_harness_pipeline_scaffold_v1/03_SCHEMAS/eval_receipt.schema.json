@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Local Agent Eval Receipt",
+  "type": "object",
+  "required": [
+    "mission_id",
+    "agent_model",
+    "status",
+    "files_changed",
+    "validation_results",
+    "scope_compliance",
+    "stop_condition_triggered"
+  ],
+  "properties": {
+    "mission_id": {"type": "string"},
+    "agent_model": {"type": "string"},
+    "status": {"enum": ["pass", "fail", "partial", "blocked"]},
+    "files_changed": {"type": "array", "items": {"type": "string"}},
+    "validation_results": {"type": "array", "items": {"type": "string"}},
+    "scope_compliance": {"enum": ["compliant", "violation", "unknown"]},
+    "stop_condition_triggered": {"type": "boolean"},
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,65 @@
+name: PDR Status Update
+
+on:
+  workflow_dispatch:
+    inputs:
+      pdr_id:
+        description: 'PDR ID (e.g., PDR-002)'
+        required: true
+      target_status:
+        description: 'Target status'
+        required: true
+        type: choice
+        options:
+          - Backlog
+          - Pre-flight
+          - In-Process
+          - Completed
+          - Reviewed
+          - Archived
+      reason:
+        description: 'Reason for transition'
+        required: false
+
+jobs:
+  promote-pdr:
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Promote PDR
+        working-directory: .01_PDRs
+        run: |
+          python pdr_sync.py promote "${{ github.event.inputs.pdr_id }}" \
+            "${{ github.event.inputs.target_status }}" \
+            "${{ github.event.inputs.reason }}"
+
+      - name: Generate report
+        working-directory: .01_PDRs
+        run: python pdr_sync.py report > /tmp/pdr_report.md
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "chore(pdr): ${{ github.event.inputs.pdr_id }} → ${{ github.event.inputs.target_status }}"
+          title: "PDR Promotion: ${{ github.event.inputs.pdr_id }} → ${{ github.event.inputs.target_status }}"
+          body: |
+            **PDR Status Update**
+            
+            - **PDR ID:** ${{ github.event.inputs.pdr_id }}
+            - **New Status:** ${{ github.event.inputs.target_status }}
+            - **Reason:** ${{ github.event.inputs.reason || 'No reason provided' }}
+            
+            See `.01_PDRs/PDR_REGISTRY.json` for full audit trail.
+          branch: pdr/promote-${{ github.event.inputs.pdr_id }}-${{ github.run_id }}
+          delete-branch: true

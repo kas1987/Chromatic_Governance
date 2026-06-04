@@ -1,0 +1,51 @@
+[
+  {
+    "Timestamp": "2026-06-04T17:09:48.6548634-04:00",
+    "Component": "T0 Ollama llama3.2:3b",
+    "DurationMs": 84,
+    "Notes": "Model loaded and accessible",
+    "Status": "Ready"
+  },
+  {
+    "Timestamp": "2026-06-04T17:09:50.2943733-04:00",
+    "Component": "T1 Featherless Hermes-3-8B",
+    "DurationMs": 1633,
+    "Notes": "Unexpected response structure",
+    "Status": "Degraded"
+  },
+  {
+    "Timestamp": "2026-06-04T17:09:53.6821774-04:00",
+    "Component": "T3 Gemini gemini-2.5-flash",
+    "DurationMs": 3372,
+    "Notes": "Cloud endpoint healthy, low latency",
+    "Status": "Live"
+  },
+  {
+    "Timestamp": "2026-06-04T17:09:53.7213281-04:00",
+    "Component": "model-router.sh hook",
+    "DurationMs": 0,
+    "Notes": "Hook path: .\\.claude\\hooks\\model-router.sh",
+    "Status": "Missing"
+  },
+  {
+    "Timestamp": "2026-06-04T17:09:53.7366945-04:00",
+    "Component": "provider-tiers configuration",
+    "DurationMs": 0,
+    "Notes": "v3 with concurrency metadata detected",
+    "Status": "Valid"
+  },
+  {
+    "Timestamp": "2026-06-04T17:09:53.7401028-04:00",
+    "Component": "taxonomy_sync.py",
+    "DurationMs": 0,
+    "Notes": "Script not located",
+    "Status": "Missing"
+  },
+  {
+    "Timestamp": "2026-06-04T17:09:53.7442161-04:00",
+    "Component": "Featherless 2× concurrency",
+    "DurationMs": 0,
+    "Notes": "API key not configured",
+    "Status": "Skipped"
+  }
+]

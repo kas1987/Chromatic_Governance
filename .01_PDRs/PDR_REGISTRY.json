@@ -1,0 +1,297 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-06-04T21:40:15.956101+00:00",
+  "pdrs": [
+    {
+      "id": "PDR-001",
+      "title": "Skill Utilization Roadmap",
+      "description": "Skill inventory and governance baseline \u00e2\u20ac\u201d 118 skills across 13 families, cross-LLM portability plan, governance standard",
+      "status": "Archived",
+      "phase": 0,
+      "owner": "Claude",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-06-04T00:00:00Z",
+      "file_path": null,
+      "notes": "Phase 0 complete. Content preserved in ART-CHROMATIC_SKILL_UTILIZATION_ROADMAP_PDR ZIP artifact. Superseded by PDR-002.",
+      "transitions": [
+        {
+          "from": null,
+          "to": "Archived",
+          "timestamp": "2026-06-04T00:00:00Z",
+          "actor": "Claude",
+          "reason": "Phase 0 complete; superseded by PDR-002 which builds on this governance baseline"
+        }
+      ],
+      "related_issues": [],
+      "related_pr": null,
+      "tags": [
+        "governance",
+        "skill-ecosystem",
+        "phase-0"
+      ],
+      "acceptance_criteria": [
+        "Skill inventory documented (118 skills, 13 families)",
+        "Governance standard baseline established",
+        "Cross-LLM portability plan documented"
+      ],
+      "completion_percentage": 100
+    },
+    {
+      "id": "PDR-002",
+      "title": "Skill Ecosystem Technical Foundation",
+      "description": "MCP skill server, Stop hook, CI governance, skill bridge, access policy",
+      "status": "In-Process",
+      "phase": 2,
+      "owner": "Claude",
+      "created_at": "2026-01-15T00:00:00Z",
+      "updated_at": "2026-06-04T22:00:00Z",
+      "file_path": ".01_PDRs\\.03_In-Process\\PDR-002-skill-ecosystem-technical-foundation.md",
+      "transitions": [
+        {
+          "from": "Backlog",
+          "to": "In-Process",
+          "timestamp": "2026-02-01T10:30:00Z",
+          "actor": "Claude",
+          "reason": "Phase 2 implementation started"
+        },
+        {
+          "from": "Phase-A",
+          "to": "Phase-B-ready",
+          "timestamp": "2026-06-04T22:00:00Z",
+          "actor": "Claude",
+          "reason": "Phase A acceptance criteria all delivered: MCP server, Stop hook, CI gates, skill bridge, access policy, invocation logging, CLI wrapper"
+        }
+      ],
+      "related_issues": [
+        "#1"
+      ],
+      "related_pr": "https://github.com/kas1987/Chromatic_Governance/pull/1",
+      "tags": [
+        "governance",
+        "skill-ecosystem",
+        "phase-2"
+      ],
+      "acceptance_criteria": [
+        "MCP skill server scaffold complete",
+        "Stop hook integrated",
+        "CI governance gates passing",
+        "Access policy documented"
+      ],
+      "completion_percentage": 75
+    },
+    {
+      "id": "PDR-004",
+      "title": "Review Intake System",
+      "description": "Chromatic Review Intake system - Phase 1-5 passive intake, dispatch, collision control, resolution logging",
+      "status": "In-Process",
+      "phase": 5,
+      "owner": "Claude",
+      "created_at": "2026-03-10T00:00:00Z",
+      "updated_at": "2026-06-04T22:00:00Z",
+      "file_path": ".01_PDRs\\.03_In-Process\\PDR-004-review-intake-system.md",
+      "extracted_path": ".01_PDRs/.99_Extracted/chromatic_review_intake_pdr_extracted",
+      "transitions": [
+        {
+          "from": "Backlog",
+          "to": "In-Process",
+          "timestamp": "2026-03-15T09:00:00Z",
+          "actor": "Claude",
+          "reason": "Phase 1-5 implementation prioritized"
+        },
+        {
+          "from": "Phase-5",
+          "to": "Phase-5-assessed",
+          "timestamp": "2026-06-04T22:00:00Z",
+          "actor": "Claude",
+          "reason": "Post-implementation assessment: Phases 1-4 fully implemented and tested. 6 scripts (review_intake.py, classify_review_finding.py, dispatch_queue.py, lock_pr_branch.py, post_review_resolution.py, update_next_work_queue.py). 4 schemas (review_finding, next_work_item, agent_dispatch, pr_branch_lock). 5 playbooks + 3 handoff packets. Phase 5 structured for GitHub App but currently GitHub Action-only. Dispatch queue with full stop conditions and confidence gating verified. Tests for dispatch_queue.py complete."
+        }
+      ],
+      "related_issues": [],
+      "related_pr": "https://github.com/kas1987/Chromatic_Governance/pull/1",
+      "tags": [
+        "governance",
+        "review-intake",
+        "phase-1",
+        "phase-2",
+        "phase-3",
+        "phase-4",
+        "phase-5"
+      ],
+      "acceptance_criteria": [
+        "Phase 1: Passive intake workflow operational",
+        "Phase 2-4: Dispatch, resolution, playbooks complete",
+        "Phase 5: Bundle integration and findings DB",
+        "All acceptance tests passing",
+        "Documentation complete"
+      ],
+      "completion_percentage": 80
+    },
+    {
+      "id": "PDR-006",
+      "title": "Global Artifact Taxonomy",
+      "description": "Typed node/edge taxonomy for all artifacts and PDRs \u00e2\u20ac\u201d sequential ordering, hierarchy, dependencies, complexity, priority scoring, SQLite query layer",
+      "status": "Completed",
+      "phase": 1,
+      "owner": "Kas/Claude",
+      "created_at": "2026-06-04T21:30:00Z",
+      "updated_at": "2026-06-04T21:40:15.956101+00:00",
+      "file_path": ".01_PDRs\\.04_Completed\\PDR-006-global-artifact-taxonomy.md",
+      "transitions": [
+        {
+          "from": null,
+          "to": "In-Process",
+          "timestamp": "2026-06-04T21:30:00Z",
+          "actor": "Kas/Claude",
+          "reason": "Designed and implementing immediately \u00e2\u20ac\u201d taxonomy needed to support audit and agent routing"
+        },
+        {
+          "from": "In-Process",
+          "to": "Completed",
+          "timestamp": "2026-06-04T21:40:15.956101+00:00",
+          "actor": "user",
+          "reason": "Taxonomy implemented: ARTIFACT_TAXONOMY.json, TAXONOMY_EDGES.json, taxonomy_sync.py, SQLite DB \u2014 all 100 acceptance criteria met this session"
+        }
+      ],
+      "related_issues": [],
+      "related_pr": null,
+      "tags": [
+        "governance",
+        "taxonomy",
+        "infrastructure"
+      ],
+      "acceptance_criteria": [
+        "ARTIFACT_TAXONOMY.json created with all current PDRs and artifacts (seq 1-11)",
+        "TAXONOMY_EDGES.json created with all known relationships",
+        "taxonomy_sync.py syncs JSON to SQLite with correct priority_score and is_blocked",
+        "All existing PDR_REGISTRY.json entries remain valid"
+      ],
+      "completion_percentage": 100
+    },
+    {
+      "id": "PDR-005",
+      "title": "n8n Intake Orchestration",
+      "description": "Phased n8n orchestration for ZIP intake, registry-aware routing, and governed handoff automation",
+      "status": "Backlog",
+      "phase": 1,
+      "owner": "Kas/Claude",
+      "created_at": "2026-06-04T00:00:00Z",
+      "updated_at": "2026-06-04T00:00:00Z",
+      "file_path": ".01_PDRs\\.01_Backlog\\PDR-005-n8n-intake-orchestration.md",
+      "transitions": [
+        {
+          "from": null,
+          "to": "Backlog",
+          "timestamp": "2026-06-04T00:00:00Z",
+          "actor": "Claude",
+          "reason": "Created per request for phased n8n integration planning"
+        }
+      ],
+      "related_issues": [],
+      "related_pr": "https://github.com/kas1987/Chromatic_Governance/pull/1",
+      "tags": [
+        "n8n",
+        "intake",
+        "orchestration",
+        "governance",
+        "phase-1"
+      ],
+      "acceptance_criteria": [
+        "Phased n8n workflow plan documented",
+        "Intake bridge design captured for local ZIP drop automation",
+        "Registry-aware routing requirements documented",
+        "No direct In-Process transition without Pre-flight readiness",
+        "Design approved for Pre-flight"
+      ],
+      "completion_percentage": 10
+    }
+  ],
+  "status_workflow": {
+    "Backlog": {
+      "description": "PDR proposed, awaiting prioritization",
+      "allowed_transitions": [
+        "Pre-flight"
+      ]
+    },
+    "Pre-flight": {
+      "description": "PDR intake validated, scoped, and ready to start",
+      "allowed_transitions": [
+        "In-Process",
+        "Backlog"
+      ]
+    },
+    "In-Process": {
+      "description": "PDR actively being worked on",
+      "allowed_transitions": [
+        "Completed",
+        "Pre-flight"
+      ]
+    },
+    "Completed": {
+      "description": "PDR implementation complete, awaiting review",
+      "allowed_transitions": [
+        "Reviewed",
+        "In-Process"
+      ]
+    },
+    "Reviewed": {
+      "description": "PDR approved through governance review",
+      "allowed_transitions": [
+        "Archived"
+      ]
+    },
+    "Archived": {
+      "description": "PDR archived for historical reference",
+      "allowed_transitions": []
+    }
+  },
+  "artifact_backlog": [
+    {
+      "id": "ART-CHROMATIC_SKILL_UTILIZATION_ROADMAP_PDR",
+      "status": "Backlog",
+      "zip_path": ".01_PDRs\\.01_Backlog\\chromatic-skill-utilization-roadmap-pdr.zip",
+      "extracted_path": null,
+      "registered_at": "2026-06-04T18:40:08.896571+00:00",
+      "notes": "Contains PDR-001 content (skill-utilization-roadmap, inventory, governance, roadmap docs). PDR-001 is Archived; this ZIP is the preserved artifact. Keep intact."
+    },
+    {
+      "id": "ART-CLAUDE_PLUGIN_FAMILIES_SCAFFOLD_V14_GOLD",
+      "status": "Backlog",
+      "zip_path": ".01_PDRs\\.01_Backlog\\.99_Dups\\claude_plugin_families_scaffold_v14_gold.zip",
+      "extracted_path": null,
+      "registered_at": "2026-06-04T18:40:08.898165+00:00",
+      "notes": "Classified redundant by intake duplicate gate and routed to duplicate shelf."
+    },
+    {
+      "id": "ART-REPO_PDR_SWARM_ROUTER",
+      "status": "Backlog",
+      "zip_path": ".01_PDRs\\.01_Backlog\\repo-pdr-swarm-router.zip",
+      "extracted_path": null,
+      "registered_at": "2026-06-04T18:40:08.898165+00:00",
+      "notes": "Auto-registered from root ZIP inventory. Keep intact until Pre-flight."
+    },
+    {
+      "id": "ART-HERMES_HARNESS_PIPELINE_SCAFFOLD_V1",
+      "status": "Backlog",
+      "zip_path": ".01_PDRs\\.01_Backlog\\hermes_harness_pipeline_scaffold_v1.zip",
+      "extracted_path": null,
+      "registered_at": "2026-06-04T21:00:00+00:00",
+      "notes": "Hermes local agent pipeline scaffold \u00e2\u20ac\u201d PDR, governance, schemas (mission_packet, eval_receipt), routing plan, model tier map, 3 agent missions, eval plan, CI gate plan, operator guide, seed queue."
+    },
+    {
+      "id": "ART-HERMES_HARNESS_PDR_PACKAGE",
+      "status": "Backlog",
+      "zip_path": ".01_PDRs\\.01_Backlog\\hermes_harness_pdr_package.zip",
+      "extracted_path": null,
+      "registered_at": "2026-06-04T21:00:00+00:00",
+      "notes": "Hermes local agent worker PDR package \u00e2\u20ac\u201d PDR_HERMES_LOCAL_AGENT_WORKER.md, agent handoff packets (Sentinel, Auditor, Cartographer, Archivist, Quartermaster), implementation plan, deployment configs, routing policy, evaluation protocol. Companion to ART-HERMES_HARNESS_PIPELINE_SCAFFOLD_V1."
+    },
+    {
+      "id": "ART-CHROMATIC_MISSION_PACKET_FRAMEWORK_V1",
+      "status": "Backlog",
+      "zip_path": ".01_PDRs\\.01_Backlog\\chromatic_mission_packet_framework_v1.zip",
+      "extracted_path": null,
+      "registered_at": "2026-06-04T21:00:00+00:00",
+      "notes": "Chromatic mission packet framework \u00e2\u20ac\u201d 4-level mission complexity schemas (M1-M4), PDR/governance-register/supporting-docs schemas, templates (PDR, risk register, dispatch board, evidence map), governance gates, PDR requirements by level, agent routing guide, worked examples."
+    }
+  ]
+}

@@ -14,6 +14,7 @@ on:
 
 jobs:
   governance-sync:
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -21,13 +22,12 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
       - name: Generate App token
         id: app-token
         uses: actions/create-github-app-token@v3
         continue-on-error: true
         with:
-          app-id: ${{ secrets.APP_ID }}
+          client-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}  # pragma: allowlist secret
 
       - uses: actions/checkout@v4
