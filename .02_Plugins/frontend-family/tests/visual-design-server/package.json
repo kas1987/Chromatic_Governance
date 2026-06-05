@@ -1,0 +1,8 @@
+{
+  "name": "visual-design-server-tests",
+  "version": "1.0.0",
+  "description": "Zero-dependency integration tests for the visual-design companion server.",
+  "scripts": {
+    "test": "node --test"
+  }
+}
