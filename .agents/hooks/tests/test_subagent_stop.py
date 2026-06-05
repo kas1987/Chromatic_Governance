@@ -32,9 +32,6 @@ def _run(monkeypatch, tmp_path: Path, payload: dict | None, env: dict | None = N
     stdin_str = json.dumps(payload) if payload is not None else ""
     monkeypatch.setattr(sys, "stdin", io.StringIO(stdin_str))
     monkeypatch.setattr(ss, "__file__", str(_fake_file(tmp_path)))
-    if env:
-        for k, v in env.items():
-            monkeypatch.setenv(k, v)
     monkeypatch.delenv("CHROMATIC_TASK_ID", raising=False)
     monkeypatch.delenv("CHROMATIC_AGENT_ID", raising=False)
     if env:

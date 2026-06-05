@@ -34,13 +34,13 @@ class TestSummarize:
         assert pta._summarize("Write", "short") == "short"
 
     def test_large_response_for_large_tool_truncated(self):
-        big = "x" * 1000
+        big = "x" * (pta._RESPONSE_MAX_CHARS * 2)
         out = pta._summarize("Read", big)
         assert len(out) < len(big)
         assert "truncated" in out
 
     def test_large_response_for_non_large_tool_not_truncated(self):
-        big = "x" * 1000
+        big = "x" * (pta._RESPONSE_MAX_CHARS * 2)
         assert pta._summarize("Write", big) == big
 
     def test_dict_value_serialized_to_string(self):
