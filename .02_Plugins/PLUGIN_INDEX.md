@@ -14,7 +14,7 @@
 | `docs-family` | 8 | Documentation operations for README, API docs, runbooks, dev guides, troubleshooting, diagrams, and doc audits. |
 | `product-family` | 8 | Requirements, user stories, MVP planning, prioritization, UX critique, and feedback-to-backlog conversion. |
 | `data-research-family` | 8 | Evidence gathering, source scans, benchmarks, documentation digests, API change watches, and citation audits. |
-| `frontend-family` | 10 | Frontend/UI-UX delivery, asset extraction, CSS/Tailwind/component systems, dashboards, local apps, and 3D assets. |
+| `frontend-family` | 11 | Frontend/UI-UX delivery, interactive visual design, asset extraction, CSS/Tailwind/component systems, dashboards, local apps, and 3D assets. |
 
 **Total: 123 skills across 13 families** (v0.16.0)
 
@@ -135,4 +135,4 @@
 `api-change-watch` · `benchmark-compare` · `citation-audit` · `docs-digest` · `evidence-brief` · `market-scan` · `research-handoff` · `source-scan`
 
 ### frontend-family
-`blender-3d-assets` · `component-library` · `css-library` · `external-ui-platforms` · `interactive-gui` · `local-apps` · `quick-dashboard` · `tailwind-system` · `ui-best-practices` · `webpage-asset-extract`
+`blender-3d-assets` · `component-library` · `css-library` · `external-ui-platforms` · `interactive-gui` · `local-apps` · `quick-dashboard` · `tailwind-system` · `ui-best-practices` · `visual-design` · `webpage-asset-extract`

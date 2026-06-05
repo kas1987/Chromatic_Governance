@@ -172,6 +172,7 @@ Load on demand when the task domain is clear.
 | `ui-best-practices` | frontend | "UI/UX standards review" |
 | `quick-dashboard` | frontend | "Scaffold a dashboard" |
 | `interactive-gui` | frontend | "Interactive GUI planning" |
+| `visual-design` | frontend | "Interactive visual design / live preview" |
 | `local-apps` | frontend | "Local app patterns" |
 | `external-ui-platforms` | frontend | "UI platform selection" |
 | `webpage-asset-extract` | frontend | "Local asset inventory" |
