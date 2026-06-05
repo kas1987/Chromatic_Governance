@@ -5,9 +5,17 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    # Group all action updates into ONE PR instead of one-per-action. Avoids the
+    # serial-conflict thrash of many PRs editing the same workflow SHA pins.
+    groups:
+      github-actions:
+        patterns: ["*"]
 
   - package-ecosystem: "pip"
     directory: "/.02_Plugins/mcp"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    groups:
+      python-deps:
+        patterns: ["*"]
