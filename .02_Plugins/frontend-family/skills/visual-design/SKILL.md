@@ -40,7 +40,7 @@ Create a task for each item and complete in order:
 7. **User reviews the spec**
 8. **Hand off to implementation** — invoke the right `frontend-family` skill (`component-library`, `tailwind-system`, `local-apps`, `quick-dashboard`, …). Do NOT invoke `pipeline-family:implement`; this is a front-end handoff.
 
-## Process Flow
+## Core procedure
 
 ```dot
 digraph visual_design {
@@ -93,6 +93,23 @@ consent. If declined, run text-only with ASCII/description and `AskUserQuestion`
 
 Once accepted, read the full loop guide before starting the server:
 `visual-companion.md`
+
+## Output format
+
+This skill terminates by producing a **design spec** — the handoff artifact a
+`frontend-family` build skill consumes. The spec captures the *approved* design
+(not implementation code) and includes:
+
+- **Layout** — chosen wireframe/structure (which A/B option won, and why).
+- **Design tokens** — exact values read from `state/tokens.json` (color, spacing,
+  typography, radius), not guessed.
+- **Components** — the previewed component set and their states.
+- **Content & assets** — real image/content sources where fidelity matters.
+- **Accessibility notes** — WCAG AA contrast results for the chosen palette.
+- **Target** — user, device, runtime, and the build skill to hand off to.
+
+Present the spec for user review before handing off; on approval, pass it to the
+build skill at the `sonnet` tier (implementation is known-pattern code).
 
 ## Guardrails
 
