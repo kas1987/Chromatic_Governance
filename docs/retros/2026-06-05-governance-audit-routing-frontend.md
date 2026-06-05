@@ -13,15 +13,15 @@
   inputs out of `run:` into `env:`, SHA-pinned actions, `permissions`/`concurrency`/
   `timeout` across 8 workflows), and hook robustness (`py -3` + `$CLAUDE_PROJECT_DIR`
   anchoring; validator derives interpreter from settings).
-- **Routing floor raised** (#29 + global config): C1→haiku (non-code only), **C2→sonnet**
-  (was haiku — code review/edits need extended thinking), C3→sonnet, C4→opus; a
+- **Routing floor raised** (#29 + global config): C1→Haiku (non-code only), **C2→Sonnet**
+  (was Haiku — code review/edits need extended thinking), C3→Sonnet, C4→Opus; a
   **code floor** so code-touching work never routes to 3B–14B open models. Applied to
   `~/.claude/CLAUDE.md`, the `feedback-agent-model-routing` memory, the canonical
   `subagent-token-efficiency.md` + `multi-router-matrix.yaml`, then federated.
 - **Front-end design lane** (#16): `frontend-experience-architect` agent given
   frontmatter (`model: opus`, `effort: medium`) + a design→impl routing table;
   `frontend-design`/`frontend-visual-triage` intents + `code_floor` in the canonical
-  matrix; `visual-design` skill registered (PLUGIN_INDEX 10→11, SKILL_TAXONOMY).
+  matrix; `visual-design` skill registered (`PLUGIN_INDEX.md` 10→11, `SKILL_TAXONOMY.md`).
 
 ## Learnings
 
@@ -70,4 +70,4 @@ test hard-codes the total skill count (123→124). Both block merge.
 - **Stale `GH_TOKEN`** in settings.json — refresh or remove so `gh` stops erroring by default.
 - **Harness gen probe-chains** (`code-small-edit`, etc.) still start on local coder models;
   the `code_floor` was applied to the Claude-agent tiers, not the gen `/api/delegate` chains — revisit if those route unreviewed code.
-- Pre-existing in_progress beads (mc-22w, mc-6a5, mc-a2u …) are harness items, untouched here.
+- Pre-existing `in_progress` beads (mc-22w, mc-6a5, mc-a2u …) are harness items, untouched here.
