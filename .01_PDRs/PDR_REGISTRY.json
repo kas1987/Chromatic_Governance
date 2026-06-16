@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-06-04T21:40:15.956101+00:00",
+  "last_updated": "2026-06-16T00:00:00+00:00",
   "pdrs": [
     {
       "id": "PDR-001",
@@ -285,6 +285,45 @@
       ],
       "completion_percentage": 100,
       "notes": "Merged via PR #15. ~108 new tests added across 8 files (test_lock_pr_branch, test_log_resolution_main, test_dispatch_main, test_token_issuer, test_pre_tool_guard, test_post_tool_audit, test_context_snapshot, test_subagent_stop). pytest.ini testpaths and coverage extended to .agents/hooks."
+    },
+    {
+      "id": "PDR-008",
+      "title": "Hermes Local-Agent Harness",
+      "description": "Folds three backlog artifacts (Hermes pipeline scaffold, Hermes PDR package, Chromatic mission-packet framework) into one initiative: a local-agent worker harness running a 5-agent roster (Sentinel, Auditor, Cartographer, Archivist, Quartermaster) on local/Featherless tiers, governed by one canonical mission-packet schema (M1-M4) and gated by mandatory eval receipts.",
+      "status": "Pre-flight",
+      "phase": 1,
+      "owner": "Claude",
+      "created_at": "2026-06-16T00:00:00Z",
+      "updated_at": "2026-06-16T00:00:00Z",
+      "file_path": ".01_PDRs\\.03_In-Process\\PDR-008-hermes-local-agent-harness.md",
+      "transitions": [
+        {
+          "from": null,
+          "to": "Pre-flight",
+          "timestamp": "2026-06-16T00:00:00Z",
+          "actor": "Claude",
+          "reason": "Drafted PDR folding ART-HERMES_HARNESS_PIPELINE_SCAFFOLD_V1, ART-HERMES_HARNESS_PDR_PACKAGE, and ART-CHROMATIC_MISSION_PACKET_FRAMEWORK_V1 into one tracked initiative; work queue defined (HERMES-001..008), not yet started."
+        }
+      ],
+      "related_issues": [],
+      "related_pr": null,
+      "tags": [
+        "governance",
+        "local-agents",
+        "hermes",
+        "mission-packets",
+        "routing"
+      ],
+      "acceptance_criteria": [
+        "All three source artifacts extracted; artifact_backlog status set to Promoted",
+        "One canonical mission-packet.schema.json; two Hermes copies reconciled to it",
+        "Hermes capability registry wired to live router tiers and validated",
+        "Eval receipt emitted for a sample mission and passes validate_packet.py",
+        "Single Hermes CI gate rejects a mission lacking a passing receipt",
+        "Sentinel and Auditor agents run a bounded mission end-to-end"
+      ],
+      "completion_percentage": 0,
+      "notes": "Drafted 2026-06-16. Promotes 3 Hermes/mission-packet backlog artifacts into one harness initiative. Next action: HERMES-001 pre-flight (extract all 3 ZIPs, diff the three mission_packet schemas, choose canonical). Builds on existing Featherless router tiers (Kimi/Hermes). Featherless key stays in ~/.claude/secrets/, never committed."
     }
   ],
   "status_workflow": {
@@ -353,27 +392,30 @@
     },
     {
       "id": "ART-HERMES_HARNESS_PIPELINE_SCAFFOLD_V1",
-      "status": "Backlog",
+      "status": "Promoted",
+      "promoted_to": "PDR-008",
       "zip_path": ".01_PDRs\\.01_Backlog\\hermes_harness_pipeline_scaffold_v1.zip",
       "extracted_path": null,
       "registered_at": "2026-06-04T21:00:00+00:00",
-      "notes": "Hermes local agent pipeline scaffold \u00e2\u20ac\u201d PDR, governance, schemas (mission_packet, eval_receipt), routing plan, model tier map, 3 agent missions, eval plan, CI gate plan, operator guide, seed queue."
+      "notes": "Promoted into PDR-008 (Hermes Local-Agent Harness) on 2026-06-16. Hermes local agent pipeline scaffold \u00e2\u20ac\u201d PDR, governance, schemas (mission_packet, eval_receipt), routing plan, model tier map, 3 agent missions, eval plan, CI gate plan, operator guide, seed queue."
     },
     {
       "id": "ART-HERMES_HARNESS_PDR_PACKAGE",
-      "status": "Backlog",
+      "status": "Promoted",
+      "promoted_to": "PDR-008",
       "zip_path": ".01_PDRs\\.01_Backlog\\hermes_harness_pdr_package.zip",
       "extracted_path": null,
       "registered_at": "2026-06-04T21:00:00+00:00",
-      "notes": "Hermes local agent worker PDR package \u00e2\u20ac\u201d PDR_HERMES_LOCAL_AGENT_WORKER.md, agent handoff packets (Sentinel, Auditor, Cartographer, Archivist, Quartermaster), implementation plan, deployment configs, routing policy, evaluation protocol. Companion to ART-HERMES_HARNESS_PIPELINE_SCAFFOLD_V1."
+      "notes": "Promoted into PDR-008 (Hermes Local-Agent Harness) on 2026-06-16. Hermes local agent worker PDR package \u00e2\u20ac\u201d PDR_HERMES_LOCAL_AGENT_WORKER.md, agent handoff packets (Sentinel, Auditor, Cartographer, Archivist, Quartermaster), implementation plan, deployment configs, routing policy, evaluation protocol. Companion to ART-HERMES_HARNESS_PIPELINE_SCAFFOLD_V1."
     },
     {
       "id": "ART-CHROMATIC_MISSION_PACKET_FRAMEWORK_V1",
-      "status": "Backlog",
+      "status": "Promoted",
+      "promoted_to": "PDR-008",
       "zip_path": ".01_PDRs\\.01_Backlog\\chromatic_mission_packet_framework_v1.zip",
       "extracted_path": null,
       "registered_at": "2026-06-04T21:00:00+00:00",
-      "notes": "Chromatic mission packet framework \u00e2\u20ac\u201d 4-level mission complexity schemas (M1-M4), PDR/governance-register/supporting-docs schemas, templates (PDR, risk register, dispatch board, evidence map), governance gates, PDR requirements by level, agent routing guide, worked examples."
+      "notes": "Promoted into PDR-008 (Hermes Local-Agent Harness) on 2026-06-16. Chromatic mission packet framework \u00e2\u20ac\u201d 4-level mission complexity schemas (M1-M4), PDR/governance-register/supporting-docs schemas, templates (PDR, risk register, dispatch board, evidence map), governance gates, PDR requirements by level, agent routing guide, worked examples."
     }
   ]
 }
