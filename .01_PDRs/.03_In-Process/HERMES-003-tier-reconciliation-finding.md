@@ -63,9 +63,20 @@ Any option also requires deciding **which file is the registry of record** — t
 - ⛔ Did **not** author `hermes-model-capability.yaml` or wire anything to the router — the stop condition fired.
 - ⛔ Did **not** alter the Gen routing matrix.
 
+## 4a. Resolution (2026-06-16)
+
+**Decision: Option B — stand up a real local `hermes3:8b` in Ollama** as a new local agentic worker on the Gen / local plane. Chosen by the decision owner.
+
+Consequences:
+- `hermes3:8b` is pulled into local Ollama (`ollama pull hermes3:8b`) and verified to run.
+- The **registry of record** for local-worker capabilities is `.03_Harness Governance/config/hermes-model-capability.yaml` (this file is authored by HERMES-003).
+- The Claude-Agent cloud tiers remain owned by the live matrix and are **not** edited by HERMES-003; the local Ollama `hermes3:8b` is the local counterpart of the Featherless-hosted `NousResearch/Hermes-3-Llama-3.1-8B` (same family, two planes).
+- **Wiring** `hermes3:8b` into the live Gen routing matrix is deferred to **HERMES-004** (additive, dry-run + diff; stop if it alters non-Hermes routing).
+- `hermes3:8b` stays C1/C2 until a `hermes_evaluation_result` scorecard (HERMES-005) earns it C3+.
+
 ## 5. Follow-up
 
-- **Decision owner (human):** choose option A / B / C in §3 and name the registry of record.
+- ✅ **Decision made:** Option B (see §4a). Registry of record = `config/hermes-model-capability.yaml`.
 - Once decided, **re-scope HERMES-003** as: "Document Hermes capability against the *live* router plane chosen in §3" — likely a small edit to `multi-router-matrix.yaml`'s `when:` clauses (option A) rather than a new YAML file.
 - **HERMES-004** (routing patch) stays blocked until §3 is resolved — its dry-run target depends on which plane HERMES-003 lands in.
 - Amend PDR-008 Decision 2 to state the live router (`multi-router-matrix.yaml`) is authoritative over the scaffold `MODEL_TIER_MAP.md`, and that the capability "registry" is the matrix's `when:` clauses, not a new file (unless option B is chosen).
