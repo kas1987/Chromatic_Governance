@@ -1,0 +1,9 @@
+{
+  "mission_id": "mission-bad-example",
+  "agent_model": "hermes3:8b",
+  "status": "succeeded",
+  "files_changed": "schemas/eval_receipt.schema.json",
+  "scope_compliance": "compliant",
+  "stop_condition_triggered": "no",
+  "unexpected_field": true
+}

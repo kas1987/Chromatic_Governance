@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chromatic.local/schemas/eval_receipt.schema.json",
+  "title": "Chromatic Harness Eval Receipt",
+  "description": "Canonical operational eval-receipt contract (PDR-008 / HERMES-005). One receipt is emitted per completed local-agent mission and is the CI-gate artifact (HERMES-006): a mission lacking a passing receipt fails the gate. Reconciled from hermes_harness_pipeline_scaffold_v1/03_SCHEMAS/eval_receipt.schema.json with the seven required fields kept byte-faithful; adds only the optional, additive fields pr_ref and created_at to support the PR-attachment workflow documented in operations/eval-receipts.md. Distinct from hermes_evaluation_result (the model-quality scorecard) per PDR-008 Decision 3.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mission_id",
+    "agent_model",
+    "status",
+    "files_changed",
+    "validation_results",
+    "scope_compliance",
+    "stop_condition_triggered"
+  ],
+  "properties": {
+    "mission_id": {"type": "string"},
+    "agent_model": {"type": "string"},
+    "status": {"enum": ["pass", "fail", "partial", "blocked"]},
+    "files_changed": {"type": "array", "items": {"type": "string"}},
+    "validation_results": {"type": "array", "items": {"type": "string"}},
+    "scope_compliance": {"enum": ["compliant", "violation", "unknown"]},
+    "stop_condition_triggered": {"type": "boolean"},
+    "notes": {"type": "string"},
+    "pr_ref": {"type": ["string", "null"], "description": "Optional (additive): the PR number/URL this receipt is attached to. See operations/eval-receipts.md."},
+    "created_at": {"type": "string", "description": "Optional (additive): ISO-8601 timestamp the receipt was emitted."}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "mission_id": "mission-001-add-hermes-capability-registry",
+  "agent_model": "hermes3:8b",
+  "status": "pass",
+  "files_changed": [
+    ".03_Harness Governance/config/hermes-model-capability.yaml"
+  ],
+  "validation_results": [
+    "PASS: hermes3:8b registered"
+  ],
+  "scope_compliance": "compliant",
+  "stop_condition_triggered": false,
+  "notes": "No forbidden files touched. YAML parsed successfully.",
+  "pr_ref": "#26",
+  "created_at": "2026-06-16T17:00:00Z"
+}
