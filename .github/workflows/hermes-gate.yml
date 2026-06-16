@@ -9,9 +9,11 @@ name: Hermes Gate
 # overlap with skill-governance.yml (scoped to '.02_Plugins/**'). Distinct job names
 # and concurrency group — no collision with any existing workflow.
 #
-# Phase note: this first landing validates every eval receipt that is present and
-# rejects invalid ones. Enforcing "a mission PR MUST include a receipt" (framework
-# Phase 3) is the documented follow-up.
+# Phase note: schema-validate validates every eval receipt that is present and rejects
+# invalid ones (Phase 1/2). The receipt-required job below is framework **Phase 3**: a
+# pull request that changes mission files under '.03_Harness Governance/' must also add
+# or update an eval receipt. Non-mission infra changes can waive it with a 'no-receipt'
+# PR label. Enforcement is PR-only (a post-merge push has no PR diff to evaluate).
 
 on:
   pull_request:
@@ -66,6 +68,53 @@ jobs:
             fi
           done
           exit $rc
+
+  receipt-required:
+    name: Mission PR includes a receipt
+    # Framework Phase 3. PR-only: a post-merge push to Main has no PR diff to evaluate.
+    if: ${{ github.event_name == 'pull_request' && !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+      - name: Require an eval receipt for mission-file changes
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        run: |
+          # Explicit human override for non-mission infra PRs.
+          if echo "$LABELS" | grep -q '"no-receipt"'; then
+            echo "::notice::'no-receipt' label present — receipt requirement waived for this PR."
+            exit 0
+          fi
+          git fetch --no-tags origin "$BASE_REF"
+          # --name-only paths are repo-root-relative regardless of working-directory.
+          changed="$(git diff --name-only "origin/${BASE_REF}...HEAD")"
+          echo "Changed files in PR:"
+          echo "$changed"
+          scope='.03_Harness Governance/'
+          receipts_re='^\.03_Harness Governance/operations/receipts/.*\.eval_receipt\.json$'
+          substantive=0
+          receipt=0
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            case "$f" in
+              "$scope"*) ;;       # in scope
+              *) continue ;;      # outside the Hermes harness tree — ignore
+            esac
+            if echo "$f" | grep -Eq "$receipts_re"; then
+              receipt=1
+            else
+              substantive=1
+            fi
+          done <<< "$changed"
+          if [ "$substantive" -eq 1 ] && [ "$receipt" -eq 0 ]; then
+            echo "::error::This PR changes mission files under '.03_Harness Governance/' but adds no eval receipt. Commit a <mission_id>.eval_receipt.json under operations/receipts/, or apply the 'no-receipt' label for a non-mission infra change."
+            exit 1
+          fi
+          echo "::notice::Receipt requirement satisfied (substantive=$substantive receipt=$receipt)."
 
   yaml-parse:
     name: Config YAML parses

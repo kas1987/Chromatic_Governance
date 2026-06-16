@@ -43,6 +43,12 @@ the receipt is the evidence the mission ran and why it stopped, not a success-on
 4. Commit the receipt **in the same PR** as the mission's changes so the CI gate
    (HERMES-006) can find and re-validate it.
 
+> **Phase-3 enforcement (HERMES-006).** The gate's `receipt-required` job fails any pull
+> request that changes mission files under `.03_Harness Governance/` without adding or
+> updating an eval receipt under `operations/receipts/`. Enforcement is PR-only. A genuine
+> non-mission infra PR (e.g. a workflow or tooling tweak that produced no agent mission)
+> can waive the requirement by applying the **`no-receipt`** label to the PR.
+
 ## Validator
 
 - Script: [`scripts/validate_packet.py`](../scripts/validate_packet.py) — validates any
