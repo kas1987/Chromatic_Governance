@@ -183,7 +183,7 @@ This PDR is complete when:
 - [x] A PR adding a SKILL.md without `name` frontmatter fails the skill-governance CI check
 - [x] `SKILL_BRIDGE.md` maps all 12 Poly-Chromatic operating skills with relationship and guidance
 - [x] `plugin-access-policy.md` maps all 4 broker profiles to allowed families with rationale
-- [ ] All items above are committed, pushed, and referenced from `AGENT_GUIDE.md` <!-- UNVERIFIED 2026-06-16: AGENT_GUIDE.md references the MCP server mechanism and context-usage.jsonl log, but does NOT reference SKILL_BRIDGE.md or plugin-access-policy.md by name; the "referenced from AGENT_GUIDE.md" link is incomplete -->
+- [x] All items above are committed, pushed, and referenced from `AGENT_GUIDE.md` <!-- VERIFIED 2026-06-16: AGENT_GUIDE.md "Governance bridges" section now references SKILL_BRIDGE.md and plugin-access-policy.md by name -->
 
 ---
 

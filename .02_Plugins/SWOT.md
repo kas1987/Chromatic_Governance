@@ -77,7 +77,7 @@ The 2026-06-16 hygiene sweep verified acceptance criteria against disk and found
 - **PDR-004 (review-intake):** registry says `Completed / Phase 5 / 100%`, but only Phases 1–2 are verified, Phase 3 is partially wired (no `review-resolution-log.jsonl`, no end-to-end agent patching), **Phase 4 (learning loop) is entirely unimplemented**, and Phase 5 has no GitHub App/webhook or cross-fork dedup. The `.md` now reflects this honestly; the registry entry was left at 100% (out of sweep scope) — so registry and `.md` now disagree.
 - **PDR-002:** registry says 100%, but its own acceptance criterion "referenced from `AGENT_GUIDE.md`" is unmet — `SKILL_BRIDGE.md` and `plugin-access-policy.md` are not linked from `AGENT_GUIDE.md`.
 
-This is the highest-priority weakness in v0.16: completion claims that can't be reproduced from artifacts erode trust in every other "Completed" status.
+This is the highest-priority weakness in v0.16: completion claims that can't be reproduced from artifacts erode trust in every other "Completed" status. **Reconciled in this PR:** PDR-004 downgraded to `In-Process` / Phase 3 / 45% with a transition documenting the verified vs. unimplemented work (Phases 4–5 deferred to a follow-up PDR), and PDR-002's `AGENT_GUIDE.md` references added so its last criterion is genuinely met. The structural fix (keeping every "Completed" verifiable) remains an ongoing discipline — see O3.
 
 ---
 
@@ -159,7 +159,7 @@ W11 elevated to a threat because it compounds: if "Completed" in the registry do
 
 | Priority | Action | SWOT driver |
 |---|---:|---|
-| P0 | Reconcile PDR registry to on-disk reality (downgrade/re-scope PDR-004; close PDR-002's AGENT_GUIDE refs) | W11, T9, O3 |
+| P0 | ~~Reconcile PDR registry to on-disk reality~~ DONE 2026-06-16: PDR-004 downgraded; PDR-002 refs closed. Remaining: re-scope deferred PDR-004 Phases 4–5 into a follow-up PDR | W11, T9, O3 |
 | P0 | Close the eager-load path so MCP server is the primary loader | W1, T2, O1 |
 | P1 | Confirm/repair `parse_repo_pdr.py` orphan | W5, O7 |
 | P1 | Harden CI gate (sections + trigger uniqueness) | T3, O4 |

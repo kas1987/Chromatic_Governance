@@ -95,12 +95,12 @@
       "id": "PDR-004",
       "title": "Review Intake System",
       "description": "Chromatic Review Intake system - Phase 1-5 passive intake, dispatch, collision control, resolution logging, central SQLite collector",
-      "status": "Completed",
-      "phase": 5,
+      "status": "In-Process",
+      "phase": 3,
       "owner": "Claude",
       "created_at": "2026-03-10T00:00:00Z",
-      "updated_at": "2026-06-04T23:59:00Z",
-      "file_path": ".01_PDRs\\.04_Completed\\PDR-004-review-intake-system.md",
+      "updated_at": "2026-06-16T00:00:00Z",
+      "file_path": ".01_PDRs\\.03_In-Process\\PDR-004-review-intake-system.md",
       "extracted_path": ".01_PDRs/.99_Extracted/chromatic_review_intake_pdr_extracted",
       "transitions": [
         {
@@ -123,6 +123,13 @@
           "timestamp": "2026-06-04T23:59:00Z",
           "actor": "Claude",
           "reason": "Phase 5 SQLite central collector implemented with CLI and daily summary"
+        },
+        {
+          "from": "Completed",
+          "to": "In-Process",
+          "timestamp": "2026-06-16T00:00:00Z",
+          "actor": "Claude",
+          "reason": "Reconciliation (governance integrity): on-disk verification during the 2026-06-16 hygiene sweep showed completion was over-claimed. VERIFIED: Phases 1-2 operational; resolution-comment generation (post_review_resolution.py) and JSONL->SQLite collector (findings_db.py/central_collector.py, with tests) work. NOT VERIFIED / not implemented: Phase 3 runtime agent patching, lock-window/test-gate flow, and review-resolution-log.jsonl are absent; Phase 4 learning loop is entirely unimplemented (only a sample reviewer-patterns.jsonl exists); Phase 5 GitHub App/webhook (Action-only) and cross-fork multi-repo dedup not demonstrated. Status downgraded to In-Process, completion to 45%, file moved back to .03_In-Process. Remaining Phase 3 runtime patching + Phase 4 learning loop + Phase 5 App/webhook/cross-fork dedup to be re-scoped into a follow-up PDR."
         }
       ],
       "related_issues": [],
@@ -132,18 +139,16 @@
         "review-intake",
         "phase-1",
         "phase-2",
-        "phase-3",
-        "phase-4",
-        "phase-5"
+        "phase-3"
       ],
       "acceptance_criteria": [
-        "Phase 1: Passive intake workflow operational",
-        "Phase 2-4: Dispatch, resolution, playbooks complete",
-        "Phase 5: Bundle integration and findings DB",
-        "All acceptance tests passing",
-        "Documentation complete"
+        "Phase 1: Passive intake workflow operational [VERIFIED]",
+        "Phase 2: Classification + dispatch queue with confidence gating [VERIFIED]",
+        "Phase 3 (partial): resolution-comment generation [VERIFIED]; runtime agent patching + lock/test-gate flow + review-resolution-log.jsonl [NOT IMPLEMENTED]",
+        "Phase 4: reviewer-pattern learning loop [NOT IMPLEMENTED - deferred to follow-up PDR]",
+        "Phase 5: JSONL->SQLite central collector [VERIFIED]; GitHub App/webhook + cross-fork dedup [NOT IMPLEMENTED - deferred]"
       ],
-      "completion_percentage": 100
+      "completion_percentage": 45
     },
     {
       "id": "PDR-006",
