@@ -5,7 +5,9 @@ from pathlib import Path
 from models import AccessRequest
 from policy_engine import PolicyEngine
 
-CONFIG = Path(__file__).resolve().parents[2] / "config"
+# Self-contained test config (see tests/fixtures/config/). Decoupled from the
+# production config/ dir so the suite is not affected by prod config drift.
+CONFIG = Path(__file__).resolve().parent / "fixtures" / "config"
 
 
 @pytest.fixture()

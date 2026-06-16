@@ -6,7 +6,9 @@ from unittest.mock import patch
 import main as access_main
 from models import AccessRequest
 
-CONFIG = str(Path(__file__).resolve().parents[2] / "config")
+# Self-contained test config (see tests/fixtures/config/). Decoupled from the
+# production config/ dir so the suite is not affected by prod config drift.
+CONFIG = str(Path(__file__).resolve().parent / "fixtures" / "config")
 
 
 @pytest.fixture(autouse=True)
