@@ -1,0 +1,123 @@
+name: Hermes Gate
+
+# PDR-008 / HERMES-006 — single CI gate for local-agent (Hermes) work.
+# Merges two source plans into one workflow keyed on the eval_receipt contract:
+#   - chromatic_mission_packet_framework_v1/validation/CI_GATE_PLAN.md (phased: advisory -> required)
+#   - hermes_harness_pipeline_scaffold_v1/07_CI/CI_GATE_PLAN.md (schema-validate / yaml-parse / unit-tests)
+#
+# Scope is deliberately limited to '.03_Harness Governance/**' so this gate does NOT
+# overlap with skill-governance.yml (scoped to '.02_Plugins/**'). Distinct job names
+# and concurrency group — no collision with any existing workflow.
+#
+# Phase note: this first landing validates every eval receipt that is present and
+# rejects invalid ones. Enforcing "a mission PR MUST include a receipt" (framework
+# Phase 3) is the documented follow-up.
+
+on:
+  pull_request:
+    paths:
+      - '.03_Harness Governance/**'
+  push:
+    branches: [Main]
+    paths:
+      - '.03_Harness Governance/**'
+  workflow_dispatch:
+
+# Read-only: this gate only reads and validates the repo.
+permissions:
+  contents: read
+
+concurrency:
+  group: hermes-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: '.03_Harness Governance'
+
+jobs:
+  schema-validate:
+    name: Validate eval receipts
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.11'
+      - name: Install validator dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Validate every eval receipt against the schema
+        run: |
+          shopt -s nullglob
+          receipts=(operations/receipts/*.eval_receipt.json)
+          if [ ${#receipts[@]} -eq 0 ]; then
+            echo "::notice::No eval receipts under operations/receipts/ — advisory pass (Phase 1/2)."
+            exit 0
+          fi
+          rc=0
+          for r in "${receipts[@]}"; do
+            echo "--- validating $r ---"
+            if ! python scripts/validate_packet.py "$r" schemas/eval_receipt.schema.json; then
+              echo "::error::Eval receipt failed schema validation: $r"
+              rc=1
+            fi
+          done
+          exit $rc
+
+  yaml-parse:
+    name: Config YAML parses
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.11'
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Parse Hermes config / routing YAML
+        run: |
+          python - <<'PY'
+          import glob, sys
+          import yaml
+
+          bad = 0
+          targets = sorted(
+              set(glob.glob("config/*.yaml") + glob.glob("config/*.yml"))
+          )
+          if not targets:
+              print("::notice::No config YAML found — nothing to parse.")
+          for f in targets:
+              try:
+                  with open(f, encoding="utf-8") as fh:
+                      list(yaml.safe_load_all(fh))
+                  print(f"ok: {f}")
+              except Exception as exc:  # noqa: BLE001
+                  print(f"::error::YAML parse failed: {f}: {exc}")
+                  bad += 1
+          sys.exit(1 if bad else 0)
+          PY
+
+  unit-tests:
+    name: Harness governance tests
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.11'
+      - name: Install dev dependencies
+        run: pip install -r requirements-dev.txt
+      # -o addopts="" overrides pytest.ini's --cov flags so the gate stays scoped
+      # and deterministic. Broaden this to the full scripts/tests suite once those
+      # suites' dependencies are pinned in requirements-dev.txt.
+      - name: Run eval-receipt contract tests
+        run: python -m pytest scripts/tests/test_eval_receipt.py -o addopts="" -q

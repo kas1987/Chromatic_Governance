@@ -1,0 +1,21 @@
+{
+  "mission_id": "HERMES-006-ci-gate",
+  "agent_model": "claude-opus-4-8 (orchestrator)",
+  "status": "pass",
+  "files_changed": [
+    ".github/workflows/hermes-gate.yml",
+    ".03_Harness Governance/requirements-dev.txt",
+    ".03_Harness Governance/operations/receipts/hermes-006-ci-gate.eval_receipt.json",
+    ".01_PDRs/.03_In-Process/PDR-008-hermes-local-agent-harness.md"
+  ],
+  "validation_results": [
+    "PASS: hermes-gate.yml scoped to .03_Harness Governance/** — no path/job/concurrency overlap with skill-governance.yml",
+    "PASS: jsonschema>=4.18 added to requirements-dev.txt (validator dep now reproducible in CI)",
+    "PASS: this receipt validates against schemas/eval_receipt.schema.json"
+  ],
+  "scope_compliance": "compliant",
+  "stop_condition_triggered": false,
+  "notes": "First landing of the merged CI gate. schema-validate validates every operations/receipts/*.eval_receipt.json; rejects invalid receipts. Phase-3 'reject a mission lacking a receipt' is the follow-up enforcement step.",
+  "pr_ref": null,
+  "created_at": "2026-06-16T18:00:00Z"
+}
