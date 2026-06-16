@@ -1,0 +1,73 @@
+schema_version: "1.0"
+mission_id: "m2-add-mission-schema"
+mission_level: "M2"
+title: "Add mission packet schema and validator"
+objective: "Add the mission packet schema and a simple validator script."
+background: "The harness needs structured packet validation before local agents execute work."
+owner_agent: "sentinel"
+support_agents:
+  - "auditor"
+status: "ready"
+complexity: "C2"
+privacy_class: "P1"
+risk_level: "medium"
+scope:
+  in_scope:
+    - "Mission packet schema."
+    - "Validator script."
+    - "One example packet."
+  out_of_scope:
+    - "Router behavior changes."
+  allowed_files:
+    - "schemas/mission-packet.schema.json"
+    - "validation/validate_packet.py"
+    - "examples/**"
+  forbidden_files:
+    - ".env"
+    - "02_RUNTIME/router/**"
+dependencies:
+  - "Schema shape accepted."
+allowed_actions:
+  - "Create schema, validator, and example."
+  - "Run validator against example."
+blocked_actions:
+  - "Do not modify runtime routing code."
+steps:
+  - "Create schema."
+  - "Create validator."
+  - "Validate example."
+acceptance_criteria:
+  - "Valid example passes schema validation."
+  - "Invalid packet fails validation."
+validation:
+  required_checks:
+    - "python validation/validate_packet.py examples/M1_basic_docs_update.yaml schemas/mission-packet.schema.json"
+  optional_checks:
+    - "python -m compileall validation"
+  success_definition: "Validator returns success for valid example."
+  evidence_required:
+    - "Validation command output."
+rollback:
+  required: true
+  strategy: "Revert created schema and validator files."
+  trigger: "Schema blocks valid packets or validator fails."
+  owner: "sentinel"
+stop_conditions:
+  - "Stop if schema requirements conflict."
+  - "Stop after one failed validation retry."
+governance:
+  level: "elevated"
+  gates:
+    - "source-of-truth"
+    - "scope"
+    - "acceptance"
+    - "validation"
+  approval_required: true
+  reviewers:
+    - "auditor"
+pdr_ref: "docs/pdr/PDR_M2_SCHEMA_VALIDATION.md"
+supporting_docs:
+  - "docs/pdr/PDR_M2_SCHEMA_VALIDATION.md"
+created_by: "front-tier-model-or-human"
+created_at: "2026-06-04"
+notes: "Example M2 mission."

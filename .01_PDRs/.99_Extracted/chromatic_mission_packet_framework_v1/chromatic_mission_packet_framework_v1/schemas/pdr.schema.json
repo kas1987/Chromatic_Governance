@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chromatic.local/schemas/pdr.schema.json",
+  "title": "Chromatic Planning and Design Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "pdr_id", "title", "mission_level", "problem", "proposed_solution", "decisions", "risks", "validation_plan", "status"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0"},
+    "pdr_id": {"type": "string"},
+    "title": {"type": "string"},
+    "mission_level": {"type": "string", "enum": ["M2", "M3", "M4"]},
+    "status": {"type": "string", "enum": ["draft", "review", "approved", "superseded", "rejected"]},
+    "problem": {"type": "string"},
+    "context": {"type": "string"},
+    "proposed_solution": {"type": "string"},
+    "alternatives_considered": {"type": "array", "items": {"type": "string"}},
+    "decisions": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "open_questions": {"type": "array", "items": {"type": "string"}},
+    "implementation_surfaces": {"type": "array", "items": {"type": "string"}},
+    "risks": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "validation_plan": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "rollback_plan": {"type": "string"},
+    "impact_assessment": {"type": "string"},
+    "stakeholders": {"type": "array", "items": {"type": "string"}},
+    "approval": {
+      "type": "object",
+      "properties": {
+        "required": {"type": "boolean"},
+        "approvers": {"type": "array", "items": {"type": "string"}},
+        "decision_date": {"type": "string"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"mission_level": {"const": "M4"}}},
+      "then": {"required": ["alternatives_considered", "rollback_plan", "impact_assessment", "stakeholders", "approval"]}
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+schema_version: "1.0"
+mission_id: "m3-example-complex"
+mission_level: "M3"
+title: "Complex mission title"
+objective: "State the cross-system or high-risk outcome."
+background: "Explain architecture context, affected systems, and why this requires a standard PDR."
+owner_agent: "sentinel"
+support_agents:
+  - "auditor"
+  - "cartographer"
+status: "draft"
+complexity: "C3"
+privacy_class: "P2"
+risk_level: "high"
+scope:
+  in_scope:
+    - "Named systems and integration surfaces."
+  out_of_scope:
+    - "Unapproved architecture changes."
+  allowed_files:
+    - "02_RUNTIME/**"
+    - "tests/**"
+    - "docs/**"
+  forbidden_files:
+    - ".env"
+    - "production-secrets/**"
+dependencies:
+  - "Standard PDR approved."
+  - "Risk register complete."
+allowed_actions:
+  - "Modify scoped runtime files."
+  - "Add tests and validators."
+  - "Update docs tied to the change."
+blocked_actions:
+  - "Do not change production credentials."
+  - "Do not alter unrelated router behavior."
+steps:
+  - "Review PDR and risk register."
+  - "Create implementation branch."
+  - "Implement in small commits."
+  - "Run tests, lint, schema validation, and custom evals."
+  - "Prepare review summary."
+acceptance_criteria:
+  - "All required CI checks pass."
+  - "Risk register items are addressed or explicitly deferred."
+  - "Rollback plan is documented."
+validation:
+  required_checks:
+    - "unit tests"
+    - "integration tests"
+    - "schema validation"
+    - "static analysis"
+    - "custom eval"
+  optional_checks:
+    - "performance check"
+  success_definition: "CI passes and audit evidence is attached."
+  evidence_required:
+    - "CI log."
+    - "Changed file list."
+    - "Risk register update."
+rollback:
+  required: true
+  strategy: "Revert PR, restore previous config, and record incident note."
+  trigger: "CI failure, performance regression, or reviewer block."
+  owner: "sentinel"
+stop_conditions:
+  - "Stop if integration behavior is ambiguous."
+  - "Stop if tests fail after one retry."
+  - "Stop if risk level becomes critical."
+governance:
+  level: "high"
+  gates:
+    - "source-of-truth"
+    - "router-alignment"
+    - "evidence"
+    - "dependency"
+    - "security"
+    - "acceptance"
+    - "stop-condition"
+    - "validation"
+  approval_required: true
+  reviewers:
+    - "sentinel"
+    - "auditor"
+pdr_ref: "docs/pdr/example-standard-pdr.md"
+supporting_docs:
+  - "docs/pdr/example-standard-pdr.md"
+  - "docs/governance/example-risk-register.md"
+  - "docs/governance/example-rollback-plan.md"
+created_by: "front-tier-model-or-human"
+created_at: "YYYY-MM-DD"
+notes: ""

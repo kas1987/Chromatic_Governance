@@ -1,0 +1,50 @@
+work_items:
+  - id: "MISSION-SCHEMA-001"
+    title: "Install M1-M4 mission packet schemas"
+    status: "ready"
+    priority: "P1"
+    repo: "chromatic-harness-v2"
+    area: "mission-governance"
+    owner_agent: "sentinel"
+    specialties: ["schemas", "validation", "python", "governance"]
+    depends_on: []
+    blocked_by: []
+    acceptance_checks:
+      - "Schemas are committed under mission/governance path."
+      - "Validator passes valid examples."
+      - "README documents usage."
+    links: []
+    notes: "Start with local validation before CI enforcement."
+
+  - id: "MISSION-GOV-002"
+    title: "Add mission level selection and governance docs"
+    status: "ready"
+    priority: "P1"
+    repo: "chromatic-harness-v2"
+    area: "governance"
+    owner_agent: "auditor"
+    specialties: ["governance", "evidence", "docs"]
+    depends_on: []
+    blocked_by: []
+    acceptance_checks:
+      - "M1-M4 level rules are clear."
+      - "Escalation triggers are documented."
+      - "Governance gates map to mission levels."
+    links: []
+    notes: "Keep rules concise enough for local agents to follow."
+
+  - id: "MISSION-CI-003"
+    title: "Add CI validation for mission packets"
+    status: "planned"
+    priority: "P2"
+    repo: "chromatic-harness-v2"
+    area: "ci"
+    owner_agent: "sentinel"
+    specialties: ["ci", "schemas", "testing"]
+    depends_on: ["MISSION-SCHEMA-001"]
+    blocked_by: []
+    acceptance_checks:
+      - "CI validates examples and new mission packets."
+      - "Invalid packets fail the check."
+    links: []
+    notes: "Do after local validation is accepted."

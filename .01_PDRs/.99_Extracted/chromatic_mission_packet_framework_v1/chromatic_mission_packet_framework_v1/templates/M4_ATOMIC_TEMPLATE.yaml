@@ -1,0 +1,104 @@
+schema_version: "1.0"
+mission_id: "m4-example-atomic"
+mission_level: "M4"
+title: "Atomic mission title"
+objective: "State the critical, high-impact outcome."
+background: "Explain why this is critical, irreversible, production-impacting, governance-changing, or security-sensitive."
+owner_agent: "human"
+support_agents:
+  - "auditor"
+  - "sentinel"
+  - "chainbreaker"
+  - "financier"
+status: "draft"
+complexity: "C4"
+privacy_class: "P3"
+risk_level: "critical"
+scope:
+  in_scope:
+    - "Exactly approved critical change."
+  out_of_scope:
+    - "Any unapproved expansion."
+  allowed_files:
+    - "approved/path/**"
+  forbidden_files:
+    - ".env"
+    - "secrets/**"
+    - "unapproved/path/**"
+dependencies:
+  - "Full PDR approved."
+  - "Threat/risk model approved."
+  - "Rollback plan approved."
+  - "Stakeholder signoff complete."
+allowed_actions:
+  - "Execute only approved plan steps."
+  - "Run required validation gates."
+blocked_actions:
+  - "No autonomous production changes."
+  - "No credential handling in mission packet."
+  - "No scope expansion without formal approval."
+steps:
+  - "Verify approval record."
+  - "Confirm rollback readiness."
+  - "Execute one bounded phase."
+  - "Run validation."
+  - "Pause for review gate."
+acceptance_criteria:
+  - "All maximum governance gates pass."
+  - "All CI/eval checks pass."
+  - "Rollback remains available."
+  - "Approval record is attached."
+validation:
+  required_checks:
+    - "unit tests"
+    - "integration tests"
+    - "schema validation"
+    - "security scan"
+    - "custom eval suite"
+    - "rollback rehearsal or proof"
+  optional_checks:
+    - "external reviewer confirmation"
+  success_definition: "Every required technical and governance gate passes."
+  evidence_required:
+    - "CI log."
+    - "Security scan."
+    - "Approval record."
+    - "Rollback evidence."
+rollback:
+  required: true
+  strategy: "Use approved full rollback and recovery plan."
+  trigger: "Any critical gate failure, production anomaly, security concern, or stakeholder block."
+  owner: "human"
+stop_conditions:
+  - "Stop if any approval is missing."
+  - "Stop if any validation gate fails."
+  - "Stop if rollback is not available."
+  - "Stop if scope changes."
+governance:
+  level: "maximum"
+  gates:
+    - "source-of-truth"
+    - "router-alignment"
+    - "evidence"
+    - "dependency"
+    - "security"
+    - "acceptance"
+    - "stop-condition"
+    - "repo-tree"
+    - "approval"
+    - "rollback"
+  approval_required: true
+  reviewers:
+    - "human"
+    - "auditor"
+    - "sentinel"
+pdr_ref: "docs/pdr/example-full-pdr.md"
+supporting_docs:
+  - "docs/pdr/example-full-pdr.md"
+  - "docs/governance/example-risk-register.md"
+  - "docs/governance/example-impact-assessment.md"
+  - "docs/governance/example-stakeholder-map.md"
+  - "docs/governance/example-communication-plan.md"
+created_by: "front-tier-model-or-human"
+created_at: "YYYY-MM-DD"
+notes: ""

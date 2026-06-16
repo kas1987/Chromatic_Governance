@@ -1,0 +1,17 @@
+{
+  "package": "chromatic_mission_packet_framework_v1",
+  "version": "1.0",
+  "purpose": "Schemas, templates, governance, PDR rules, examples, and validation tooling for M1-M4 mission packets.",
+  "primary_outputs": [
+    "schemas/mission-packet.schema.json",
+    "schemas/pdr.schema.json",
+    "schemas/governance-register.schema.json",
+    "schemas/supporting-documents.schema.json",
+    "templates/M1_BASIC_TEMPLATE.yaml",
+    "templates/M2_INTERMEDIATE_TEMPLATE.yaml",
+    "templates/M3_COMPLEX_TEMPLATE.yaml",
+    "templates/M4_ATOMIC_TEMPLATE.yaml",
+    "validation/validate_packet.py"
+  ],
+  "recommended_first_task": "Run validator against examples/M1_basic_docs_update.yaml and examples/M2_intermediate_schema_addition.yaml."
+}
