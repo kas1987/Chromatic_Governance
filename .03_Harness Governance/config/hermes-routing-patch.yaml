@@ -1,0 +1,69 @@
+# Hermes Routing Patch — HERMES-004 (PDR-008)
+#
+# Purpose: wire the locally-pulled `hermes3:8b` (Nous Research Hermes 3, Llama-3.1-8B,
+# Ollama) into the live Gen `/api/delegate` routing matrix as a new local-first worker,
+# WITHOUT altering any existing task-intent chain.
+#
+# Authority boundary (unchanged from HERMES-003 / Option B):
+#   - This patch targets ONLY the Gen / local-worker plane:
+#       C:\.04_Prism\gen\src\routes\routing-matrix.json
+#   - It does NOT touch the Claude-Code Agent router plane
+#       (~/.claude/governance/multi-router-matrix.yaml, ~/.claude/config/provider-tiers.json,
+#        ~/.claude/hooks/model-router.sh). Those remain the cloud-tier source of record.
+#   - Registry of record for the local worker: .03_Harness Governance/config/hermes-model-capability.yaml
+#
+# Stop condition (PDR-008 work-queue): "Stop if patch would alter non-Hermes routing."
+#   Satisfied by construction: the patch ADDS new top-level task-intent keys only.
+#   No existing key is modified. See machine proof:
+#     .03_Harness Governance/config/hermes-routing-patch.proof.txt
+#   Assertions: 0 key collisions; 10/10 existing keys byte-identical after merge.
+
+schema_version: "1.0"
+plane: gen_local_worker
+patch_kind: additive_only
+apply_target: "C:/.04_Prism/gen/src/routes/routing-matrix.json"
+fragment: ".03_Harness Governance/config/hermes-routing-patch.fragment.json"
+proof: ".03_Harness Governance/config/hermes-routing-patch.proof.txt"
+source_registry: ".03_Harness Governance/config/hermes-model-capability.yaml"
+generated: "2026-06-16"
+
+# Why these two intents: hermes3:8b is best_at [instruction, speed, agentic] and
+# good_at [reasoning, coding] (complexity_fit c1/c2, escalate_above c2). The two new
+# intents map exactly onto that profile and keep hermes3:8b within its c1/c2 envelope,
+# escalating through an existing local peer to the Claude backstop.
+added_intents:
+  instruction-follow:
+    rationale: "Bounded instruction-following / normalization tasks (c1-c2)."
+    chain:
+      - { provider: ollama, localModelTag: "hermes3:8b" }   # primary local worker
+      - { provider: ollama, localModelTag: "qwen3:8b" }     # existing local fallback
+      - { provider: claude }                                # cloud backstop (unchanged role)
+  agentic-tool-use:
+    rationale: "Bounded tool-use / agentic loops (c1-c2); hermes3 is tools-capable."
+    chain:
+      - { provider: ollama, localModelTag: "hermes3:8b" }   # primary local worker
+      - { provider: ollama, localModelTag: "qwen2.5-coder:14b" } # existing local fallback
+      - { provider: claude }                                # cloud backstop (unchanged role)
+
+untouched_intents:
+  # All 10 existing keys are left byte-for-byte unchanged (proven):
+  - architecture-decision
+  - classify-route
+  - code-complex-refactor
+  - code-small-edit
+  - longform-final-user-answer
+  - policy-risk-check
+  - prompt-normalize
+  - review-summary
+  - test-generation
+  - vision-triage
+
+# Application procedure (HUMAN-GATED — the live write lives in a separate Prism repo):
+#   1. Review this spec + the proof artifact.
+#   2. Apply:  jq -s '.[0] * .[1]' \
+#        "C:/.04_Prism/gen/src/routes/routing-matrix.json" \
+#        ".03_Harness Governance/config/hermes-routing-patch.fragment.json" \
+#        > routing-matrix.patched.json  &&  move into place.
+#   3. Re-run the proof to confirm the applied file still shows 10/10 existing keys unchanged.
+#   4. hermes3:8b stays c1/c2 until a hermes_evaluation_result scorecard (HERMES-005) earns c3+.
+apply_status: pending_human_gate

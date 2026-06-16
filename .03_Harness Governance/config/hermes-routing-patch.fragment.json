@@ -1,0 +1,16 @@
+{
+  "instruction-follow": {
+    "steps": [
+      { "provider": "ollama", "localModelTag": "hermes3:8b" },
+      { "provider": "ollama", "localModelTag": "qwen3:8b" },
+      { "provider": "claude" }
+    ]
+  },
+  "agentic-tool-use": {
+    "steps": [
+      { "provider": "ollama", "localModelTag": "hermes3:8b" },
+      { "provider": "ollama", "localModelTag": "qwen2.5-coder:14b" },
+      { "provider": "claude" }
+    ]
+  }
+}
