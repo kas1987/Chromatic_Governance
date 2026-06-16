@@ -43,3 +43,46 @@ agents:
       - kas1987/Chromatic_Governance
     branch_prefix: agent/janitor/
     require_task_id_for_write: true
+
+  # PDR-008 / HERMES-008: bounded broker-profile runtimes for the remaining Hermes
+  # specialties. Registered inactive; each maps to read_only + patch_standard
+  # (PR-only, deny direct Main push) — no authority beyond the broker policy.
+  # Mission contracts: handoffs/hermes/{CARTOGRAPHER,ARCHIVIST,QUARTERMASTER}_HANDOFF_HERMES_INTEGRATION.md
+  cartographer:
+    display_name: Cartographer
+    status: inactive
+    allowed_profiles:
+      - read_only
+      - patch_standard
+    allowed_repos:
+      - kas1987/Chromatic_Governance
+    branch_prefix: agent/cartographer/
+    require_task_id_for_write: true
+    require_pull_request: true
+    deny_direct_main_push: true
+
+  archivist:
+    display_name: Archivist
+    status: inactive
+    allowed_profiles:
+      - read_only
+      - patch_standard
+    allowed_repos:
+      - kas1987/Chromatic_Governance
+    branch_prefix: agent/archivist/
+    require_task_id_for_write: true
+    require_pull_request: true
+    deny_direct_main_push: true
+
+  quartermaster:
+    display_name: Quartermaster
+    status: inactive
+    allowed_profiles:
+      - read_only
+      - patch_standard
+    allowed_repos:
+      - kas1987/Chromatic_Governance
+    branch_prefix: agent/quartermaster/
+    require_task_id_for_write: true
+    require_pull_request: true
+    deny_direct_main_push: true
