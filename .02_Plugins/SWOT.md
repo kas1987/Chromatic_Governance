@@ -1,132 +1,148 @@
 # SWOT Analysis — Chromatic Skill Ecosystem
 
-**Version:** 0.15.0  
-**Date:** 2026-06-04  
-**Scope:** Skill taxonomy, plugin families, loading model, governance infrastructure  
+**Version:** 0.16.0  
+**Date:** 2026-06-16  
+**Scope:** Skill taxonomy, plugin families, loading model, governance infrastructure, broker policy engine, PDR process  
+**Supersedes:** 0.15.0 (2026-06-04)
+
+> **What changed since v0.15:** PDR-002 (skill-ecosystem technical foundation) landed its core deliverables — an MCP skill server, a wired `Stop` hook for context snapshots, and a CI frontmatter gate — converting three former "aspirational" weaknesses (W1/W2/W3, W6) into working mechanisms. PDR-007 closed the broker test gap: the 23 red `policy_engine` tests are green via self-contained fixtures (56 broker + 208 scripts tests passing). The README skill count was reconciled to 118. Net: the ecosystem is materially stronger on the *implementation* axis. The newly-exposed risk is **governance integrity** — the PDR registry over-claims completion relative to what is verifiably on disk (see W11, T9).
 
 ---
 
 ## Strengths
 
 ### S1 — Clear, governed taxonomy
-118 skills are organized into 7 operational tiers with explicit trigger conditions, output contracts, and anti-overlap rules. The `SKILL_TAXONOMY.md` makes it straightforward for any agent to find the right skill for a task without guessing.
+118 skills are organized into operational tiers with explicit trigger conditions, output contracts, and anti-overlap rules. `SKILL_TAXONOMY.md` lets any agent find the right skill without guessing.
 
-### S2 — On-demand loading philosophy is architecturally sound
-The design principle — load only what the current task requires, add families as triggers appear — is the correct approach for preserving context budget across long sessions and multi-agent work. `AGENT_GUIDE.md` documents the model clearly.
+### S2 — On-demand loading is now technically real, not just documented
+The on-demand philosophy is no longer aspirational: an MCP skill server (`.02_Plugins/mcp/chromatic_skills_server.py`) exposes `list_skills` / `get_skill` / `search_skills`, so skill content can be fetched as a tool call rather than pre-loaded into context. `AGENT_GUIDE.md` documents the model. (Caveat: this serves skills on demand but does not yet *replace* session-start family loading — see W1.)
 
 ### S3 — Strong family isolation
-Each of the 13 families has a clear domain, bounded scope, and its own `plugin.json`, agents, hooks, policies, and references. Families compose without stepping on each other.
+Each of the 13 families has a bounded domain and its own `plugin.json`, agents, hooks, policies, and references. Families compose without stepping on each other.
 
-### S4 — Production-grade governance infrastructure
-The `.03_Harness Governance` broker has a working policy engine with 72 tests at 95% coverage, YAML-driven permission profiles, JSONL audit logging with secret filtering, and a CI workflow. This is the strongest part of the repo.
+### S4 — Production-grade, now-verified broker governance
+The `.03_Harness Governance` broker has a working YAML-driven policy engine, permission profiles, JSONL audit logging with secret filtering, and CI. As of PDR-007 the test suite is **green and honest**: 56 broker tests (incl. the previously-failing 23 `policy_engine` cases) + 208 scripts tests pass, against self-contained `tests/fixtures/config/` rather than production config. No assertions were weakened to get there. This is the strongest, best-tested part of the repo.
 
 ### S5 — PDR-driven development with traceable decisions
-Every major design choice has a PDR record. The skill-utilization-roadmap PDR identified missing skills; those skills are now built. The process works.
+Every major design choice has a PDR record with a registry, status workflow, and physical folder lifecycle. The process produces real artifacts (PDR-002's MCP server, PDR-007's test fixes).
 
 ### S6 — Cross-LLM portability designed in from the start
-`llm-ide-handoff-packager` provides a universal handoff contract with a `handoff_target` field. Skills produce structured markdown/YAML outputs that can be consumed by Cursor, Codex, Gemini, GitHub Issues, or local LLMs.
+`llm-ide-handoff-packager` provides a universal handoff contract with a `handoff_target` field; skills emit structured markdown/YAML consumable by Cursor, Codex, Gemini, GitHub Issues, or local LLMs.
 
-### S7 — Context monitoring now exists
-`context-monitor` provides threshold-based guidance (`green/yellow/orange/red/critical`) and writes JSONL snapshots to `.agents/logs/context-usage.jsonl`, creating a feedback loop for usage patterns.
+### S7 — Passive context telemetry now exists
+`context-monitor` provides threshold-based guidance and — via the now-wired `Stop` hook (`context_snapshot.py` in `.claude/settings.json`) — writes a `context-usage.jsonl` snapshot at session end **automatically**, with no agent action required.
 
-### S8 — Skill governance standard prevents sprawl
-The formal approval test (7 questions before creating a skill) and the requirement for a PDR and trigger map create friction that filters noise.
+### S8 — Skill governance is now CI-enforced
+The formal approval test (7 questions) plus `skill-governance.yml` → `validate_skills.py` gate every PR: a `SKILL.md` missing `name`/`description` frontmatter fails CI. Sprawl prevention is now mechanical, not just policy.
+
+### S9 — Broker↔plugin mapping documented
+`plugin-access-policy.md` maps all four broker permission profiles (`read_only`, `issue_triage`, `patch_standard`, `cleanup_limited`) to plugin-family access — the first concrete bridge between the two governance planes (partial; see W9).
 
 ---
 
 ## Weaknesses
 
-### W1 — No actual lazy-loading mechanism (critical)
-`PLUGIN_INDEX.md` says "load only what you need" and `AGENT_GUIDE.md` references `/plugin load <family>`, but no such command exists in Claude Code. Plugin families listed in `settings.json` are loaded at session start — all of them, every time. The on-demand model is documented but not enforced or technically implemented.
+### W1 — On-demand loading still co-exists with eager session-start loading (partial)
+The MCP server (S2) serves skills on request, but plugin families listed in `settings.json` are still loaded eagerly at session start. The on-demand path exists but does not yet *displace* the eager path — both run. The win is real but incomplete.
 
-### W2 — MCP boundary is aspirational, not implemented
-The design says "MCP optional for external-system access." There is no MCP server that serves skills on demand. Skills are static SKILL.md files that require the family to already be loaded. There is no dynamic skill discovery or serve-on-request mechanism.
+### W2 — ~~MCP boundary aspirational~~ → RESOLVED (PDR-002)
+A real MCP skill server now serves SKILL.md content on demand. Retained here only to mark the v0.15 weakness as closed.
 
-### W3 — Context-monitor is advisory only
-`context-monitor` documents thresholds and a JSONL log format, but nothing invokes it automatically. If an agent doesn't call it proactively, there's no protection against context overflow. The hook infrastructure exists (`.claude-plugin/hooks.json`) but no `Stop` hook writes a snapshot at session end.
+### W3 — ~~Context-monitor advisory only~~ → RESOLVED (PDR-002)
+The `Stop` hook now writes snapshots automatically. Closed.
 
-### W4 — Skill invocation is not tracked
-`context-usage.jsonl` logs token snapshots but does not record which skills were invoked, in what order, or with what outcome. The `skill-agent-utilization-auditor` skill is documented but its trigger depends on logs that don't yet exist.
+### W4 — Skill invocation is still not tracked
+`context-usage.jsonl` logs token snapshots but not *which* skills were invoked, in what order, or with what outcome. `skill-agent-utilization-auditor` still depends on a log that isn't being written.
 
-### W5 — `parse_repo_pdr.py` is orphaned
-`repo-pdr-swarm-router`'s SKILL.md references `scripts/parse_repo_pdr.py`. That script lives in the extracted zip (`repo-pdr-swarm-router.zip`) but was never copied into the plugin family's `scripts/` directory. The reference in the skill is broken.
+### W5 — `parse_repo_pdr.py` orphan — status unconfirmed
+`repo-pdr-swarm-router`'s SKILL.md references `scripts/parse_repo_pdr.py`, historically only present in the extracted zip. Not re-verified in this pass — treat as open until confirmed copied into the family `scripts/`.
 
-### W6 — No CI validation for SKILL.md governance compliance
-`validate-scaffold.sh` and `plugin-structure-audit.sh` exist but are not wired into any CI workflow for the `.02_Plugins` directory. Skills can be added that violate the governance standard with no automated detection.
+### W6 — ~~No CI governance validation~~ → RESOLVED (PDR-002)
+`skill-governance.yml` + `validate_skills.py` now gate SKILL.md frontmatter. Closed. (Section-completeness and trigger-uniqueness checks remain a future hardening — see O4.)
 
-### W7 — README.md and SCOPE_MATRIX.md still say v14 / 113 skills
-Neither root document was updated after the v15 additions. The ecosystem has two sources of truth claiming different skill counts.
+### W7 — Source-of-truth drift, reduced but not eliminated
+README skill count reconciled to 118 in this pass. `SCOPE_MATRIX.md` and other docs were not re-audited; multiple count/version statements may still disagree until a single generated source-of-truth exists.
 
-### W8 — Two parallel skill worlds are not reconciled
-The `chromatic-skill-utilization-roadmap-pdr` describes a separate operating stack (`project-level-operator`, `cognitive-stack-architect`, `chromatic-systems-auditor`, `queue-dispatcher`, `fusion-computer`, etc.) that is not in the plugin families. These skills have different taxonomy, trigger maps, and output contracts. An agent that knows both systems faces conflicting guidance.
+### W8 — Two parallel skill worlds still unreconciled
+The `chromatic-skill-utilization-roadmap-pdr` operating stack (`project-level-operator`, `cognitive-stack-architect`, `chromatic-systems-auditor`, `queue-dispatcher`, `fusion-computer`) is not in the plugin families and carries a different taxonomy/trigger/output model. An agent that knows both faces conflicting guidance.
 
-### W9 — Broker and plugin systems are disconnected
-`.03_Harness Governance` controls agent access via a policy engine. `.02_Plugins` controls skill content. There is no integration: an agent could be granted broker access but have no relevant skills loaded, or have skills loaded but be denied by the broker. The two governance planes don't talk.
+### W9 — Broker↔plugin integration documented, not enforced (partial)
+`plugin-access-policy.md` (S9) describes the profile→family mapping, but nothing *enforces* it at runtime: an agent can still be granted a broker profile while loading unrelated families, or vice versa. The planes now reference each other on paper but don't gate each other in execution.
 
 ### W10 — No skill-level versioning
-The ecosystem has a version (0.15.0), but individual skills have no version. A skill can be changed without any changelog, making it impossible to know when a breaking change to a trigger or output contract occurred.
+The ecosystem has a version; individual skills don't. A trigger or output-contract change leaves no changelog trail.
+
+### W11 — PDR registry over-claims completion vs. on-disk reality (NEW — governance integrity)
+The 2026-06-16 hygiene sweep verified acceptance criteria against disk and found gaps the registry hides:
+- **PDR-004 (review-intake):** registry says `Completed / Phase 5 / 100%`, but only Phases 1–2 are verified, Phase 3 is partially wired (no `review-resolution-log.jsonl`, no end-to-end agent patching), **Phase 4 (learning loop) is entirely unimplemented**, and Phase 5 has no GitHub App/webhook or cross-fork dedup. The `.md` now reflects this honestly; the registry entry was left at 100% (out of sweep scope) — so registry and `.md` now disagree.
+- **PDR-002:** registry says 100%, but its own acceptance criterion "referenced from `AGENT_GUIDE.md`" is unmet — `SKILL_BRIDGE.md` and `plugin-access-policy.md` are not linked from `AGENT_GUIDE.md`.
+
+This is the highest-priority weakness in v0.16: completion claims that can't be reproduced from artifacts erode trust in every other "Completed" status. **Reconciled in this PR:** PDR-004 downgraded to `In-Process` / Phase 3 / 45% with a transition documenting the verified vs. unimplemented work (Phases 4–5 deferred to a follow-up PDR), and PDR-002's `AGENT_GUIDE.md` references added so its last criterion is genuinely met. The structural fix (keeping every "Completed" verifiable) remains an ongoing discipline — see O3.
 
 ---
 
 ## Opportunities
 
-### O1 — MCP skill server: the missing loading mechanism
-An MCP server that serves SKILL.md content on request would implement the on-demand model technically rather than aspirationally. A client calls `get_skill("context-monitor")` and receives the SKILL.md. Skill loading becomes a tool call, not a pre-context file load. This is the single highest-leverage build.
+### O1 — Close the eager-load path
+Make the MCP server the primary loading mechanism by trimming the eager family list in `settings.json` to a minimal core and resolving the rest on demand. Converts W1 from "partial" to "done" and delivers the real context-budget win.
 
 ### O2 — Skill invocation log + analytics
-Add a `skill-invocation.jsonl` log alongside `context-usage.jsonl`. Each log entry: `{ts, model, session, skill, family, trigger_text, outcome}`. After 30+ entries, run `/skill-agent-utilization-auditor` to surface which skills are hot, which are cold, which need improvement, and which overlap in practice.
+Add `skill-invocation.jsonl` (`{ts, model, session, skill, family, trigger_text, outcome}`) alongside `context-usage.jsonl`; after 30+ entries run `/skill-agent-utilization-auditor` to surface hot/cold/overlapping skills. Closes W4.
 
-### O3 — Automatic context snapshot on session Stop hook
-Wire `context-monitor` into the Claude Code `Stop` hook so every session end writes a context-usage JSONL entry automatically — no agent action required. This gives passive, consistent telemetry without overhead.
+### O3 — Reconcile the registry to disk (governance integrity)
+Either (a) downgrade PDR-004's registry completion to honest reality and re-scope Phases 4–5 into a follow-up PDR, or (b) if Phases 4–5 were intentionally descoped, record that decision explicitly. Add the two missing `AGENT_GUIDE.md` references to fully close PDR-002. Directly addresses W11/T9.
 
-### O4 — CI governance validation for skills
-A GitHub Actions workflow that runs `validate-scaffold.sh` and checks every SKILL.md for required frontmatter (`name`, `description`), required sections (Core procedure, Output format, Guardrails), and trigger uniqueness against the taxonomy. Blocks PRs that introduce non-compliant skills.
+### O4 — Harden the CI skill gate
+Extend `validate_skills.py` beyond frontmatter to required sections (Core procedure, Output format, Guardrails) and trigger-uniqueness against the taxonomy.
 
-### O5 — Skill discovery tool
-A lightweight skill search — given a task description string, return the top 3 matching skills from `SKILL_TAXONOMY.md` by keyword match against trigger conditions. Could be a simple Python script, a bash grep wrapper, or an MCP tool.
+### O5 — Skill discovery surface
+The MCP `search_skills` tool exists; expose it as a one-line CLI/grep wrapper for non-MCP clients so discovery works everywhere.
 
 ### O6 — Reconcile the two skill worlds
-Map `project-level-operator`, `cognitive-stack-architect`, `chromatic-systems-auditor`, `queue-dispatcher`, and `fusion-computer` to their nearest plugin-family equivalents (or gaps). Either absorb them as skills, retire them as redundant, or create a formal bridge document explaining when each system applies.
+Map the roadmap-PDR operating stack to nearest plugin-family equivalents — absorb, retire, or formally bridge with a "when each system applies" document. Closes W8.
 
-### O7 — Integrate `parse_repo_pdr.py` into the plugin
-Copy the script from the extracted zip into `agent-governance-family/scripts/parse_repo_pdr.py` and update the SKILL.md reference. This makes the router skill's optional automation actually available.
+### O7 — Confirm/repair `parse_repo_pdr.py`
+Verify whether the script is in the family `scripts/`; copy it from the extracted zip and fix the SKILL.md reference if not. Closes W5.
 
-### O8 — Broker × plugin integration
-Define how the broker's permission profiles map to plugin family access. A `read_only` profile agent should load only read-oriented families. A `patch_standard` agent should be allowed architecture and qa-eval families. This makes the governance planes coherent.
+### O8 — Enforce broker × plugin mapping at runtime
+Turn `plugin-access-policy.md` from documentation into a check: at load time, validate the loaded family set against the agent's broker profile. Closes W9.
 
-### O9 — Context budget forecasting
-Before a session starts, estimate required context from the task description and planned family loads. Output: "this task will use approximately X% of context on model Y — consider Z instead." Prevents surprises before they happen.
+### O9 — Generated single source of truth for counts/versions
+Generate skill counts and family lists into README/SCOPE_MATRIX from the taxonomy so they cannot drift. Closes W7 permanently.
 
-### O10 — Publish to the Claude Code plugin marketplace
-Once CI validation is green and the MCP server exists, the ecosystem is marketplace-ready. External teams can install individual families rather than the whole scaffold.
+### O10 — Marketplace publication
+With CI green (S8) and the MCP server live (S2), individual families are closer to marketplace-ready. Gate on W11 resolution first — don't publish over-claimed statuses.
 
 ---
 
 ## Threats
 
 ### T1 — Claude Code plugin format instability
-The `.claude-plugin/plugin.json` schema and how plugin families are activated is subject to change as Claude Code matures. A format change could invalidate all 13 plugin manifests simultaneously. There is no version pin or compatibility layer.
+The `plugin.json` schema and family-activation model may change as Claude Code matures; a format change could invalidate all 13 manifests at once. No version pin or compatibility layer.
 
-### T2 — "Load by mission" is unenforceable without tooling
-Without W1 fixed (the lazy-loading mechanism), the on-demand model depends entirely on human or agent discipline. Under real time pressure, agents will default to loading everything or guessing, defeating the context savings.
+### T2 — On-demand discipline still partly manual
+With W1 only partially closed, the context-saving model still depends on agents preferring the MCP path over eager-loaded families. Under time pressure, agents default to what's already loaded.
 
-### T3 — Skill sprawl without enforcement
-The governance standard requires a PDR before creating a new skill, but nothing enforces this. A contributor can add a SKILL.md directly without review. Without CI validation (O4), the only check is human review of PRs.
+### T3 — Sprawl pressure persists despite the gate
+CI now blocks malformed SKILL.md (mitigates the old form of this threat), but a well-formed-but-redundant skill still passes. Trigger-uniqueness enforcement (O4) is the remaining gap.
 
 ### T4 — Cross-LLM portability gap
-`llm-ide-handoff-packager` produces handoff documents in the correct format, but Cursor, Codex, and Gemini do not natively consume these files. The portability promise depends on human copy-paste or agent discipline at the receiving end — not on a technical integration.
+Handoff documents are correctly formatted, but Cursor/Codex/Gemini don't natively consume them; portability still depends on copy-paste at the receiving end.
 
 ### T5 — Single-operator bus factor
-The ecosystem is owned and maintained by one person. No bus-factor mitigation, no backup owner, no documented onboarding path for a second maintainer. If the operator is unavailable, the system goes stale.
+One owner/maintainer, no backup, no documented onboarding for a second maintainer.
 
 ### T6 — Two-governance-plane confusion at runtime
-An agent that knows both the broker governance (policy engine) and the plugin skill governance (SKILL.md) has two sets of rules that don't reference each other. This can produce contradictory behavior — the broker approves an action the skill's guardrails block, or vice versa.
+The broker (policy engine) and plugin skill governance still don't gate each other in execution (W9); contradictory behavior remains possible.
 
-### T7 — Context window inflation may erode the value proposition
-As model context windows grow (Gemini already at 1M tokens, Claude approaching that range), the careful per-family loading model becomes less critical. Teams may simply load everything and ignore the on-demand guidance, leading to a degraded ecosystem with no incentive to maintain the on-demand pattern.
+### T7 — Context-window inflation erodes the value proposition
+As context windows grow (1M+ now common), the per-family loading discipline becomes easier to ignore, weakening the incentive to maintain the on-demand pattern.
 
 ### T8 — JSONL logs are runtime artifacts, not source-controlled
-`.agents/logs/*.jsonl` is gitignored. There is no mechanism to aggregate logs across machines, sessions, or operators. Usage analytics will be local and ephemeral unless an explicit aggregation pipeline is built.
+`.agents/logs/*.jsonl` is gitignored with no cross-machine/session aggregation; analytics stay local and ephemeral until a pipeline exists.
+
+### T9 — False-green completion claims (NEW)
+W11 elevated to a threat because it compounds: if "Completed" in the registry doesn't mean "verifiable on disk," then SWOT strengths, PDR closures, and any downstream automation that trusts the registry inherit the inaccuracy. Reconciling registry↔disk (O3) and keeping acceptance criteria verifiable is the structural fix.
 
 ---
 
@@ -134,8 +150,8 @@ As model context windows grow (Gemini already at 1M tokens, Claude approaching t
 
 |   | Helpful | Harmful |
 |---|---|---|
-| **Internal** | S1–S8: Strong taxonomy, governance, portability design, PDR process | W1–W10: No real lazy-load, no MCP server, orphaned scripts, two skill worlds, no CI |
-| **External** | O1–O10: MCP server, analytics, CI gate, skill reconciliation, marketplace | T1–T8: Format instability, unenforceable discipline, bus factor, context inflation |
+| **Internal** | S1–S9: governed taxonomy, *verified* broker tests, real MCP server + Stop hook + CI gate, broker↔plugin mapping | W1, W4, W5, W7–W11: partial lazy-load, no invocation log, two skill worlds, mapping not enforced, **registry over-claims completion** |
+| **External** | O1–O10: close eager-load, registry reconciliation, harden CI, marketplace | T1–T9: format instability, manual discipline, bus factor, context inflation, **false-green completion** |
 
 ---
 
@@ -143,14 +159,14 @@ As model context windows grow (Gemini already at 1M tokens, Claude approaching t
 
 | Priority | Action | SWOT driver |
 |---|---:|---|
-| P0 | Build the MCP skill server (on-demand loading) | W1, T2, O1 |
-| P0 | Fix `parse_repo_pdr.py` orphan in router skill | W5 |
-| P1 | Add CI validation for SKILL.md governance | W6, T3, O4 |
-| P1 | Add Stop hook for automatic context snapshots | W3, O3 |
-| P1 | Update README and SCOPE_MATRIX to v15 | W7 |
-| P1 | Reconcile two skill worlds / map Poly-Chromatic skills | W8, O6 |
-| P2 | Add skill invocation logging | W4, O2 |
-| P2 | Define broker × plugin permission mapping | W9, O8 |
+| P0 | ~~Reconcile PDR registry to on-disk reality~~ DONE 2026-06-16: PDR-004 downgraded; PDR-002 refs closed. Remaining: re-scope deferred PDR-004 Phases 4–5 into a follow-up PDR | W11, T9, O3 |
+| P0 | Close the eager-load path so MCP server is the primary loader | W1, T2, O1 |
+| P1 | Confirm/repair `parse_repo_pdr.py` orphan | W5, O7 |
+| P1 | Harden CI gate (sections + trigger uniqueness) | T3, O4 |
+| P1 | Reconcile the two skill worlds | W8, O6 |
+| P1 | Generated single source of truth for counts/versions | W7, O9 |
+| P2 | Add skill invocation logging + analytics | W4, O2 |
+| P2 | Enforce broker × plugin mapping at runtime | W9, T6, O8 |
 | P2 | Add skill-level versioning | W10 |
-| P3 | Skill discovery tool | O5 |
-| P3 | Context budget forecasting | O9 |
+| P3 | Expose `search_skills` as a non-MCP discovery surface | O5 |
+| P3 | Bus-factor mitigation / second-maintainer onboarding | T5 |

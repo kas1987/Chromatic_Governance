@@ -1,7 +1,7 @@
 # Agent and Subagent Guide
 
 **For:** Primary agents, subagents, and orchestrators using the Poly-Chromatic plugin ecosystem  
-**Version:** 0.15.0
+**Version:** 0.16.0
 
 ---
 
@@ -177,6 +177,15 @@ After any of these events, run `/chromatic-memory-registrar`:
 - A release shipped
 
 This prevents loss of continuity when sessions end, models switch, or a new agent picks up work.
+
+---
+
+## Governance bridges
+
+Two reference documents connect the skill ecosystem to the broker and to the parallel Poly-Chromatic operating stack. Consult them when your task crosses either boundary:
+
+- **`SKILL_BRIDGE.md`** (in `.02_Plugins/`) — maps each Poly-Chromatic operating skill (`project-level-operator`, `cognitive-stack-architect`, `chromatic-systems-auditor`, `queue-dispatcher`, `fusion-computer`, etc.) to its nearest plugin-family equivalent, stating the relationship (equivalent / partial overlap / gap) and when to use each. Read this before acting on guidance from the operating stack so you don't apply two conflicting taxonomies.
+- **`plugin-access-policy.md`** (in `.03_Harness Governance/governance/`) — maps each broker permission profile (`read_only`, `issue_triage`, `patch_standard`, `cleanup_limited`) to the plugin families that profile is allowed to load. Before loading a family, confirm it's permitted for your broker profile.
 
 ---
 

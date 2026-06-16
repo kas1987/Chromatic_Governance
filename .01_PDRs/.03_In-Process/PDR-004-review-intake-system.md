@@ -1,7 +1,7 @@
 # PDR-004: Chromatic Review Intake System
 
 ## Status
-Implemented v1.1 — Phase 1 (passive intake) + Phase 2 (queue dispatch) live
+Completed — Phases 1-2 verified live (passive intake + queue dispatch). Phase 3 partial: resolution-comment generator (`post_review_resolution.py`) verified; end-to-end agent patching not wired. Phase 5 partial: SQLite persistence (`findings_db.py`/`central_collector.py`) and JSONL→SQLite migration verified and tested; no GitHub App/webhook or cross-fork dedup. Phase 4 (learning loop) unimplemented. See per-criterion UNVERIFIED notes below.
 
 ## Date
 2026-06-04
@@ -155,25 +155,25 @@ One active mutating agent per PR branch at any time. `lock_pr_branch.py acquire`
 
 ## Acceptance criteria (Phase 3 — Agent Patching)
 
-- [ ] Dispatched agent applies a scoped patch within the lock window
-- [ ] Patch passes tests and lint before resolution comment is posted
-- [ ] `post_review_resolution.py` generates a well-formed Chromatic resolution comment
-- [ ] Resolution event is appended to `review-resolution-log.jsonl`
-- [ ] Lock is released on both success and failure paths
+- [ ] Dispatched agent applies a scoped patch within the lock window <!-- UNVERIFIED 2026-06-16: runtime agent-patching behavior; no executed patch/lock-window evidence on disk (Phase 3 not wired end-to-end) -->
+- [ ] Patch passes tests and lint before resolution comment is posted <!-- UNVERIFIED 2026-06-16: runtime gate; no evidence of an actual patch run passing tests/lint before resolution -->
+- [x] `post_review_resolution.py` generates a well-formed Chromatic resolution comment
+- [ ] Resolution event is appended to `review-resolution-log.jsonl` <!-- UNVERIFIED 2026-06-16: log_resolution.py mechanism exists and is unit-tested, but no review-resolution-log.jsonl file has been produced (only agent-dispatch-log.jsonl exists) -->
+- [ ] Lock is released on both success and failure paths <!-- UNVERIFIED 2026-06-16: lock_pr_branch.py release path is unit-tested, but the agent-patching success/failure release flow is not implemented (Phase 3 not wired) -->
 
 ## Acceptance criteria (Phase 4 — Learning Loop)
 
-- [ ] Weekly analysis job runs against `reviewer-patterns.jsonl`
-- [ ] Patterns with ≥3 occurrences generate a staged improvement proposal
-- [ ] Proposals are written to a staging location; nothing is auto-implemented
-- [ ] Analysis output is human-reviewable before any change is applied
+- [ ] Weekly analysis job runs against `reviewer-patterns.jsonl` <!-- UNVERIFIED 2026-06-16: no learning-loop/analysis script in scripts/; only an extracted sample reviewer-patterns.jsonl under .99_Extracted -->
+- [ ] Patterns with ≥3 occurrences generate a staged improvement proposal <!-- UNVERIFIED 2026-06-16: no pattern-analysis or proposal-generation implementation found -->
+- [ ] Proposals are written to a staging location; nothing is auto-implemented <!-- UNVERIFIED 2026-06-16: no staging location or proposal writer implemented -->
+- [ ] Analysis output is human-reviewable before any change is applied <!-- UNVERIFIED 2026-06-16: Phase 4 learning loop not implemented -->
 
 ## Acceptance criteria (Phase 5 — Central Collector)
 
-- [ ] GitHub App installed and receiving webhook events from at least one repo
-- [ ] Findings persisted in SQLite with schema conforming to `review_finding.schema.json`
-- [ ] Multi-repo deduplication handles the same finding across branches/forks
-- [ ] Migration path from JSONL to SQLite is documented and tested
+- [ ] GitHub App installed and receiving webhook events from at least one repo <!-- UNVERIFIED 2026-06-16: no GitHub App or webhook receiver exists; intake is GitHub Action-only -->
+- [x] Findings persisted in SQLite with schema conforming to `review_finding.schema.json`
+- [ ] Multi-repo deduplication handles the same finding across branches/forks <!-- UNVERIFIED 2026-06-16: findings_db/central_collector store a repo column and dedup by content hash, but no cross-fork/multi-repo dedup is demonstrated or tested -->
+- [x] Migration path from JSONL to SQLite is documented and tested
 
 ---
 

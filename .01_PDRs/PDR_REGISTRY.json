@@ -45,7 +45,7 @@
       "owner": "Claude",
       "created_at": "2026-01-15T00:00:00Z",
       "updated_at": "2026-06-04T23:59:00Z",
-      "file_path": ".01_PDRs\\.03_In-Process\\PDR-002-skill-ecosystem-technical-foundation.md",
+      "file_path": ".01_PDRs\\.04_Completed\\PDR-002-skill-ecosystem-technical-foundation.md",
       "transitions": [
         {
           "from": "Backlog",
@@ -95,11 +95,11 @@
       "id": "PDR-004",
       "title": "Review Intake System",
       "description": "Chromatic Review Intake system - Phase 1-5 passive intake, dispatch, collision control, resolution logging, central SQLite collector",
-      "status": "Completed",
-      "phase": 5,
+      "status": "In-Process",
+      "phase": 3,
       "owner": "Claude",
       "created_at": "2026-03-10T00:00:00Z",
-      "updated_at": "2026-06-04T23:59:00Z",
+      "updated_at": "2026-06-16T00:00:00Z",
       "file_path": ".01_PDRs\\.03_In-Process\\PDR-004-review-intake-system.md",
       "extracted_path": ".01_PDRs/.99_Extracted/chromatic_review_intake_pdr_extracted",
       "transitions": [
@@ -123,6 +123,13 @@
           "timestamp": "2026-06-04T23:59:00Z",
           "actor": "Claude",
           "reason": "Phase 5 SQLite central collector implemented with CLI and daily summary"
+        },
+        {
+          "from": "Completed",
+          "to": "In-Process",
+          "timestamp": "2026-06-16T00:00:00Z",
+          "actor": "Claude",
+          "reason": "Reconciliation (governance integrity): on-disk verification during the 2026-06-16 hygiene sweep showed completion was over-claimed. VERIFIED: Phases 1-2 operational; resolution-comment generation (post_review_resolution.py) and JSONL->SQLite collector (findings_db.py/central_collector.py, with tests) work. NOT VERIFIED / not implemented: Phase 3 runtime agent patching, lock-window/test-gate flow, and review-resolution-log.jsonl are absent; Phase 4 learning loop is entirely unimplemented (only a sample reviewer-patterns.jsonl exists); Phase 5 GitHub App/webhook (Action-only) and cross-fork multi-repo dedup not demonstrated. Status downgraded to In-Process, completion to 45%, file moved back to .03_In-Process. Remaining Phase 3 runtime patching + Phase 4 learning loop + Phase 5 App/webhook/cross-fork dedup to be re-scoped into a follow-up PDR."
         }
       ],
       "related_issues": [],
@@ -132,18 +139,16 @@
         "review-intake",
         "phase-1",
         "phase-2",
-        "phase-3",
-        "phase-4",
-        "phase-5"
+        "phase-3"
       ],
       "acceptance_criteria": [
-        "Phase 1: Passive intake workflow operational",
-        "Phase 2-4: Dispatch, resolution, playbooks complete",
-        "Phase 5: Bundle integration and findings DB",
-        "All acceptance tests passing",
-        "Documentation complete"
+        "Phase 1: Passive intake workflow operational [VERIFIED]",
+        "Phase 2: Classification + dispatch queue with confidence gating [VERIFIED]",
+        "Phase 3 (partial): resolution-comment generation [VERIFIED]; runtime agent patching + lock/test-gate flow + review-resolution-log.jsonl [NOT IMPLEMENTED]",
+        "Phase 4: reviewer-pattern learning loop [NOT IMPLEMENTED - deferred to follow-up PDR]",
+        "Phase 5: JSONL->SQLite central collector [VERIFIED]; GitHub App/webhook + cross-fork dedup [NOT IMPLEMENTED - deferred]"
       ],
-      "completion_percentage": 100
+      "completion_percentage": 45
     },
     {
       "id": "PDR-006",
@@ -195,7 +200,7 @@
       "owner": "Kas/Claude",
       "created_at": "2026-06-04T00:00:00Z",
       "updated_at": "2026-06-04T23:59:00Z",
-      "file_path": ".01_PDRs\\.01_Backlog\\PDR-005-n8n-intake-orchestration.md",
+      "file_path": ".01_PDRs\\.04_Completed\\PDR-005-n8n-intake-orchestration.md",
       "transitions": [
         {
           "from": null,
@@ -240,6 +245,46 @@
       "completion_percentage": 100,
       "updated_at": "2026-06-04T23:59:00Z",
       "notes": "Phases 1-4 Python scripts delivered: intake_event_bridge.py, registry_router.py, mission_packet_emitter.py, intake_metrics.py. Phase 5: n8n workflow JSON nodes created — intake-orchestration.json implements full Phase 1-4 pipeline with 5-minute schedule trigger, 5 command nodes (read backlog → route events → emit missions → compute metrics), conditional dispatch check, and summary formatting. metrics-dashboard.json provides daily reporting workflow."
+    },
+    {
+      "id": "PDR-007",
+      "title": "Test Coverage Improvements",
+      "description": "Closes six coverage gaps: untested lock_pr_branch.py, proxied main() functions (log_resolution, dispatch_queue), token_issuer stub contract, acquire_branch_lock subprocess integration, and four untested agent hooks (pre_tool_guard, post_tool_audit, context_snapshot, subagent_stop).",
+      "status": "Completed",
+      "phase": 1,
+      "owner": "Claude",
+      "created_at": "2026-06-16T00:00:00Z",
+      "updated_at": "2026-06-16T00:00:00Z",
+      "file_path": ".01_PDRs\\.04_Completed\\PDR-007-test-coverage-improvements.md",
+      "transitions": [
+        {
+          "from": null,
+          "to": "Completed",
+          "timestamp": "2026-06-16T00:00:00Z",
+          "actor": "Claude",
+          "reason": "Merged via PR #15; test coverage gaps closed across harness, scripts, and agent hooks; 23 broker policy_engine failures resolved via self-contained test fixtures"
+        }
+      ],
+      "related_issues": [
+        "#15"
+      ],
+      "related_pr": "https://github.com/kas1987/Chromatic_Governance/pull/15",
+      "tags": [
+        "governance",
+        "test-coverage",
+        "quality"
+      ],
+      "acceptance_criteria": [
+        "All 8 new test files pass with pytest from .03_Harness Governance/",
+        "lock_pr_branch.py TTL expiry and collision (exit 2) paths covered",
+        "log_resolution.main() and dispatch_queue.main() called directly in tests",
+        "token_issuer.issue_token() NotImplementedError assertion present",
+        "acquire_branch_lock() subprocess integration and OSError fallback tested",
+        "All four agent hooks included in pytest coverage scan",
+        "pre_tool_guard.check_command() covers all 8 destructive patterns"
+      ],
+      "completion_percentage": 100,
+      "notes": "Merged via PR #15. ~108 new tests added across 8 files (test_lock_pr_branch, test_log_resolution_main, test_dispatch_main, test_token_issuer, test_pre_tool_guard, test_post_tool_audit, test_context_snapshot, test_subagent_stop). pytest.ini testpaths and coverage extended to .agents/hooks."
     }
   ],
   "status_workflow": {
