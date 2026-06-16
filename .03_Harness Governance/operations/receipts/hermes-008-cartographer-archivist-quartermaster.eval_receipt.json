@@ -1,0 +1,25 @@
+{
+  "mission_id": "HERMES-008-cartographer-archivist-quartermaster",
+  "agent_model": "claude-opus-4-8 (orchestrator)",
+  "status": "pass",
+  "files_changed": [
+    ".03_Harness Governance/handoffs/hermes/CARTOGRAPHER_HANDOFF_HERMES_INTEGRATION.md",
+    ".03_Harness Governance/handoffs/hermes/ARCHIVIST_HANDOFF_HERMES_INTEGRATION.md",
+    ".03_Harness Governance/handoffs/hermes/QUARTERMASTER_HANDOFF_HERMES_INTEGRATION.md",
+    ".03_Harness Governance/config/agents.yaml",
+    ".03_Harness Governance/operations/receipts/hermes-008-cartographer-archivist-quartermaster.eval_receipt.json",
+    ".01_PDRs/.03_In-Process/PDR-008-hermes-local-agent-harness.md"
+  ],
+  "validation_results": [
+    "PASS: all three source packets are the identical generic template (Allowed: read/propose-patch/add-tests/add-docs/record) — none requires authority beyond patch_standard, so the HERMES-008 stop condition does not fire",
+    "PASS: three runtimes registered in config/agents.yaml (cartographer, archivist, quartermaster) as status:inactive, mapped to read_only + patch_standard, PR-only + deny_direct_main_push — mirrors the existing code_sentinel bounded-write runtime; no new permission profile and no authority above broker policy",
+    "PASS: source-packet Source Files remapped to actual repo paths (PDR-008, config/hermes-*.yaml); blocked-actions and stop-conditions carried verbatim, with role-specific Mission/Role text per specialty",
+    "PASS: agents.yaml parses as YAML (yaml-parse job); this receipt validates against schemas/eval_receipt.schema.json",
+    "PASS: change scoped to .03_Harness Governance/** — picked up by hermes-gate.yml, no overlap with skill-governance.yml"
+  ],
+  "scope_compliance": "compliant",
+  "stop_condition_triggered": false,
+  "notes": "Landed the three remaining Hermes mission-packet handoffs under handoffs/hermes/ and registered their runtimes in config/agents.yaml (inactive, broker-profile only). Owner chose 'docs + register runtimes' over docs-only; the runtime entries add no authority beyond patch_standard, so the stop condition (write authority beyond broker policy) does not fire. Activation of the runtimes and an end-to-end run against the live hermes3:8b worker remain follow-ups.",
+  "pr_ref": null,
+  "created_at": "2026-06-16T19:10:00Z"
+}
