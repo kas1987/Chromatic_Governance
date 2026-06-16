@@ -13,7 +13,7 @@ It contains:
 ## Repository Layout
 
 - `.01_PDRs/` — product, design, and governance records
-- `.02_Plugins/` — plugin families and validation tooling (13 families, 108+ skills)
+- `.02_Plugins/` — plugin families and validation tooling (13 families, 118 skills)
 - `.03_Harness Governance/` — orchestration scripts, tests, and runtime controls
 - `.agents/hooks/` — Claude Code hook scripts (guard, audit, snapshot, swarm coordination)
 - `.claude/` — Claude Code settings (`settings.json` hooks) and the standalone provider route-selector CLI (`hooks/model-router.sh`, not a Claude hook)

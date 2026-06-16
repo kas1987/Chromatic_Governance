@@ -1,7 +1,7 @@
 # PDR-002: Chromatic Skill Ecosystem — Technical Foundation
 
 ## Status
-Draft v1.0
+Completed (PR #1 / 2026-06-04)
 
 ## Date
 2026-06-04
@@ -178,12 +178,12 @@ This PDR is complete when:
 
 - [x] `parse_repo_pdr.py` is in `agent-governance-family/scripts/` and the SKILL.md reference is live
 - [x] README.md and SCOPE_MATRIX.md say 118 skills and reference v15 additions
-- [ ] `chromatic-skills-mcp` server passes: `list_skills()`, `get_skill("context-monitor")`, `search_skills("track token usage")`
-- [ ] A session end event writes a well-formed JSONL entry to `.agents/logs/context-usage.jsonl` automatically
-- [ ] A PR adding a SKILL.md without `name` frontmatter fails the skill-governance CI check
-- [ ] `SKILL_BRIDGE.md` maps all 12 Poly-Chromatic operating skills with relationship and guidance
-- [ ] `plugin-access-policy.md` maps all 4 broker profiles to allowed families with rationale
-- [ ] All items above are committed, pushed, and referenced from `AGENT_GUIDE.md`
+- [x] `chromatic-skills-mcp` server passes: `list_skills()`, `get_skill("context-monitor")`, `search_skills("track token usage")`
+- [x] A session end event writes a well-formed JSONL entry to `.agents/logs/context-usage.jsonl` automatically
+- [x] A PR adding a SKILL.md without `name` frontmatter fails the skill-governance CI check
+- [x] `SKILL_BRIDGE.md` maps all 12 Poly-Chromatic operating skills with relationship and guidance
+- [x] `plugin-access-policy.md` maps all 4 broker profiles to allowed families with rationale
+- [ ] All items above are committed, pushed, and referenced from `AGENT_GUIDE.md` <!-- UNVERIFIED 2026-06-16: AGENT_GUIDE.md references the MCP server mechanism and context-usage.jsonl log, but does NOT reference SKILL_BRIDGE.md or plugin-access-policy.md by name; the "referenced from AGENT_GUIDE.md" link is incomplete -->
 
 ---
 
