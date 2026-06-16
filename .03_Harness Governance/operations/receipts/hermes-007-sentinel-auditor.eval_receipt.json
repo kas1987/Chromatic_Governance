@@ -1,0 +1,23 @@
+{
+  "mission_id": "HERMES-007-sentinel-auditor",
+  "agent_model": "claude-opus-4-8 (orchestrator)",
+  "status": "pass",
+  "files_changed": [
+    ".03_Harness Governance/handoffs/hermes/SENTINEL_HANDOFF_HERMES_INTEGRATION.md",
+    ".03_Harness Governance/handoffs/hermes/AUDITOR_HANDOFF_HERMES_INTEGRATION.md",
+    ".03_Harness Governance/operations/receipts/hermes-007-sentinel-auditor.eval_receipt.json",
+    ".01_PDRs/.03_In-Process/PDR-008-hermes-local-agent-harness.md"
+  ],
+  "validation_results": [
+    "PASS: Sentinel/Auditor runtimes already exist in config/agents.yaml (code_sentinel, auditor) — handoffs bind to them, create no new authority",
+    "PASS: guard policy is unambiguous (patch_standard PR-only + deny_direct_main_push for Sentinel; read_only/issue_triage may_write_files:false for Auditor) — HERMES-007 stop condition does not fire",
+    "PASS: source-packet Source Files remapped to actual repo paths (PDR-008, config/hermes-*.yaml); blocked-actions and stop-conditions carried verbatim",
+    "PASS: this receipt validates against schemas/eval_receipt.schema.json",
+    "PASS: docs-only change scoped to .03_Harness Governance/** — picked up by hermes-gate.yml, no overlap with skill-governance.yml"
+  ],
+  "scope_compliance": "compliant",
+  "stop_condition_triggered": false,
+  "notes": "Landed the two Hermes mission-packet handoff docs under handoffs/hermes/ adapted to this repo's layout and bound to the existing code_sentinel/auditor runtime entries. No config-capability or authority change. Sentinel (guard) lands before any agent with write authority per PDR-008 Design Decision 4.",
+  "pr_ref": null,
+  "created_at": "2026-06-16T18:40:00Z"
+}
