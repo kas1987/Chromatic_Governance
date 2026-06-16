@@ -1,0 +1,63 @@
+# Hermes Local-Agent Capability Registry
+# PDR-008 · HERMES-003 · 2026-06-16
+#
+# Registry of record for LOCAL-WORKER model capabilities (the Ollama / Gen
+# routing plane). Routing-plane decision: OPTION B — stand up a real local
+# hermes3:8b in Ollama as a new local agentic worker. See the finding:
+#   .01_PDRs/.03_In-Process/HERMES-003-tier-reconciliation-finding.md
+#
+# Authority boundary (do not blur the two planes):
+#   * Claude-Code Agent router (cloud-tiered: Ollama-T0 / Featherless-Hermes-T1 /
+#     OpenAI-T2 / Gemini-T3 / Claude-T4) is owned by the LIVE matrix and is NOT
+#     edited here:  ~/.claude/governance/multi-router-matrix.yaml
+#                   ~/.claude/config/provider-tiers.json
+#   * THIS file governs local-worker capability tags only. Wiring these workers
+#     into the live Gen routing matrix is HERMES-004 (additive, dry-run + diff).
+#
+# C-levels follow config/providers.example.yaml: c1/c2 prefer-local,
+# c3/c4 escalate-to-cloud.
+
+schema_version: "1.0"
+plane: local_worker            # Ollama / Gen plane — NOT the Claude-Agent cloud tiers
+registry_of_record: true       # per HERMES-003 option B
+source: "Nous Research Hermes 3 (Llama-3.1-8B) — local Ollama validation"
+
+models:
+  hermes3:8b:
+    provider: ollama_local
+    runtime: ollama
+    pulled: true               # `ollama pull hermes3:8b` — verified in HERMES-003
+    role: local_agentic_worker
+    # Capability tags carried forward from the scaffold's
+    # hermes-model-capability.example.yaml, validated against local behaviour.
+    best_at: [instruction, speed, agentic]
+    good_at: [reasoning, coding]
+    weak_at: [creativity, vision, deep_architecture]
+    # Complexity fit: operational worker, not an architect. Stays c1/c2 until a
+    # benchmark (hermes_evaluation_result scorecard, HERMES-005) earns it c3+.
+    complexity_fit: [c1, c2]
+    max_complexity_without_benchmark: c2
+    escalate_above: c2
+    escalate_to: featherless_hermes3   # cloud Hermes-3 sibling on the Claude-Agent plane (T1)
+    notes: >
+      hermes3:8b is the local counterpart to the Featherless-hosted
+      NousResearch/Hermes-3-Llama-3.1-8B that the Claude-Agent router runs at T1.
+      Same model family, two planes: this entry is the local Ollama worker;
+      Featherless remains the cloud fallback. Promotion past c2 requires a passing
+      hermes_evaluation_result scorecard (HERMES-005), per PDR-008 Decision 3.
+
+# Existing local workers (already pulled) are referenced for context only;
+# their canonical capability/routing remains in the Gen matrix, untouched here.
+known_local_peers:
+  - qwen2.5-coder:14b   # local coder (Gen plane)
+  - llama3.2:3b         # nano / formatting (matches live router T0)
+  - llama3.2:1b
+
+validation:
+  acceptance:
+    - "hermes3:8b appears exactly once in models"
+    - "hermes3:8b has best_at / good_at / weak_at tags"
+    - "existing local peers are unchanged (reference-only)"
+    - "no Claude-Agent cloud tier (Featherless/OpenAI/Gemini/Claude) is redefined here"
+  asserts:
+    - "'hermes3:8b' in models"
