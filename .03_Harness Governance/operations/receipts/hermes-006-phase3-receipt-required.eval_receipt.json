@@ -1,0 +1,24 @@
+{
+  "mission_id": "HERMES-006-phase3-receipt-required",
+  "agent_model": "claude-opus-4-8 (orchestrator)",
+  "status": "pass",
+  "files_changed": [
+    ".github/workflows/hermes-gate.yml",
+    ".03_Harness Governance/operations/eval-receipts.md",
+    ".03_Harness Governance/operations/receipts/hermes-006-phase3-receipt-required.eval_receipt.json",
+    ".01_PDRs/.03_In-Process/PDR-008-hermes-local-agent-harness.md"
+  ],
+  "validation_results": [
+    "PASS: added receipt-required job to hermes-gate.yml — framework Phase 3. On pull_request it diffs origin/<base>...HEAD, flags substantive in-scope changes under '.03_Harness Governance/' that are not themselves receipts, and fails if no operations/receipts/*.eval_receipt.json is added/updated",
+    "PASS: enforcement is PR-only (if: github.event_name == 'pull_request') — a post-merge push to Main has no PR diff to evaluate, matching the existing schema-validate advisory-on-push behavior",
+    "PASS: explicit human override via 'no-receipt' PR label short-circuits the step to a pass (notice), so a skipped requirement never strands the check as pending",
+    "PASS: --name-only diff paths are repo-root-relative, so the scope/receipt regexes match despite defaults.run.working-directory='.03_Harness Governance'",
+    "PASS: this very PR is self-consistent — it changes a mission file (operations/eval-receipts.md) and ships this receipt, so substantive=1 receipt=1 clears the new job",
+    "PASS: branch protection unchanged — receipt-required is an additional gate job, not in the required-checks list, so no admin/branch-protection change is needed"
+  ],
+  "scope_compliance": "compliant",
+  "stop_condition_triggered": false,
+  "notes": "Implements the documented HERMES-006 Phase-3 follow-up: the Hermes gate now rejects a mission PR that changes '.03_Harness Governance/' files without an eval receipt, with a 'no-receipt' label escape hatch for genuine non-mission infra changes. Owner selected this track at the loop boundary after HERMES-001..008 landed. The eval-receipts.md operator guide documents the rule and the override.",
+  "pr_ref": null,
+  "created_at": "2026-06-16T20:05:00Z"
+}
