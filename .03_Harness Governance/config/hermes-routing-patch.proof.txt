@@ -1,0 +1,59 @@
+HERMES-004 routing-patch dry-run proof
+Generated: 2026-06-16
+Live target: C:\.04_Prism\gen\src\routes\routing-matrix.json
+Patch fragment: .03_Harness Governance/config/hermes-routing-patch.fragment.json
+
+Mechanical assertions (jq):
+  - key collisions between live and fragment : NONE ([])
+  - existing live keys                        : 10
+  - existing keys byte-identical after merge  : true
+  => patch is PURELY ADDITIVE; stop condition 'alters non-Hermes routing' does NOT fire.
+
+Unified diff (sorted-key normalized): live -> patched
+----------------------------------------------------
+--- /tmp/live.sorted.json	2026-06-16 12:58:18.238889900 -0400
++++ /tmp/patched.sorted.json	2026-06-16 12:58:18.272096400 -0400
+@@ -1,4 +1,19 @@
+ {
++  "agentic-tool-use": {
++    "steps": [
++      {
++        "localModelTag": "hermes3:8b",
++        "provider": "ollama"
++      },
++      {
++        "localModelTag": "qwen2.5-coder:14b",
++        "provider": "ollama"
++      },
++      {
++        "provider": "claude"
++      }
++    ]
++  },
+   "architecture-decision": {
+     "steps": [
+       {
+@@ -55,6 +70,21 @@
+         "provider": "ollama"
+       },
+       {
++        "provider": "claude"
++      }
++    ]
++  },
++  "instruction-follow": {
++    "steps": [
++      {
++        "localModelTag": "hermes3:8b",
++        "provider": "ollama"
++      },
++      {
++        "localModelTag": "qwen3:8b",
++        "provider": "ollama"
++      },
++      {
+         "provider": "claude"
+       }
+     ]
+----------------------------------------------------
+(Only additions of new top-level keys appear above; no existing line removed/changed.)
