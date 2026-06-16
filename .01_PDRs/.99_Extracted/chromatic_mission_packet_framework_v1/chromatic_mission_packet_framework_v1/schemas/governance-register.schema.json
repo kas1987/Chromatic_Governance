@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Chromatic Governance Register",
+  "type": "object",
+  "required": ["schema_version", "mission_id", "governance_level", "gates"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0"},
+    "mission_id": {"type": "string"},
+    "governance_level": {"type": "string", "enum": ["standard", "elevated", "high", "maximum"]},
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["gate", "status", "evidence", "owner"],
+        "properties": {
+          "gate": {"type": "string"},
+          "status": {"type": "string", "enum": ["pass", "fail", "blocked", "not_applicable"]},
+          "evidence": {"type": "string"},
+          "owner": {"type": "string"},
+          "notes": {"type": "string"}
+        }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "properties": {
+        "required": {"type": "boolean"},
+        "approved_by": {"type": "array", "items": {"type": "string"}},
+        "approval_status": {"type": "string", "enum": ["not_required", "pending", "approved", "rejected"]}
+      }
+    }
+  }
+}

@@ -1,0 +1,78 @@
+schema_version: "1.0"
+mission_id: "m2-example-intermediate"
+mission_level: "M2"
+title: "Intermediate mission title"
+objective: "State the bounded multi-step outcome."
+background: "Why this change is needed and what context matters."
+owner_agent: "sentinel"
+support_agents:
+  - "auditor"
+status: "draft"
+complexity: "C2"
+privacy_class: "P1"
+risk_level: "medium"
+scope:
+  in_scope:
+    - "Implementation surface."
+    - "Tests for implementation."
+  out_of_scope:
+    - "Architecture redesign."
+  allowed_files:
+    - "src/**"
+    - "tests/**"
+  forbidden_files:
+    - ".env"
+    - "secrets/**"
+dependencies:
+  - "Light PDR approved or accepted."
+allowed_actions:
+  - "Edit allowed source and test files."
+  - "Run local test suite."
+blocked_actions:
+  - "Do not modify deployment secrets."
+  - "Do not expand scope without escalation."
+steps:
+  - "Read the PDR."
+  - "Implement the scoped change."
+  - "Add or update tests."
+  - "Run validation."
+acceptance_criteria:
+  - "Feature works as described."
+  - "Tests cover expected path and one failure path."
+  - "No forbidden files touched."
+validation:
+  required_checks:
+    - "unit tests"
+    - "schema validation"
+  optional_checks:
+    - "lint"
+  success_definition: "Required tests and schema checks pass."
+  evidence_required:
+    - "Test output."
+    - "Summary of changed files."
+rollback:
+  required: true
+  strategy: "Revert this mission branch or PR."
+  trigger: "Tests fail or behavior regresses."
+  owner: "sentinel"
+stop_conditions:
+  - "Stop if dependency is missing."
+  - "Stop after one failed retry."
+  - "Stop if scope expands beyond allowed files."
+governance:
+  level: "elevated"
+  gates:
+    - "source-of-truth"
+    - "scope"
+    - "dependency"
+    - "acceptance"
+    - "validation"
+  approval_required: true
+  reviewers:
+    - "sentinel"
+pdr_ref: "docs/pdr/example-light-pdr.md"
+supporting_docs:
+  - "docs/pdr/example-light-pdr.md"
+created_by: "front-tier-model-or-human"
+created_at: "YYYY-MM-DD"
+notes: ""

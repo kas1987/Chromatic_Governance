@@ -30,7 +30,7 @@ Three independently-dropped backlog artifacts describe one coherent system: a **
 | `ART-HERMES_HARNESS_PIPELINE_SCAFFOLD_V1` | **Pipeline scaffold** | `PDR_HERMES_LOCAL_AGENT_PIPELINE.md`; `MODEL_AUTHORITY_POLICY.md` + governance checklist; `mission_packet` / `eval_receipt` schemas; routing patch plan + `MODEL_TIER_MAP.md`; 3 agent missions (capability registry, routing, eval receipts); eval plan + sample receipt; CI gate plan; operator guide; seed queue |
 | `ART-HERMES_HARNESS_PDR_PACKAGE` | **Agent roster + deployment** | `PDR_HERMES_LOCAL_AGENT_WORKER.md`; 5 agent handoff packets — **Sentinel, Auditor, Cartographer, Archivist, Quartermaster**; implementation plan; deployment configs (`hermes-model-capability.yaml`, `hermes-routing-patch.yaml`); routing policy; evaluation protocol; smoke-test plan; `hermes_evaluation_result.schema.json` |
 
-The three overlap deliberately: both Hermes packages define a `mission_packet` schema and an eval-receipt contract, and the mission-packet framework generalizes that same schema to four complexity levels. That overlap is the seam they join on — not a conflict.
+The three overlap deliberately along a shared seam — not a conflict. **Reconciled by HERMES-001 (2026-06-16):** there are **two** `mission_packet` schemas, not three — the framework's M1–M4 version and the pipeline scaffold's flat copy. The PDR package does **not** carry a third mission-packet schema; its only schema is `hermes_evaluation_result.schema.json`, an eval-result contract. Separately, the two *eval* schemas (`eval_receipt` and `hermes_evaluation_result`) are **distinct contracts** — an operational per-mission receipt and a model-quality scorecard — not duplicate copies. See `.01_PDRs/.03_In-Process/HERMES-001-schema-diff-report.md`.
 
 ---
 
@@ -71,7 +71,7 @@ Adopt `chromatic_mission_packet_framework_v1/schemas/mission-packet.schema.json`
 Mission complexity (M1 basic → M4 atomic) selects both the required PDR rigor and the model tier. Low-complexity (M1/M2) routes to local/Featherless tiers; high-complexity (M3/M4) escalates. The `MODEL_AUTHORITY_POLICY.md` + `MODEL_TIER_MAP.md` from the scaffold define the mapping; it must agree with the live router tiers (T0 Ollama, T1–T3 Featherless).
 
 ### Decision 3 — Eval receipts are mandatory and CI-gated
-Every completed mission emits an eval receipt conforming to `eval_receipt.schema.json` / `hermes_evaluation_result.schema.json`. The CI gate plan (present in two of the three artifacts) becomes one workflow that fails a mission lacking a passing receipt. Reconcile the two CI gate plans into one.
+**Amended by HERMES-001:** the two eval schemas are *not* duplicates and are **both retained**. Every completed mission emits an operational **`eval_receipt`** (mission_id, status, files_changed, scope_compliance, stop_condition_triggered) — this is the CI-gate artifact: a mission lacking a passing receipt fails the gate. Separately, **`hermes_evaluation_result`** is a model-quality scorecard (scores 0–1, hallucinated-path counts) used for routing/capability decisions, not per-mission gating. The CI gate plan becomes one workflow keyed on `eval_receipt`; the scorecard feeds the capability registry (HERMES-003).
 
 ### Decision 4 — Incremental agent roster
 Land the five agents in dependency order, each behind its own mission: capability registry first (no agent runs without it), then routing, then eval receipts, then the individual agent packets. Sentinel (guard/security) lands before agents with write authority.
@@ -82,8 +82,8 @@ Land the five agents in dependency order, each behind its own mission: capabilit
 
 | ID | Pri | Status | Task | Output | Stop condition |
 |---|---:|---|---|---|---|
-| HERMES-001 | P0 | proposed | Pre-flight: extract all three ZIPs to `.02_Extracted/`, diff the three `mission_packet` schemas | Diff report + chosen canonical schema | Stop if schemas are structurally incompatible (escalate) |
-| HERMES-002 | P0 | proposed | Reconcile to one canonical `mission-packet.schema.json`; record supersessions | Single schema + migration note | Stop if a Hermes field has no home in the M1–M4 schema |
+| HERMES-001 | P0 | ✅ done | Pre-flight: extract ZIPs to `.99_Extracted/`, diff the `mission_packet` schemas | Diff report + chosen canonical (framework) — done 2026-06-16, no escalation | Stop if schemas are structurally incompatible (escalate) |
+| HERMES-002 | P0 | ✅ done | Reconcile to one canonical `mission-packet.schema.json`; record supersessions | `.03_Harness Governance/schemas/mission-packet.schema.json` + `.MIGRATION.md` — done 2026-06-16 | Stop if a Hermes field has no home in the M1–M4 schema |
 | HERMES-003 | P1 | proposed | Build Hermes capability registry (mission-001) | `hermes-model-capability.yaml` wired to router | Stop if router tier names don't match the tier map |
 | HERMES-004 | P1 | proposed | Apply Hermes routing patch (mission-002) against live tiers | Routing patch + dry-run proof | Stop if patch would alter non-Hermes routing |
 | HERMES-005 | P1 | proposed | Implement eval-receipt emission + `validate_packet.py` (mission-003) | Receipts validated against schema | Stop if validator has undocumented deps |
@@ -97,7 +97,7 @@ Land the five agents in dependency order, each behind its own mission: capabilit
 
 | Risk | Severity | Mitigation |
 |---|---:|---|
-| Three `mission_packet` schemas silently diverge | High | HERMES-001/002 collapse to one schema before any runtime work |
+| ~~Three~~ Two `mission_packet` schemas silently diverge | High | ✅ Resolved: HERMES-001/002 collapsed to one canonical schema (2026-06-16) before any runtime work |
 | Hermes routing patch perturbs the live subagent router | High | Dry-run + diff-only proof in HERMES-004; patch is additive |
 | Two CI gate plans contradict each other or skill-governance CI | Medium | HERMES-006 merges them into one workflow |
 | Featherless key handling | Medium | Key stays in `~/.claude/secrets/`; never committed; secret scans active |

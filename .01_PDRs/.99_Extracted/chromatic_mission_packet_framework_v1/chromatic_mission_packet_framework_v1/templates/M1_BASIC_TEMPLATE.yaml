@@ -1,0 +1,56 @@
+schema_version: "1.0"
+mission_id: "m1-example-basic"
+mission_level: "M1"
+title: "Basic mission title"
+objective: "State the specific low-risk outcome."
+owner_agent: "local_worker"
+status: "draft"
+complexity: "C1"
+privacy_class: "P1"
+risk_level: "low"
+scope:
+  in_scope:
+    - "Exact work included."
+  out_of_scope:
+    - "Anything not allowed."
+  allowed_files:
+    - "path/to/file.md"
+  forbidden_files:
+    - "secrets/**"
+dependencies: []
+allowed_actions:
+  - "Read allowed files."
+  - "Edit only allowed files."
+blocked_actions:
+  - "Do not touch secrets or credentials."
+  - "Do not change architecture."
+steps:
+  - "Inspect the allowed file."
+  - "Make the requested change."
+  - "Run validation."
+acceptance_criteria:
+  - "Requested change is present."
+  - "Validation passes."
+validation:
+  required_checks:
+    - "schema validation"
+  optional_checks: []
+  success_definition: "All required checks pass."
+  evidence_required:
+    - "Command output or file diff."
+stop_conditions:
+  - "Stop if required file is missing."
+  - "Stop if the task requires editing forbidden files."
+governance:
+  level: "standard"
+  gates:
+    - "scope"
+    - "acceptance"
+    - "validation"
+  approval_required: false
+  reviewers: []
+pdr_ref: null
+supporting_docs: []
+created_by: "front-tier-model-or-human"
+created_at: "YYYY-MM-DD"
+notes: ""

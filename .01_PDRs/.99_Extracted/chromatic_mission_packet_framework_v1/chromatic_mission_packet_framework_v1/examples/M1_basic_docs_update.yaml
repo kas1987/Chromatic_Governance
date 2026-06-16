@@ -1,0 +1,56 @@
+schema_version: "1.0"
+mission_id: "m1-docs-update-readme"
+mission_level: "M1"
+title: "Update README with mission packet overview"
+objective: "Add a short mission packet overview to the README."
+owner_agent: "local_worker"
+status: "ready"
+complexity: "C1"
+privacy_class: "P1"
+risk_level: "low"
+scope:
+  in_scope:
+    - "README mission packet overview section."
+  out_of_scope:
+    - "Architecture or routing changes."
+  allowed_files:
+    - "README.md"
+  forbidden_files:
+    - ".env"
+    - "secrets/**"
+dependencies: []
+allowed_actions:
+  - "Edit README.md only."
+blocked_actions:
+  - "Do not edit source code."
+steps:
+  - "Open README.md."
+  - "Add overview section."
+  - "Run markdown lint if available."
+acceptance_criteria:
+  - "README contains a clear mission packet overview."
+  - "No non-README files changed."
+validation:
+  required_checks:
+    - "git diff review"
+  optional_checks:
+    - "markdown lint"
+  success_definition: "README-only diff is clean and readable."
+  evidence_required:
+    - "git diff summary"
+stop_conditions:
+  - "Stop if README.md is missing."
+  - "Stop if another file must be edited."
+governance:
+  level: "standard"
+  gates:
+    - "scope"
+    - "acceptance"
+    - "validation"
+  approval_required: false
+  reviewers: []
+pdr_ref: null
+supporting_docs: []
+created_by: "front-tier-model-or-human"
+created_at: "2026-06-04"
+notes: "Example M1 mission."

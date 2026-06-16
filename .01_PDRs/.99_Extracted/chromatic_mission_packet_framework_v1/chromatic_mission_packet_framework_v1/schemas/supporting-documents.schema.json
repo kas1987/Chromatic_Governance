@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Chromatic Supporting Documents Manifest",
+  "type": "object",
+  "required": ["schema_version", "mission_id", "documents"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0"},
+    "mission_id": {"type": "string"},
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "doc_type", "required_for", "status"],
+        "properties": {
+          "path": {"type": "string"},
+          "doc_type": {"type": "string", "enum": ["pdr", "test_plan", "risk_register", "rollback_plan", "impact_assessment", "stakeholder_map", "communication_plan", "evidence_map", "decision_register", "dispatch_board"]},
+          "required_for": {"type": "array", "items": {"type": "string", "enum": ["M1", "M2", "M3", "M4"]}},
+          "status": {"type": "string", "enum": ["missing", "draft", "ready", "approved", "superseded"]},
+          "owner": {"type": "string"},
+          "notes": {"type": "string"}
+        }
+      }
+    }
+  }
+}
